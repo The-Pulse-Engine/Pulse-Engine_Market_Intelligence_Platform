@@ -1,5 +1,5 @@
 """
-src/sentiment.py — Sentiment analysis for financial text.
+pulseengine/core/sentiment.py — Sentiment analysis for financial text.
 
 Single responsibility: score the emotional polarity of a text string.
 

@@ -1,5 +1,5 @@
 """
-src/news.py — News fetching, deduplication, and clustering.
+pulseengine/core/news.py — News fetching, deduplication, and clustering.
 
 Single responsibility: acquire and pre-process raw article data from RSS feeds.
 
@@ -11,7 +11,7 @@ Pipeline role (steps 2 and 2.5 of the full engine):
   - generate_keywords     : auto-build a keyword list for any ticker from Yahoo Finance metadata
 
 This module does NOT score sentiment or match articles to assets — those
-responsibilities belong to src/sentiment.py and src/signals.py respectively.
+responsibilities belong to pulseengine/core/sentiment.py and pulseengine/core/signals.py respectively.
 """
 
 from __future__ import annotations

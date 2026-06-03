@@ -1,5 +1,5 @@
 """
-src/context.py — Market and sector context analysis.
+pulseengine/core/context.py — Market and sector context analysis.
 
 Single responsibility: determine whether an asset move is asset-specific,
 sector-wide, or market-wide by comparing it against sector peers and a

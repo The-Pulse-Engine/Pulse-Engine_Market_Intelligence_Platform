@@ -1,5 +1,5 @@
 """
-src/signals.py — Signal scoring, event detection, and news-asset correlation.
+pulseengine/core/signals.py — Signal scoring, event detection, and news-asset correlation.
 
 Single responsibility: turn price metrics, momentum data, and news articles
 into a single composite signal score and enriched article matches.

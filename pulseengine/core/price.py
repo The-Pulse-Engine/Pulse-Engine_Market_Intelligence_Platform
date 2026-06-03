@@ -1,5 +1,5 @@
 """
-src/price.py — Price data fetching and technical metrics.
+pulseengine/core/price.py — Price data fetching and technical metrics.
 
 Single responsibility: everything that touches Yahoo Finance price data.
 

@@ -10,8 +10,9 @@ Pipeline role (steps 11 and 12 of the full engine):
   - fetch_all_metrics_parallel : lightweight parallel price + momentum fetch
                                  (used by the dashboard heatmap / top-movers view)
 
-This module owns no domain logic — it only wires together src/price, src/news,
-src/signals, src/context, and src/explanation.
+This module owns no domain logic — it only wires together pulseengine/core/price,
+pulseengine/core/news, pulseengine/core/signals, pulseengine/core/context, and
+pulseengine/core/explanation.
 """
 
 from __future__ import annotations

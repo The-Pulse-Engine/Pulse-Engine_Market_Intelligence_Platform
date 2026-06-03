@@ -1,5 +1,5 @@
 """
-src/explanation.py — Multi-factor explanation engine.
+pulseengine/core/explanation.py — Multi-factor explanation engine.
 
 Single responsibility: turn structured analysis data into human-readable
 narrative output.
