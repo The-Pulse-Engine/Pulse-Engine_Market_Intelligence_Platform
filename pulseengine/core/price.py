@@ -54,7 +54,7 @@ def fetch_price_history(
     Returns None when the market simply has no data for the requested window.
     Raises DataFetchError when the fetch itself fails after retries.
     """
-    end   = dt.datetime.now()
+    end   = dt.datetime.now(dt.timezone.utc)
     start = end - dt.timedelta(days=days)
     last_error: Exception | None = None
 
@@ -121,7 +121,7 @@ def _fetch_via_ticker_history(ticker: str, days: int) -> pd.DataFrame | None:
     for anything else.
     """
     try:
-        end   = dt.datetime.now()
+        end   = dt.datetime.now(dt.timezone.utc)
         start = end - dt.timedelta(days=days)
         with _yf_semaphore:
             data = yf.Ticker(ticker).history(
