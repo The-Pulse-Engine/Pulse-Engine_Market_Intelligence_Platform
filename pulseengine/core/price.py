@@ -158,6 +158,8 @@ def compute_price_metrics(df: pd.DataFrame | None) -> dict:
         return {}
 
     def safe_pct(n: int) -> float | None:
+        if n < 1:
+            return None
         if len(close) > n:
             old = float(close.iloc[-(n + 1)])
             if abs(old) < 1e-9 or not math.isfinite(old):
