@@ -100,8 +100,14 @@ def correlate_news(
         src_weight  = SOURCE_WEIGHTS.get(article.get("source", ""), 1.0)
         final_score = round((score + recency_bonus) * src_weight, 2)
 
-        sentiment = score_sentiment(text)
-        events    = detect_events(text)
+        # Prefer fields precomputed by fetch_news_articles; fall back to
+        # computing them here for articles that lack them (e.g. handmade dicts).
+        sentiment = article.get("sentiment")
+        if sentiment is None:
+            sentiment = score_sentiment(text)
+        events = article.get("events_detected")
+        if events is None:
+            events = detect_events(text)
 
         matched.append({
             **article,
@@ -123,7 +129,7 @@ def detect_events(text: str) -> list[dict]:
     text_lower = text.lower()
     found: list[dict] = []
     for key, info in EVENT_TRIGGERS.items():
-        hits = [kw for kw in info["keywords"] if kw in text_lower]
+        hits = [kw for kw in info["keywords"] if _kw_re(kw).search(text_lower)]
         if hits:
             found.append({
                 "event_key":  key,

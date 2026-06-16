@@ -209,6 +209,13 @@ def run_full_scan() -> dict:
       with_market_ctx=True so context flags are persisted in every snapshot.
 
     Do not add save=True here.  Snapshot writes belong exclusively in run_scan().
+
+    Returns
+    -------
+    dict
+        ``{category: {asset_name: result}}`` plus a reserved ``"_errors"`` key
+        holding the list of accumulated per-asset error payloads. Callers that
+        iterate categories must skip keys beginning with ``"_"``.
     """
     log.info("Starting full market scan ...")
     articles = fetch_news_articles()
@@ -273,4 +280,9 @@ def run_full_scan() -> dict:
                 log.error("Analysis error for %s (%s): %s", name, cat, exc)
 
     log.info("Full scan complete.")
+    # Surface the accumulated per-asset errors as scan-wide metadata. The key is
+    # underscore-prefixed so it sits beside the category buckets without being
+    # mistaken for one (mirrors the _scan_summary sibling convention); consumers
+    # iterating categories must skip keys starting with "_".
+    results["_errors"] = errors
     return results

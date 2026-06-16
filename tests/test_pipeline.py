@@ -69,7 +69,9 @@ def test_run_full_scan_assets_have_signal(mock_price_history, mock_news_articles
                                           mock_market_context, storage_dir):
     """Every asset result in the scan must contain a 'signal' key."""
     result = run_full_scan()
-    for cat_results in result.values():
+    for category, cat_results in result.items():
+        if category.startswith("_"):  # skip reserved metadata keys (e.g. _errors)
+            continue
         for asset_result in cat_results.values():
             assert "signal" in asset_result
 
@@ -93,10 +95,14 @@ def test_run_full_scan_surfaces_structured_fetch_errors(mocker, ohlcv_df,
     result = run_full_scan()
     error_entries = [
         asset_result.get("error")
-        for cat_results in result.values()
+        for category, cat_results in result.items()
+        if not category.startswith("_")
         for asset_result in cat_results.values()
         if asset_result.get("error")
     ]
 
     assert error_entries
     assert error_entries[0]["type"] == "data_fetch_error"
+
+    # The same errors are also rolled up under the reserved "_errors" key.
+    assert any(e["type"] == "data_fetch_error" for e in result["_errors"])

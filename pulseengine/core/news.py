@@ -36,11 +36,16 @@ from .config import (
     RELEVANCE_MEDIUM,
     REQUEST_TIMEOUT,
 )
+from .sentiment import score_sentiment
+from .signals import detect_events
 
 log = logging.getLogger(__name__)
 
 _RE_STRIP_HTML     = re.compile(r"<[^>]+>")
 _RE_NORMALIZE_TITLE = re.compile(r"[^a-z0-9\s]")
+
+# Cap each RSS body read so a single oversized/malformed feed cannot exhaust memory.
+_MAX_FEED_BYTES = 5 * 1024 * 1024  # 5 MB
 
 
 # ── Fetching ─────────────────────────────────────────────────────────────────
@@ -70,7 +75,15 @@ def fetch_news_articles() -> list[dict]:
                 headers={"User-Agent": "PulseEngine/1.0"},
             )
             with urllib.request.urlopen(request, timeout=REQUEST_TIMEOUT) as response:
-                feed = feedparser.parse(response.read())
+                # Read one byte past the cap so we can detect an oversized feed.
+                body = response.read(_MAX_FEED_BYTES + 1)
+            if len(body) > _MAX_FEED_BYTES:
+                log.warning(
+                    "RSS feed %s skipped: body exceeds %d-byte cap",
+                    source_name, _MAX_FEED_BYTES,
+                )
+                return []
+            feed = feedparser.parse(body)
             for entry in feed.entries:
                 pub = _parse_pub_date(entry)
                 if pub and pub < cutoff:
@@ -104,14 +117,25 @@ def fetch_news_articles() -> list[dict]:
         key=lambda a: a["published"] or dt.datetime.min.replace(tzinfo=dt.UTC),
         reverse=True,
     )
-    articles = articles[:NEWS_MAX_ARTICLES]
-
+    # Deduplicate before applying the article budget so near-duplicates don't
+    # consume slots that unique articles could fill.
     before = len(articles)
     articles = deduplicate_articles(articles)
+    removed = before - len(articles)
+    articles = articles[:NEWS_MAX_ARTICLES]
     log.info(
         "Fetched %d articles from %d feeds (%d removed as duplicates)",
-        len(articles), len(NEWS_FEEDS), before - len(articles),
+        len(articles), len(NEWS_FEEDS), removed,
     )
+
+    # Enrich each surviving article once with sentiment and detected events.
+    # Doing it here (after dedup) means correlate_news can read these
+    # precomputed fields per asset instead of recomputing them N times.
+    for article in articles:
+        text = article["title"] + " " + article["summary"]
+        article["sentiment"]       = score_sentiment(text)
+        article["events_detected"] = detect_events(text)
+
     return articles
 
 
