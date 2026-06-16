@@ -18,7 +18,7 @@ import datetime as dt
 import logging
 from typing import Any
 
-from .config import BACKTEST_WINDOW, TRACKED_ASSETS
+from .config import BACKTEST_WINDOW, SIGNAL_THRESHOLDS, TRACKED_ASSETS
 from .errors import StorageError
 from .storage import list_tracked_assets_with_history, load_snapshots
 
@@ -100,6 +100,11 @@ def evaluate_signal_accuracy(
         if sig_score is None or curr_price is None or next_price is None:
             continue
         if curr_price == 0:
+            continue
+        # Neutral-band signals carry no directional claim; grading them as
+        # "down" predictions pollutes the hit rate. Skip |score| below the
+        # slightly_bullish threshold (the neutral cutoff).
+        if abs(sig_score) < SIGNAL_THRESHOLDS["slightly_bullish"]:
             continue
 
         predicted_up  = sig_score > 0  # did we call it up or down
