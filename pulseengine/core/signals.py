@@ -123,7 +123,7 @@ def detect_events(text: str) -> list[dict]:
     text_lower = text.lower()
     found: list[dict] = []
     for key, info in EVENT_TRIGGERS.items():
-        hits = [kw for kw in info["keywords"] if kw in text_lower]
+        hits = [kw for kw in info["keywords"] if _kw_re(kw).search(text_lower)]
         if hits:
             found.append({
                 "event_key":  key,
