@@ -36,6 +36,8 @@ from .config import (
     RELEVANCE_MEDIUM,
     REQUEST_TIMEOUT,
 )
+from .sentiment import score_sentiment
+from .signals import detect_events
 
 log = logging.getLogger(__name__)
 
@@ -112,6 +114,15 @@ def fetch_news_articles() -> list[dict]:
         "Fetched %d articles from %d feeds (%d removed as duplicates)",
         len(articles), len(NEWS_FEEDS), before - len(articles),
     )
+
+    # Enrich each surviving article once with sentiment and detected events.
+    # Doing it here (after dedup) means correlate_news can read these
+    # precomputed fields per asset instead of recomputing them N times.
+    for article in articles:
+        text = article["title"] + " " + article["summary"]
+        article["sentiment"]       = score_sentiment(text)
+        article["events_detected"] = detect_events(text)
+
     return articles
 
 
