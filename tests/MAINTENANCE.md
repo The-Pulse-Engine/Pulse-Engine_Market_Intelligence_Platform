@@ -7,15 +7,15 @@ catch crashes, broken invariants, and pipeline regressions without freezing inte
 
 ## File Layout
 
-| File | Purpose |
-|---|---|
-| `conftest.py` | Shared fixtures (price series, DataFrames, articles, signal dicts, mocks) |
-| `test_core.py` | Core sanity/invariant tests for pure functions |
-| `test_pipeline.py` | Smoke tests for end-to-end orchestration |
-| `test_logic_coverage.py` | Additional edge coverage for scoring, sentiment, dedup, contradictions |
-| `test_storage_and_scan.py` | Storage retention/cleanup, round-trip, dry-run scan, synthetic backtest |
-| `test_optimisation.py` | Optimisation-related tests |
-| `test_web_surface.py` | Web demo surface tests |
+| File                       | Purpose                                                                   |
+| -------------------------- | ------------------------------------------------------------------------- |
+| `conftest.py`              | Shared fixtures (price series, DataFrames, articles, signal dicts, mocks) |
+| `test_core.py`             | Core sanity/invariant tests for pure functions                            |
+| `test_pipeline.py`         | Smoke tests for end-to-end orchestration                                  |
+| `test_logic_coverage.py`   | Additional edge coverage for scoring, sentiment, dedup, contradictions    |
+| `test_storage_and_scan.py` | Storage retention/cleanup, round-trip, dry-run scan, synthetic backtest   |
+| `test_optimisation.py`     | Optimisation-related tests                                                |
+| `test_web_surface.py`      | Web demo surface tests                                                    |
 
 The suite is no longer fixed to a tiny count. Add tests when they improve confidence on important logic.
 
@@ -47,14 +47,14 @@ meaningful pipeline outcomes (no crash, sane outputs, expected side effects).
 
 Canonical imports use the `pulseengine.*` package. The existing test files import from the backward-compat shims intentionally — this verifies the shims themselves remain functional. New tests should prefer canonical paths.
 
-| Import style | Module resolved |
-|---|---|
-| `from pulseengine.core.app import X` | Canonical — `pulseengine/core/app.py` |
-| `from pulseengine.core.storage import X` | Canonical — `pulseengine/core/storage.py` |
-| `from pulseengine.local.scan import X` | Canonical — `pulseengine/local/scan.py` |
-| `from app.analysis import X` | Shim — re-exports from `pulseengine.core` |
-| `from storage.storage import X` | Shim — re-exports from `pulseengine.core.storage` |
-| `from src.engine import X` | Shim — re-exports from `pulseengine.core.app` |
+| Import style                             | Module resolved                                   |
+| ---------------------------------------- | ------------------------------------------------- |
+| `from pulseengine.core.app import X`     | Canonical — `pulseengine/core/app.py`             |
+| `from pulseengine.core.storage import X` | Canonical — `pulseengine/core/storage.py`         |
+| `from pulseengine.local.scan import X`   | Canonical — `pulseengine/local/scan.py`           |
+| `from app.analysis import X`             | Shim — re-exports from `pulseengine.core`         |
+| `from storage.storage import X`          | Shim — re-exports from `pulseengine.core.storage` |
+| `from src.engine import X`               | Shim — re-exports from `pulseengine.core.app`     |
 
 `conftest.py` imports `storage.storage as storage` so that `monkeypatch.setattr` targets the correct module object.
 
@@ -67,15 +67,15 @@ Network calls are mocked at the point of use in `src/engine.py` (the backward-co
 
 ## When to update tests
 
-| Change | Action required |
-|---|---|
-| New key added to `analyse_asset()` result | Usually nothing; avoid strict key snapshots |
-| `analyse_asset()` top-level contract changed | Update smoke expectations in `test_pipeline.py` |
-| RSI/ROC formula replaced | Re-check range/sign invariants and edge-case behavior |
-| Signal score clamping removed | Clamping tests should fail intentionally |
-| Dedup threshold changed | Review boundary tests in `test_logic_coverage.py` |
-| Storage retention windows changed | Review age-based tests in `test_storage_and_scan.py` |
-| Functions moved between `pulseengine/core/` modules | Update patch targets and imports accordingly |
+| Change                                              | Action required                                       |
+| --------------------------------------------------- | ----------------------------------------------------- |
+| New key added to `analyse_asset()` result           | Usually nothing; avoid strict key snapshots           |
+| `analyse_asset()` top-level contract changed        | Update smoke expectations in `test_pipeline.py`       |
+| RSI/ROC formula replaced                            | Re-check range/sign invariants and edge-case behavior |
+| Signal score clamping removed                       | Clamping tests should fail intentionally              |
+| Dedup threshold changed                             | Review boundary tests in `test_logic_coverage.py`     |
+| Storage retention windows changed                   | Review age-based tests in `test_storage_and_scan.py`  |
+| Functions moved between `pulseengine/core/` modules | Update patch targets and imports accordingly          |
 
 ---
 

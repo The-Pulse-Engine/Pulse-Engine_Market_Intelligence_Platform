@@ -94,13 +94,13 @@ What is missing:
 
 The goal: download and double-click. No terminal required.
 
-| Deliverable | Detail |
-|---|---|
-| PyInstaller EXE | Windows first, then macOS and Linux |
-| Launcher script | Starts the server, waits for ready, opens browser automatically |
-| System tray icon | Shows running status, allows clean shutdown |
-| GitHub Actions pipeline | Builds and attaches platform binaries to every release tag |
-| First-run setup | Lightweight wizard to configure data directory on first launch |
+| Deliverable             | Detail                                                          |
+| ----------------------- | --------------------------------------------------------------- |
+| PyInstaller EXE         | Windows first, then macOS and Linux                             |
+| Launcher script         | Starts the server, waits for ready, opens browser automatically |
+| System tray icon        | Shows running status, allows clean shutdown                     |
+| GitHub Actions pipeline | Builds and attaches platform binaries to every release tag      |
+| First-run setup         | Lightweight wizard to configure data directory on first launch  |
 
 ---
 
@@ -112,14 +112,14 @@ The goal: download and double-click. No terminal required.
 
 This is where the local app becomes genuinely independent of any external service.
 
-| Deliverable | Detail |
-|---|---|
-| FinBERT local model | Downloaded once on first run, cached permanently, runs fully offline |
-| Offline mode | Serve cached data when network unavailable, flag signal staleness clearly |
-| Export | CSV and PDF export of signal reports and backtest results |
-| Backtest improvements | Lag correction, rolling validation, signal weight evaluation |
-| Test coverage | Property-based tests for pure functions, integration tests for full pipeline |
-| Custom RSS feeds | Users add their own news sources via config |
+| Deliverable           | Detail                                                                       |
+| --------------------- | ---------------------------------------------------------------------------- |
+| FinBERT local model   | Downloaded once on first run, cached permanently, runs fully offline         |
+| Offline mode          | Serve cached data when network unavailable, flag signal staleness clearly    |
+| Export                | CSV and PDF export of signal reports and backtest results                    |
+| Backtest improvements | Lag correction, rolling validation, signal weight evaluation                 |
+| Test coverage         | Property-based tests for pure functions, integration tests for full pipeline |
+| Custom RSS feeds      | Users add their own news sources via config                                  |
 
 ---
 
@@ -131,15 +131,15 @@ This is where the local app becomes genuinely independent of any external servic
 
 > Timeline depends on community growth. The more contributors, the faster this lands.
 
-| Deliverable | Detail |
-|---|---|
-| Dynamic asset discovery | System finds and covers stocks automatically |
-| All stocks | Any exchange, any ticker, any news volume |
-| Auto-generated company profiles | Executive names, subsidiaries, products — all derived automatically |
-| News routing at scale | RSS feeds alone will not cut it at this volume |
-| Signal weight auto-tuning | Weights validated against rolling historical data, not hand-tuned |
-| Alert system | Local desktop notification when a signal crosses a configurable threshold |
-| Community sector profiles | Contributors own their domain and maintain keyword profiles for their sectors |
+| Deliverable                     | Detail                                                                        |
+| ------------------------------- | ----------------------------------------------------------------------------- |
+| Dynamic asset discovery         | System finds and covers stocks automatically                                  |
+| All stocks                      | Any exchange, any ticker, any news volume                                     |
+| Auto-generated company profiles | Executive names, subsidiaries, products — all derived automatically           |
+| News routing at scale           | RSS feeds alone will not cut it at this volume                                |
+| Signal weight auto-tuning       | Weights validated against rolling historical data, not hand-tuned             |
+| Alert system                    | Local desktop notification when a signal crosses a configurable threshold     |
+| Community sector profiles       | Contributors own their domain and maintain keyword profiles for their sectors |
 
 ---
 
@@ -152,17 +152,17 @@ This is where the local app becomes genuinely independent of any external servic
 
 The web demo is not a separate project. It runs off the same core engine and stays deliberately limited. Its only job is to give people a taste of the tool and send them to the local download.
 
-| Feature | Local App | Web Demo |
-|---|---|---|
-| All 24 current assets | Yes | Yes |
-| Arbitrary ticker lookup | Yes | No |
-| Backtesting | Yes | No |
-| Historical snapshots | Yes | No |
-| FinBERT local model | Yes | No |
-| Custom RSS feeds | Yes | No |
-| Export to CSV / PDF | Yes | No |
-| Offline mode | Yes | No |
-| Data stored anywhere | Never | Never |
+| Feature                 | Local App | Web Demo |
+| ----------------------- | --------- | -------- |
+| All 24 current assets   | Yes       | Yes      |
+| Arbitrary ticker lookup | Yes       | No       |
+| Backtesting             | Yes       | No       |
+| Historical snapshots    | Yes       | No       |
+| FinBERT local model     | Yes       | No       |
+| Custom RSS feeds        | Yes       | No       |
+| Export to CSV / PDF     | Yes       | No       |
+| Offline mode            | Yes       | No       |
+| Data stored anywhere    | Never     | Never    |
 
 > **Privacy commitment:** We store nothing. Ever. The web demo is architecturally incapable of retaining user data.
 
@@ -205,20 +205,20 @@ pulseengine/
 ---
 ## What the Web Demo Unlocks vs Locks
 
-| Feature | Web Demo | Local App |
-|---|---|---|
-| assets | Yes | Yes |
-| Signal score + explanation | Yes | Yes |
-| Price chart | Yes | Yes |
-| News sentiment feed | Yes | Yes |
-| Market heatmap | Yes | Yes |
-| Arbitrary ticker lookup | No | Yes |
-| Backtesting | No | Yes |
-| Historical snapshots | No | Yes |
-| Export to CSV / PDF | No | Yes |
-| FinBERT local model | No | Yes |
-| Custom RSS feeds | No | Yes |
-| Offline mode | No | Yes |
+| Feature                    | Web Demo | Local App |
+| -------------------------- | -------- | --------- |
+| assets                     | Yes      | Yes       |
+| Signal score + explanation | Yes      | Yes       |
+| Price chart                | Yes      | Yes       |
+| News sentiment feed        | Yes      | Yes       |
+| Market heatmap             | Yes      | Yes       |
+| Arbitrary ticker lookup    | No       | Yes       |
+| Backtesting                | No       | Yes       |
+| Historical snapshots       | No       | Yes       |
+| Export to CSV / PDF        | No       | Yes       |
+| FinBERT local model        | No       | Yes       |
+| Custom RSS feeds           | No       | Yes       |
+| Offline mode               | No       | Yes       |
 
 > Locked features in the web demo display a prompt to download the local app. No feature is paywalled. No feature requires an account. The local app is free forever.
 
