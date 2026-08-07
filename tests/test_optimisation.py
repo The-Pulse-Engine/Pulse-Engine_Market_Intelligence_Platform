@@ -27,7 +27,7 @@ import textwrap
 import pytest
 
 from pulseengine.core.config import DEDUP_SIMILARITY_THRESHOLD
-from pulseengine.core.news import _jaccard, _normalize_title, deduplicate_articles
+from pulseengine.core.news import deduplicate_articles, jaccard, normalize_title
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -46,11 +46,11 @@ def _dedup_naive(articles: list[dict]) -> list[dict]:
     seen: list[set] = []
     deduped: list[dict] = []
     for a in articles:
-        tokens = set(_normalize_title(a["title"]).split())
+        tokens = set(normalize_title(a["title"]).split())
         if not tokens:
             deduped.append(a)
             continue
-        if not any(_jaccard(tokens, p) >= DEDUP_SIMILARITY_THRESHOLD for p in seen):
+        if not any(jaccard(tokens, p) >= DEDUP_SIMILARITY_THRESHOLD for p in seen):
             seen.append(tokens)
             deduped.append(a)
     return deduped

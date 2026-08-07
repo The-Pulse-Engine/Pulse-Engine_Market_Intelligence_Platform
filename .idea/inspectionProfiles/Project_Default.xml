@@ -3,68 +3,53 @@
     <option name="myName" value="Project Default" />
 
     <!--
-      Only inspections that are *structurally* wrong for this repository are
-      disabled here, each with the reason. Everything else stays on: ruff and
-      mypy run clean in CI, so a finding the IDE reports and those two do not
-      is worth reading rather than hiding.
+      Four inspections are disabled. Each is something the repository cannot
+      fix in source, with the evidence recorded. Everything the IDE reported
+      that COULD be fixed was fixed instead of suppressed:
 
-      Verified false positives, not judgement calls:
+        unused imports        the star-import shims became explicit
+                              `from X import Y as Y` re-exports
+        no generic font name  every use site now names its generic fallback
+        protected member      jaccard, normalize_title, detect_contradictions
+                              and build_error_payload were made public, since
+                              other modules and the tests already used them
+        unused local          the optional-import fallbacks `del` their
+                              parameters, keeping the signature contract
+        unused CSS symbol     four genuinely dead rules (.hist-box, .hist-label,
+                              .bt-hit, .bt-miss) were deleted
 
-      PyUnusedImports — the repo keeps seven documented backward-compat shims
-        (src/, app/, config/, storage/, dashboard/) whose entire body is
-        `from <canonical> import *`. The import being "unused" locally is the
-        point; re-export is the purpose. ruff still enforces real unused
-        imports repo-wide via F401/F403 with per-line noqa.
+      What remains, and why source cannot fix it:
 
-      CssUnusedSymbol — pulseengine/local/dashboard.css styles DOM that
-        Streamlit generates at runtime, plus class names built inside Python
-        f-strings (see components/snapshot.py _SIGNAL_CLASS_MAP). The IDE has
-        no HTML to match against, so every selector reads as dead.
+      CssUnusedSymbol — the 37 remaining selectors are all emitted at runtime.
+        Some come from Streamlit's own DOM (.stApp, .stAlert), the rest from
+        class names built in Python f-strings; _SIGNAL_CLASS_MAP in
+        components/snapshot.py is the clearest example. Each was checked
+        against the Python sources before disabling; the four that turned out
+        to be genuinely dead were removed rather than hidden.
 
-      CssNoGenericFontName — every flagged declaration reads the font family
-        from a CSS custom property (font-body / font-display) via var(). The
-        IDE cannot resolve through var(); the token definitions at :root do
-        end in `serif`, so the generic fallback is present.
+      PyTypeChecker — every hit is "Expected type X, got Any | None" on a
+        dict.get() result that is already guarded. Sampled 8 across every
+        cluster (explanation.py 74/100, storage.py 388-389, data.py 167,
+        backtest.py 112, scan.py 167, price.py) and all sit behind an explicit
+        `is not None` test or an early return; the IDE does not narrow through
+        compound `and` conditions. compute_roc is even annotated `-> float`
+        and returns 0.0 on every early path. mypy is the type checker of
+        record: it narrows correctly, has pandas-stubs active, runs over
+        pulseengine/ in CI, and is clean.
 
       UndefinedParamsPresent — flags `python-version` and `cache` on
         actions/setup-python@v7 in .github/workflows/ci.yml. Both are valid;
-        the bundled GitHub Actions schema is simply behind the action version.
+        the bundled GitHub Actions schema is behind the action version. There
+        is nothing to change in the workflow.
 
       PyPackageRequirements — reads requirements.txt only. The dev toolchain is
         declared in pyproject.toml under [project.optional-dependencies] and
         pinned in requirements-dev.txt, so `import pytest` in tests/ is
-        correctly declared even though this inspection cannot see it.
-
-      PyTypeChecker — every hit is "Expected type X, got Any | None", where the
-        value came from dict.get() and is already guarded. Sampled 6 across the
-        two largest clusters (explanation.py 74/100, storage.py 388-389,
-        data.py 167, backtest.py 112, scan.py 167) and all six sit behind an
-        explicit `is not None` test or an early return; the IDE simply does not
-        narrow through compound `and` conditions. mypy is the type checker of
-        record here: it narrows correctly, has pandas-stubs active, runs over
-        pulseengine/ in CI, and is clean. Keeping a second, weaker checker
-        enabled only produces noise that competes with the one that gates merges.
-
-      PyUnusedLocal — the optional-import fallbacks in
-        components/analysis.py declare parameters they never read, because the
-        signature is the contract: a catch-all (*_a, **_kw) would accept calls
-        the real functions reject. Same reasoning keeps ruff's ARG rules off.
-
-      PyProtectedMember — the only remaining hits are tests importing the
-        private helpers they exist to test (_jaccard, _normalize_title,
-        _detect_contradictions). Suppressing per-site is not possible without
-        putting a comment inside an import block, which fights ruff's import
-        sorting. The one genuine cross-package case this inspection did catch
-        was fixed instead, by renaming _build_error_payload to
-        build_error_payload in pulseengine/core/errors.py.
+        properly declared; this inspection just cannot see either file.
     -->
-    <inspection_tool class="PyUnusedImportsInspection" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="CssUnusedSymbol" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="CssNoGenericFontName" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="UndefinedParamsPresent" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="PyPackageRequirementsInspection" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="PyProtectedMemberInspection" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
     <inspection_tool class="PyTypeCheckerInspection" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="PyUnusedLocalInspection" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
+    <inspection_tool class="UndefinedParamsPresent" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="PyPackageRequirementsInspection" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
   </profile>
 </component>

@@ -8,7 +8,7 @@ Pipeline role (step 10 of the full engine):
   - build_explanation     : produce verdict, factor list, markdown detail,
                             confidence assessment, contradictions, and a
                             concise "why it matters" insight
-  - _detect_contradictions: identify tensions between signal components
+  - detect_contradictions: identify tensions between signal components
   - _build_why_it_matters : generate a 1-2 sentence actionable insight
   - _assess_confidence    : score explanation confidence and list reasons
   - _build_verdict        : compose the one-line summary sentence
@@ -297,7 +297,7 @@ def build_explanation(
             })
 
     # E. Contradiction detection ───────────────────────────────────────────────
-    contradictions = _detect_contradictions(metrics, momentum, factors, signal)
+    contradictions = detect_contradictions(metrics, momentum, factors, signal)
     if contradictions:
         detail_parts.append("## Signal Contradictions\n")
         for c in contradictions:
@@ -336,7 +336,7 @@ def build_explanation(
 
 # ── Private helpers ───────────────────────────────────────────────────────────
 
-def _detect_contradictions(
+def detect_contradictions(
     metrics: dict,
     momentum: dict,
     factors: list[dict],

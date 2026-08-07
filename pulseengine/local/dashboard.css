@@ -44,7 +44,7 @@
 html, body, [class*="css"], .stApp, .main {
   background-color: var(--bg-main) !important;
   color: var(--text-primary) !important;
-  font-family: var(--font-body) !important;
+  font-family: var(--font-body), serif !important;
   font-size: 16px;
   line-height: 1.75;
   -webkit-font-smoothing: antialiased;
@@ -53,7 +53,7 @@ html, body, [class*="css"], .stApp, .main {
 /* ── Headings ─────────────────────────────────────────────────────────────── */
 h1, h2, h3, h4, h5, h6,
 .stMarkdown h1, .stMarkdown h2, .stMarkdown h3 {
-  font-family: var(--font-display) !important;
+  font-family: var(--font-display), serif !important;
   color: var(--text-primary) !important;
   font-weight: 700;
 }
@@ -86,7 +86,7 @@ h1, h2, h3, h4, h5, h6,
 /* ── Caption ──────────────────────────────────────────────────────────────── */
 .stCaption, [data-testid="stCaptionContainer"] p {
   color: var(--text-muted) !important;
-  font-family: var(--font-body) !important;
+  font-family: var(--font-body), serif !important;
   font-size: 0.82rem !important;
   font-style: italic;
 }
@@ -109,7 +109,7 @@ section[data-testid="stSidebar"] .stMarkdown p,
 section[data-testid="stSidebar"] label,
 section[data-testid="stSidebar"] .stCaption {
   color: var(--text-secondary) !important;
-  font-family: var(--font-body) !important;
+  font-family: var(--font-body), serif !important;
   font-size: 0.88rem !important;
 }
 section[data-testid="stSidebar"] strong {
@@ -139,7 +139,7 @@ div[data-testid="stMetric"]::before {
 }
 div[data-testid="stMetric"] label {
   color: var(--text-muted) !important;
-  font-family: var(--font-body) !important;
+  font-family: var(--font-body), serif !important;
   font-size: 0.74rem !important;
   font-weight: 500 !important;
   letter-spacing: 0.12em !important;
@@ -147,13 +147,13 @@ div[data-testid="stMetric"] label {
 }
 div[data-testid="stMetric"] [data-testid="stMetricValue"] {
   color: var(--text-primary) !important;
-  font-family: var(--font-display) !important;
+  font-family: var(--font-display), serif !important;
   font-size: 1.6rem !important;
   font-weight: 700 !important;
 }
 div[data-testid="stMetric"] [data-testid="stMetricDelta"] svg { display: none; }
 div[data-testid="stMetric"] [data-testid="stMetricDelta"] {
-  font-family: var(--font-body) !important;
+  font-family: var(--font-body), serif !important;
   font-size: 0.83rem !important;
   font-weight: 500 !important;
 }
@@ -167,12 +167,12 @@ div[data-testid="stMetric"] [data-testid="stMetricDelta"] {
   box-shadow: 0 2px 14px rgba(0,0,0,0.45);
 }
 .signal-label-text {
-  font-family: var(--font-display) !important;
+  font-family: var(--font-display), serif !important;
   font-size: 1.65rem;
   font-weight: 700;
 }
 .signal-score-text {
-  font-family: var(--font-body);
+  font-family: var(--font-body), serif;
   font-size: 0.90rem;
   font-weight: 400;
   font-style: italic;
@@ -192,7 +192,7 @@ div[data-testid="stMetric"] [data-testid="stMetricDelta"] {
   display: inline-block;
   padding: 3px 11px;
   border-radius: 2px;
-  font-family: var(--font-body);
+  font-family: var(--font-body), serif;
   font-size: 0.70rem;
   font-weight: 600;
   font-style: normal;
@@ -214,14 +214,14 @@ div[data-testid="stMetric"] [data-testid="stMetricDelta"] {
   border-radius: 0 4px 4px 0;
   padding: 16px 22px;
   margin: 12px 0 14px;
-  font-family: var(--font-body);
+  font-family: var(--font-body), serif;
   font-size: 1.0rem;
   font-weight: 400;
   color: var(--text-secondary);
   line-height: 1.8;
 }
 .why-label {
-  font-family: var(--font-body);
+  font-family: var(--font-body), serif;
   font-size: 0.70rem;
   font-weight: 600;
   font-style: normal;
@@ -238,13 +238,13 @@ div[data-testid="stMetric"] [data-testid="stMetricDelta"] {
   border-radius: 0 4px 4px 0;
   padding: 12px 18px;
   margin: 0 0 12px;
-  font-family: var(--font-body);
+  font-family: var(--font-body), serif;
   font-size: 0.95rem;
   color: #a8d8a8;
   line-height: 1.7;
 }
 .driver-label {
-  font-family: var(--font-body);
+  font-family: var(--font-body), serif;
   font-size: 0.70rem;
   font-weight: 600;
   letter-spacing: 0.14em;
@@ -260,7 +260,7 @@ div[data-testid="stMetric"] [data-testid="stMetricDelta"] {
   border-radius: 4px;
   padding: 10px 16px;
   margin: 6px 0;
-  font-family: var(--font-body);
+  font-family: var(--font-body), serif;
   font-size: 0.92rem;
   color: #c8a0a0;
   line-height: 1.65;
@@ -283,7 +283,7 @@ div[data-testid="stMetric"] [data-testid="stMetricDelta"] {
   border-bottom: 1px solid var(--border);
 }
 .cluster-title {
-  font-family: var(--font-body);
+  font-family: var(--font-body), serif;
   font-size: 0.76rem;
   font-weight: 600;
   letter-spacing: 0.12em;
@@ -291,7 +291,7 @@ div[data-testid="stMetric"] [data-testid="stMetricDelta"] {
   color: var(--gold-dim);
 }
 .cluster-meta {
-  font-family: var(--font-body);
+  font-family: var(--font-body), serif;
   font-size: 0.80rem;
   font-style: italic;
   color: var(--text-muted);
@@ -309,7 +309,7 @@ div[data-testid="stMetric"] [data-testid="stMetricDelta"] {
 .news-row:hover { border-color: var(--gold-dim); background: #181510; }
 .news-meta {
   color: var(--text-muted);
-  font-family: var(--font-body);
+  font-family: var(--font-body), serif;
   font-size: 0.80rem;
   font-style: italic;
 }
@@ -325,31 +325,11 @@ div[data-testid="stMetric"] [data-testid="stMetricDelta"] {
   border-radius: 2px;
   padding: 3px 10px;
   margin: 3px 4px;
-  font-family: var(--font-body);
+  font-family: var(--font-body), serif;
   font-size: 0.82rem;
   color: var(--text-secondary);
 }
 .factor-pill-warn { border-color: #5a3030; color: var(--red-text); }
-
-/* ── Historical context box ───────────────────────────────────────────────── */
-.hist-box {
-  background: var(--bg-card);
-  border: 1px solid var(--border-mid);
-  border-radius: 4px;
-  padding: 12px 18px;
-  font-family: var(--font-body);
-  font-size: 0.90rem;
-  color: var(--text-secondary);
-}
-.hist-label {
-  font-family: var(--font-body);
-  font-size: 0.70rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--gold-dim);
-  margin-bottom: 5px;
-}
 
 /* ── Top movers row ───────────────────────────────────────────────────────── */
 .mover-row {
@@ -357,13 +337,9 @@ div[data-testid="stMetric"] [data-testid="stMetricDelta"] {
   justify-content: space-between;
   padding: 5px 0;
   border-bottom: 1px solid var(--border);
-  font-family: var(--font-body);
+  font-family: var(--font-body), serif;
   font-size: 0.85rem;
 }
-
-/* ── Backtest ─────────────────────────────────────────────────────────────── */
-.bt-hit  { color: var(--green-text); }
-.bt-miss { color: var(--red-text);   }
 
 /* ── Back button — fixed top-left ─────────────────────────────────────────── */
 /* The span #pe-back-slot-marker is injected by st.markdown() immediately      */
@@ -396,7 +372,7 @@ div:has(> * > #pe-back-slot-marker) + div .stButton > button:not(:disabled):hove
 
 /* ── Buttons ──────────────────────────────────────────────────────────────── */
 .stButton > button {
-  font-family: var(--font-body) !important;
+  font-family: var(--font-body), serif !important;
   font-size: 0.88rem !important;
   font-weight: 500 !important;
   letter-spacing: 0.06em !important;
@@ -420,11 +396,11 @@ div:has(> * > #pe-back-slot-marker) + div .stButton > button:not(:disabled):hove
   border-color: var(--border-mid) !important;
   border-radius: 3px !important;
   color: var(--text-primary) !important;
-  font-family: var(--font-body) !important;
+  font-family: var(--font-body), serif !important;
 }
 [data-baseweb="select"] span {
   color: var(--text-primary) !important;
-  font-family: var(--font-body) !important;
+  font-family: var(--font-body), serif !important;
   font-size: 0.95rem !important;
 }
 
@@ -432,7 +408,7 @@ div:has(> * > #pe-back-slot-marker) + div .stButton > button:not(:disabled):hove
 .stCheckbox label,
 .stCheckbox label p {
   color: var(--text-secondary) !important;
-  font-family: var(--font-body) !important;
+  font-family: var(--font-body), serif !important;
   font-size: 0.92rem !important;
 }
 
@@ -444,7 +420,7 @@ div:has(> * > #pe-back-slot-marker) + div .stButton > button:not(:disabled):hove
 }
 [data-testid="stExpander"] summary,
 [data-testid="stExpander"] summary p {
-  font-family: var(--font-body) !important;
+  font-family: var(--font-body), serif !important;
   font-size: 0.92rem !important;
   color: var(--text-secondary) !important;
   letter-spacing: 0.02em;
@@ -457,7 +433,7 @@ div[data-testid="stAlert"],
 div[role="alert"],
 .stAlert,
 [data-baseweb="notification"] {
-  font-family: var(--font-body) !important;
+  font-family: var(--font-body), serif !important;
   font-size: 0.92rem !important;
   border-radius: 4px !important;
   border-width: 1px !important;
@@ -509,20 +485,20 @@ div[role="alert"]:has(svg[data-testid="stIconMaterial-check_circle"]) {
 
 /* Nuclear override — catches any class-name Streamlit might generate */
 div[data-testid="stAlert"] * {
-  font-family: var(--font-body) !important;
+  font-family: var(--font-body), serif !important;
 }
 
 /* ── Dataframe ────────────────────────────────────────────────────────────── */
 [data-testid="stDataFrame"],
 [data-testid="stDataFrame"] * {
-  font-family: var(--font-body) !important;
+  font-family: var(--font-body), serif !important;
   font-size: 0.90rem !important;
 }
 
 /* ── Spinner ──────────────────────────────────────────────────────────────── */
 [data-testid="stSpinner"] p {
   color: var(--text-muted) !important;
-  font-family: var(--font-body) !important;
+  font-family: var(--font-body), serif !important;
   font-style: italic;
 }
 
@@ -532,14 +508,14 @@ div[data-testid="stAlert"] * {
   background: var(--bg-card) !important;
   border: 1px solid var(--border-mid) !important;
   color: var(--text-primary) !important;
-  font-family: var(--font-body) !important;
+  font-family: var(--font-body), serif !important;
   border-radius: 4px !important;
 }
 
 /* ── Markdown body ────────────────────────────────────────────────────────── */
 .stMarkdown p, .stMarkdown li {
   color: var(--text-secondary) !important;
-  font-family: var(--font-body) !important;
+  font-family: var(--font-body), serif !important;
   font-size: 0.97rem;
   font-weight: 400;
   line-height: 1.8;

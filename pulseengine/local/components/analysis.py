@@ -22,9 +22,11 @@ except ImportError:
     _BACKTEST_AVAILABLE = False
 
     def evaluate_signal_accuracy(asset_name: str, lookback: int = BACKTEST_WINDOW) -> dict:
+        del asset_name, lookback
         return {}
 
     def get_signal_streak(details: list[dict]) -> dict:
+        del details
         return {"type": "none", "length": 0}
 
 try:
@@ -38,6 +40,7 @@ except ImportError:
         limit: int = SNAPSHOT_LOAD_LIMIT,
         strict: bool = False,
     ) -> dict:
+        del asset_name, limit, strict
         return {}
 
 
