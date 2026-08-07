@@ -18,6 +18,21 @@ dependencies = [
     "yfinance>=1.0",
 ]
 
+[project.optional-dependencies]
+# `pip install -e ".[dev]"` gets the full toolchain. Declared here as well as in
+# requirements-dev.txt because tooling reads project metadata, not loose
+# requirements files: without this, IDEs flag every `import pytest` in tests/ as
+# an undeclared dependency. requirements-dev.txt keeps the exact pins.
+dev = [
+    "mypy>=1.13",
+    # Upper bound is deliberate: stubs for a newer pandas major describe an API
+    # this project does not run. Keep in step with the pandas pin.
+    "pandas-stubs>=2.3,<3",
+    "pytest>=7.4",
+    "pytest-mock>=3.12",
+    "ruff>=0.6",
+]
+
 [tool.setuptools.dynamic]
 # Single source of truth: pulseengine/__init__.py. Keeps the packaged version
 # and the importable __version__ attribute from drifting apart.

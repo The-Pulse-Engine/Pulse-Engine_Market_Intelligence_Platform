@@ -9,6 +9,7 @@ being present and reachable needs asserting rather than assuming.
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any
 
 from pulseengine.local import styles
 
@@ -63,10 +64,10 @@ def test_sidebar_logo_resolves_to_the_real_asset():
 
 def test_load_css_wraps_the_sheet_in_a_style_tag(monkeypatch):
     """load_css() injects the stylesheet; the <style> wrapper lives in Python now."""
-    captured: dict[str, object] = {}
+    captured: dict[str, Any] = {}
 
-    def fake_markdown(body, **kwargs):
-        captured["body"] = body
+    def fake_markdown(markdown_body, **kwargs):
+        captured["body"] = markdown_body
         captured["kwargs"] = kwargs
 
     monkeypatch.setattr(styles.st, "markdown", fake_markdown)

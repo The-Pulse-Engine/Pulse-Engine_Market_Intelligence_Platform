@@ -34,11 +34,14 @@ from pathlib import Path
 # Reconfigure stdout/stderr to UTF-8 on Windows so box-drawing characters
 # don't crash with UnicodeEncodeError on cp1252 consoles.
 if platform.system() == "Windows":
-    try:
-        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
-        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
-    except AttributeError:
-        pass
+    for _stream in (sys.stdout, sys.stderr):
+        # reconfigure() exists on TextIOWrapper but not on the TextIO protocol
+        # that sys.stdout is typed as, and is genuinely absent when the stream
+        # has been replaced (pytest capture, some CI runners). getattr covers
+        # both without an except-AttributeError that could mask other failures.
+        _reconfigure = getattr(_stream, "reconfigure", None)
+        if _reconfigure is not None:
+            _reconfigure(encoding="utf-8", errors="replace")
 
 # ---------------------------------------------------------------------------
 # Constants

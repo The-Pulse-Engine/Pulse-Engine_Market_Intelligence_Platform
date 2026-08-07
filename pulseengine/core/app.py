@@ -28,7 +28,7 @@ from .config import (
     TRACKED_ASSETS,
 )
 from .context import analyse_market_context
-from .errors import DataFetchError, _build_error_payload
+from .errors import DataFetchError, build_error_payload
 from .explanation import build_explanation
 from .news import cluster_articles, fetch_news_articles
 from .price import (
@@ -91,7 +91,7 @@ def analyse_asset(
     try:
         history = fetch_price_history(ticker)
     except DataFetchError as exc:
-        fetch_error = _build_error_payload(
+        fetch_error = build_error_payload(
             "price_history",
             exc,
             asset=asset_name,
@@ -249,7 +249,7 @@ def run_full_scan() -> dict:
                 results.setdefault(cat, {})[name] = res
             except Exception as exc:
                 cat, name = futures[future]
-                error = _build_error_payload(
+                error = build_error_payload(
                     "full_scan",
                     exc,
                     asset=name,

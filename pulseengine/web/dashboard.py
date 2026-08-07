@@ -133,35 +133,35 @@ default_index = categories.index(DEFAULT_CATEGORY) if DEFAULT_CATEGORY in catego
 selected_category = st.sidebar.selectbox("Category", categories, index=default_index)
 asset_names = list(TRACKED_ASSETS[selected_category].keys())
 selected_asset = st.sidebar.selectbox("Asset", asset_names)
-ticker = TRACKED_ASSETS[selected_category][selected_asset]
+_ticker = TRACKED_ASSETS[selected_category][selected_asset]
 
-selected = _build_live_analysis(selected_asset, ticker, selected_category)
+selected = _build_live_analysis(selected_asset, _ticker, selected_category)
 
 if selected.get("error"):
     st.warning(selected["error"])
 else:
-    metrics = selected["metrics"]
-    momentum = selected["momentum"]
-    signal = selected["signal"]
-    explanation = selected["explanation"]
-    history = selected["history"]
+    _metrics = selected["metrics"]
+    _momentum = selected["momentum"]
+    _signal = selected["signal"]
+    _explanation = selected["explanation"]
+    _history = selected["history"]
 
     c1, c2, c3, c4 = st.columns(4)
-    c1.metric("Signal", signal.get("label", "n/a"), f"{signal.get('score', 0.0):+.1f}")
+    c1.metric("Signal", _signal.get("label", "n/a"), f"{_signal.get('score', 0.0):+.1f}")
     c2.metric(
         "Price",
-        f"${metrics.get('latest_price', 0.0):,.2f}",
-        _format_pct(metrics.get("change_1d")),
+        f"${_metrics.get('latest_price', 0.0):,.2f}",
+        _format_pct(_metrics.get("change_1d")),
     )
-    c3.metric("RSI", f"{momentum.get('rsi', 0.0):.1f}")
-    c4.metric("ROC 10d", _format_pct(momentum.get("roc_10d")))
+    c3.metric("RSI", f"{_momentum.get('rsi', 0.0):.1f}")
+    c4.metric("ROC 10d", _format_pct(_momentum.get("roc_10d")))
 
     st.subheader("Why it matters")
-    st.write(explanation.get("why_it_matters") or explanation.get("verdict", ""))
+    st.write(_explanation.get("why_it_matters") or _explanation.get("verdict", ""))
 
-    if history is not None and not history.empty and "Close" in history.columns:
+    if _history is not None and not _history.empty and "Close" in _history.columns:
         st.subheader("Price chart")
-        st.line_chart(history["Close"])
+        st.line_chart(_history["Close"])
 
     st.subheader("News sentiment")
     if selected["news"]:
@@ -172,11 +172,11 @@ else:
         st.caption("No relevant articles matched this asset.")
 
     st.subheader("Current market context")
-    market_ctx = selected.get("market_ctx") or {}
+    _market_ctx = selected.get("market_ctx") or {}
     context_cols = st.columns(3)
-    context_cols[0].metric("Sector-wide", str(bool(market_ctx.get("is_sector_wide"))))
-    context_cols[1].metric("Market-wide", str(bool(market_ctx.get("is_market_wide"))))
-    context_cols[2].metric("Asset-specific", str(bool(market_ctx.get("is_asset_specific"))))
+    context_cols[0].metric("Sector-wide", str(bool(_market_ctx.get("is_sector_wide"))))
+    context_cols[1].metric("Market-wide", str(bool(_market_ctx.get("is_market_wide"))))
+    context_cols[2].metric("Asset-specific", str(bool(_market_ctx.get("is_asset_specific"))))
 
     _render_locked_features()
 
@@ -187,38 +187,38 @@ st.caption("Computed on demand from live price data only. No state is written to
 
 if st.button("Build market overview"):
     try:
-        overview = fetch_all_metrics_parallel(days=5)
-    except DataFetchError as exc:
-        st.error(f"Could not build the market overview: {exc}")
+        _overview = fetch_all_metrics_parallel(days=5)
+    except DataFetchError as _exc:
+        st.error(f"Could not build the market overview: {_exc}")
     else:
         rows: list[dict] = []
-        asset_order = [asset for category in TRACKED_ASSETS.values() for asset in category]
+        asset_order = [asset for _category in TRACKED_ASSETS.values() for asset in _category]
         categories = list(TRACKED_ASSETS.keys())
 
         matrix: list[list[float | None]] = []
         labels: list[list[str]] = []
-        for category in categories:
+        for _category in categories:
             row_values: list[float | None] = []
             row_labels: list[str] = []
-            for asset_name in asset_order:
-                asset_map = TRACKED_ASSETS.get(category, {})
-                if asset_name in asset_map:
-                    data = overview.get(category, {}).get(asset_name, {})
-                    metrics = data.get("metrics", {})
-                    momentum = data.get("momentum", {})
+            for _asset_name in asset_order:
+                _asset_map = TRACKED_ASSETS.get(_category, {})
+                if _asset_name in _asset_map:
+                    data = _overview.get(_category, {}).get(_asset_name, {})
+                    _metrics = data.get("metrics", {})
+                    _momentum = data.get("momentum", {})
                     rows.append(
                         {
-                            "Category": category,
-                            "Asset": asset_name,
-                            "Ticker": asset_map[asset_name],
-                            "Price": metrics.get("latest_price"),
-                            "Change 1d": metrics.get("change_1d"),
-                            "RSI": momentum.get("rsi"),
-                            "Trend": metrics.get("trend"),
+                            "Category": _category,
+                            "Asset": _asset_name,
+                            "Ticker": _asset_map[_asset_name],
+                            "Price": _metrics.get("latest_price"),
+                            "Change 1d": _metrics.get("change_1d"),
+                            "RSI": _momentum.get("rsi"),
+                            "Trend": _metrics.get("trend"),
                         }
                     )
-                    row_values.append(metrics.get("change_1d"))
-                    row_labels.append(f"{asset_name}<br>{_format_pct(metrics.get('change_1d'))}")
+                    row_values.append(_metrics.get("change_1d"))
+                    row_labels.append(f"{_asset_name}<br>{_format_pct(_metrics.get('change_1d'))}")
                 else:
                     row_values.append(None)
                     row_labels.append("")

@@ -8,5 +8,14 @@ pytest==9.0.3
 pytest-mock==3.15.1
 ruff==0.16.1
 mypy==2.3.0
+# Type stubs for pandas. Without these both mypy and IDE inspection treat every
+# DataFrame/Series expression as Any, which hides real type errors rather than
+# reporting them.
+#
+# The first three version segments MUST track the pandas pin in requirements.txt
+# (pandas 2.3.3 -> pandas-stubs 2.3.3.*). pip will happily install stubs for a
+# different pandas major, and the result is an IDE full of "incompatible stub
+# package" warnings plus type errors that describe an API you are not running.
+pandas-stubs==2.3.3.260113
 setuptools>=70
 # Install production deps separately: pip install -r requirements.txt

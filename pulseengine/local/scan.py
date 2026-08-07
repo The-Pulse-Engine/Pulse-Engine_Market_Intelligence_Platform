@@ -69,7 +69,7 @@ from pulseengine.core import (
 from pulseengine.core import (
     cleanup_old_snapshots as _cleanup_old_snapshots,
 )
-from pulseengine.core.errors import _build_error_payload
+from pulseengine.core.errors import build_error_payload
 
 log = logging.getLogger(__name__)
 
@@ -174,7 +174,7 @@ def run_scan(verbose: bool = True, dry_run: bool = False) -> dict:
                         )
 
             except Exception as exc:
-                error = _build_error_payload(
+                error = build_error_payload(
                     "scan_asset", exc,
                     asset=asset_name, category=category, ticker=ticker,
                 )
