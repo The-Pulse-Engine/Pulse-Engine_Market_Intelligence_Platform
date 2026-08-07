@@ -153,6 +153,33 @@ def test_dashboard_calls_only_documented_components():
     assert used <= PUBLIC_COMPONENTS, f"undocumented component(s): {used - PUBLIC_COMPONENTS}"
 
 
+def test_pandas_stubs_track_the_pandas_pin():
+    """pandas-stubs must target the same pandas version that is pinned.
+
+    Dependabot bumps pandas and pandas-stubs in separate PRs, so they drift the
+    moment one lands without the other. Stubs for a different pandas major
+    produce "incompatible stub package" warnings and type errors describing an
+    API the project does not run — a failure that shows up as noise rather than
+    as anything obviously broken, which is exactly why it needs a test.
+    """
+    root = Path(__file__).resolve().parents[1]
+
+    def pin(path: str, package: str) -> str:
+        for line in (root / path).read_text(encoding="utf-8").splitlines():
+            name, sep, version = line.strip().partition("==")
+            if sep and name.strip().lower() == package:
+                return version.strip()
+        raise AssertionError(f"{package} is not pinned in {path}")
+
+    pandas_pin = pin("requirements.txt", "pandas")
+    stubs_pin = pin("requirements-dev.txt", "pandas-stubs")
+
+    # pandas-stubs versions are <pandas version>.<stub release date>
+    assert stubs_pin.startswith(pandas_pin + "."), (
+        f"pandas-stubs {stubs_pin} does not target pandas {pandas_pin}"
+    )
+
+
 def test_version_is_single_sourced():
     """pulseengine.__version__ is the one place the version is written.
 

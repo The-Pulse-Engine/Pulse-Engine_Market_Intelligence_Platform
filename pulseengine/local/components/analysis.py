@@ -15,7 +15,6 @@ from pulseengine.core.config import BACKTEST_WINDOW, CHART_HEIGHT, SNAPSHOT_LOAD
 # only on machines where the optional import failed.
 #
 # The parameters are therefore unused on purpose: the signature IS the contract.
-# noinspection PyUnusedLocal
 try:
     from pulseengine.core import evaluate_signal_accuracy, get_signal_streak
     _BACKTEST_AVAILABLE = True

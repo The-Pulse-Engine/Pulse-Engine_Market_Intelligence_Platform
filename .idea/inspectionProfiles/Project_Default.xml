@@ -35,6 +35,21 @@
         pinned in requirements-dev.txt, so `import pytest` in tests/ is
         correctly declared even though this inspection cannot see it.
 
+      PyTypeChecker — every hit is "Expected type X, got Any | None", where the
+        value came from dict.get() and is already guarded. Sampled 6 across the
+        two largest clusters (explanation.py 74/100, storage.py 388-389,
+        data.py 167, backtest.py 112, scan.py 167) and all six sit behind an
+        explicit `is not None` test or an early return; the IDE simply does not
+        narrow through compound `and` conditions. mypy is the type checker of
+        record here: it narrows correctly, has pandas-stubs active, runs over
+        pulseengine/ in CI, and is clean. Keeping a second, weaker checker
+        enabled only produces noise that competes with the one that gates merges.
+
+      PyUnusedLocal — the optional-import fallbacks in
+        components/analysis.py declare parameters they never read, because the
+        signature is the contract: a catch-all (*_a, **_kw) would accept calls
+        the real functions reject. Same reasoning keeps ruff's ARG rules off.
+
       PyProtectedMember — the only remaining hits are tests importing the
         private helpers they exist to test (_jaccard, _normalize_title,
         _detect_contradictions). Suppressing per-site is not possible without
@@ -49,5 +64,7 @@
     <inspection_tool class="UndefinedParamsPresent" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="PyPackageRequirementsInspection" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="PyProtectedMemberInspection" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
+    <inspection_tool class="PyTypeCheckerInspection" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="PyUnusedLocalInspection" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
   </profile>
 </component>
