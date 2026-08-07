@@ -1,6 +1,12 @@
-pytest>=7.4
-pytest-mock>=3.12
-ruff>=0.6
-mypy>=1.13
+# Dev/test toolchain, pinned so CI is reproducible.
+#
+# These were previously floors (`>=`), which meant CI silently ran whatever was
+# newest on PyPI that day. That matters most for ruff: CI lints the whole repo,
+# so a new release introducing a rule can turn an unrelated PR red. Dependabot
+# covers pip weekly and will propose bumps, with CI validating each one.
+pytest==9.0.3
+pytest-mock==3.15.1
+ruff==0.16.1
+mypy==2.3.0
 setuptools>=70
 # Install production deps separately: pip install -r requirements.txt
