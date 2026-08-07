@@ -18,13 +18,12 @@ pulseengine/core/explanation.
 from __future__ import annotations
 
 import logging
-from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from typing import Any
 
 from .config import (
     LOOKBACK_DAYS,
     PRICE_FETCH_WORKERS,
+    SNAPSHOT_LOAD_LIMIT,
     TRACKED_ASSETS,
 )
 from .context import analyse_market_context
@@ -41,17 +40,34 @@ from .signals import compute_signal_score, correlate_news
 log = logging.getLogger(__name__)
 
 
-_save_snapshot: Callable[..., Any]
-_get_historical_features: Callable[..., Any]
-
+# The fallbacks mirror the real signatures exactly. A catch-all (*_a, **_kw)
+# would accept calls the real functions reject, so a bad call site would work
+# only on machines where storage failed to import. The parameters are unused on
+# purpose: the signature is the contract.
 try:
     from .storage import get_historical_features as _get_historical_features
     from .storage import save_snapshot as _save_snapshot
     STORAGE_AVAILABLE = True
 except ImportError:
     STORAGE_AVAILABLE = False
-    def _save_snapshot(*_a: Any, **_kw: Any) -> None: pass
-    def _get_historical_features(*_a: Any, **_kw: Any) -> dict: return {}
+
+    def _save_snapshot(
+        asset_name: str,
+        metrics: dict,
+        momentum: dict,
+        signal: dict,
+        top_headlines: list[dict],
+        market_ctx: dict | None = None,
+    ) -> None:
+        _ = asset_name, metrics, momentum, signal, top_headlines, market_ctx
+
+    def _get_historical_features(
+        asset_name: str,
+        limit: int = SNAPSHOT_LOAD_LIMIT,
+        strict: bool = False,
+    ) -> dict:
+        _ = asset_name, limit, strict
+        return {}
 
 
 # ── Single-asset analysis ─────────────────────────────────────────────────────

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
@@ -96,9 +98,10 @@ def _render_confidence_reasoning(conf_info: dict) -> None:
 def _render_price_chart(history: pd.DataFrame) -> None:
     """Render the 30-day close price chart with optional MA overlays."""
     st.markdown("### Price History")
-    close_col = history["Close"]
-    if isinstance(close_col, pd.DataFrame):
-        close_col = close_col.iloc[:, 0]
+    raw_close_col: Any = history["Close"]
+    close_col: pd.Series = (
+        raw_close_col.iloc[:, 0] if isinstance(raw_close_col, pd.DataFrame) else raw_close_col
+    )
 
     fig = go.Figure()
     fig.add_trace(go.Scatter(
@@ -156,9 +159,10 @@ def _render_volume_chart(history: pd.DataFrame) -> None:
         if "Volume" not in history.columns:
             st.info("Volume data not available.")
             return
-        vol_col = history["Volume"]
-        if isinstance(vol_col, pd.DataFrame):
-            vol_col = vol_col.iloc[:, 0]
+        raw_vol_col: Any = history["Volume"]
+        vol_col: pd.Series = (
+            raw_vol_col.iloc[:, 0] if isinstance(raw_vol_col, pd.DataFrame) else raw_vol_col
+        )
         vfig = go.Figure(go.Bar(
             x=history.index, y=vol_col,
             marker={"color": "rgba(196,163,90,0.25)"},
