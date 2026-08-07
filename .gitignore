@@ -86,6 +86,12 @@ launch.sh
 # Note: glob form (.idea/*) is required so the negation can pierce the directory
 .idea/*
 !.idea/runConfigurations/
+# Shared inspection profile + project dictionary: without these every
+# contributor re-triages the same false positives (star-import shims flagged as
+# unused, CSS classes emitted from Python f-strings flagged as dead, tickers and
+# library names flagged as typos).
+!.idea/inspectionProfiles/
+!.idea/dictionaries/
 *.iml
 *.iws
 *.ipr

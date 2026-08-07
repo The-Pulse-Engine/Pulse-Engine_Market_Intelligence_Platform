@@ -13,6 +13,9 @@ from pulseengine.core.config import BACKTEST_WINDOW, CHART_HEIGHT, SNAPSHOT_LOAD
 # The fallbacks mirror the real signatures exactly. A catch-all (*_a, **_kw)
 # would accept calls the real functions reject, so a bad call site would work
 # only on machines where the optional import failed.
+#
+# The parameters are therefore unused on purpose: the signature IS the contract.
+# noinspection PyUnusedLocal
 try:
     from pulseengine.core import evaluate_signal_accuracy, get_signal_streak
     _BACKTEST_AVAILABLE = True

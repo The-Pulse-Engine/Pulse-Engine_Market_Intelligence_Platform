@@ -101,7 +101,7 @@ This software is made available internationally. Financial regulations vary by j
 
 ## 9. Software License
 
-This disclaimer is provided in addition to, and does not replace, the limitations and exclusions set out in the [MIT License](LICENSE) under which this software is distributed.
+This disclaimer is provided in addition to, and does not replace, the limitations and exclusions set out in the [MIT License](../LICENSE) under which this software is distributed.
 
 ---
 

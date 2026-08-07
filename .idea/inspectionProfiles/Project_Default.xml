@@ -1,0 +1,53 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+
+    <!--
+      Only inspections that are *structurally* wrong for this repository are
+      disabled here, each with the reason. Everything else stays on: ruff and
+      mypy run clean in CI, so a finding the IDE reports and those two do not
+      is worth reading rather than hiding.
+
+      Verified false positives, not judgement calls:
+
+      PyUnusedImports — the repo keeps seven documented backward-compat shims
+        (src/, app/, config/, storage/, dashboard/) whose entire body is
+        `from <canonical> import *`. The import being "unused" locally is the
+        point; re-export is the purpose. ruff still enforces real unused
+        imports repo-wide via F401/F403 with per-line noqa.
+
+      CssUnusedSymbol — pulseengine/local/dashboard.css styles DOM that
+        Streamlit generates at runtime, plus class names built inside Python
+        f-strings (see components/snapshot.py _SIGNAL_CLASS_MAP). The IDE has
+        no HTML to match against, so every selector reads as dead.
+
+      CssNoGenericFontName — every flagged declaration reads the font family
+        from a CSS custom property (font-body / font-display) via var(). The
+        IDE cannot resolve through var(); the token definitions at :root do
+        end in `serif`, so the generic fallback is present.
+
+      UndefinedParamsPresent — flags `python-version` and `cache` on
+        actions/setup-python@v7 in .github/workflows/ci.yml. Both are valid;
+        the bundled GitHub Actions schema is simply behind the action version.
+
+      PyPackageRequirements — reads requirements.txt only. The dev toolchain is
+        declared in pyproject.toml under [project.optional-dependencies] and
+        pinned in requirements-dev.txt, so `import pytest` in tests/ is
+        correctly declared even though this inspection cannot see it.
+
+      PyProtectedMember — the only remaining hits are tests importing the
+        private helpers they exist to test (_jaccard, _normalize_title,
+        _detect_contradictions). Suppressing per-site is not possible without
+        putting a comment inside an import block, which fights ruff's import
+        sorting. The one genuine cross-package case this inspection did catch
+        was fixed instead, by renaming _build_error_payload to
+        build_error_payload in pulseengine/core/errors.py.
+    -->
+    <inspection_tool class="PyUnusedImportsInspection" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="CssUnusedSymbol" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="CssNoGenericFontName" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="UndefinedParamsPresent" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="PyPackageRequirementsInspection" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="PyProtectedMemberInspection" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
+  </profile>
+</component>
