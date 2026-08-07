@@ -44,8 +44,12 @@ jobs:
       - name: Lint with ruff
         run: ruff check .
 
+      # Whole package, not just core/: local/ and web/ were unchecked, which is
+      # how three mismatched optional-import fallback stubs went unnoticed.
+      # tests/ and the compat shims stay out — the shims exist to be
+      # dynamically re-exported and fight mypy for no gain.
       - name: Type-check with mypy
-        run: mypy pulseengine/core/
+        run: mypy pulseengine/
 
   tests:
     name: Tests (py${{ matrix.python-version }})

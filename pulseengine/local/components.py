@@ -27,24 +27,42 @@ from pulseengine.core import (
     RELEVANCE_MEDIUM,
     TRACKED_ASSETS,
 )
-from pulseengine.core.config import CHART_HEIGHT, SCAN_INTERVAL_MINUTES
+from pulseengine.core.config import (
+    BACKTEST_WINDOW,
+    CHART_HEIGHT,
+    SCAN_INTERVAL_MINUTES,
+    SNAPSHOT_LOAD_LIMIT,
+)
 
 # ── Optional dependencies ──────────────────────────────────────────────────────
 
+# The fallbacks mirror the real signatures exactly. A catch-all (*_a, **_kw)
+# would accept calls the real functions reject, so a bad call site would work
+# only on machines where the optional import failed.
 try:
     from pulseengine.core import evaluate_signal_accuracy, get_signal_streak
     _BACKTEST_AVAILABLE = True
 except ImportError:
     _BACKTEST_AVAILABLE = False
-    def evaluate_signal_accuracy(*_a, **_kw): return {}
-    def get_signal_streak(*_a, **_kw): return {"type": "none", "length": 0}
+
+    def evaluate_signal_accuracy(asset_name: str, lookback: int = BACKTEST_WINDOW) -> dict:
+        return {}
+
+    def get_signal_streak(details: list[dict]) -> dict:
+        return {"type": "none", "length": 0}
 
 try:
     from pulseengine.core import get_historical_features
     _STORAGE_AVAILABLE = True
 except ImportError:
     _STORAGE_AVAILABLE = False
-    def get_historical_features(*_a, **_kw): return {}
+
+    def get_historical_features(
+        asset_name: str,
+        limit: int = SNAPSHOT_LOAD_LIMIT,
+        strict: bool = False,
+    ) -> dict:
+        return {}
 
 # ── Internal constants ─────────────────────────────────────────────────────────
 
