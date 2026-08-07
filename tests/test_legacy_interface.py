@@ -103,6 +103,56 @@ def test_legacy_dashboard_entry_point_is_intact():
     compile(wrapper.read_text(encoding="utf-8"), str(wrapper), "exec")
 
 
+# The documented public UI surface, frozen here on purpose. Asserting only
+# "the shim exports whatever __all__ says" would pass if a name were dropped
+# from both sides at once; this list is the independent third party.
+PUBLIC_COMPONENTS = {
+    "render_article",
+    "render_category_overview",
+    "render_data_status_banner",
+    "render_heatmap",
+    "render_live_analysis",
+    "render_mover_rows",
+    "render_news_section",
+    "render_scan_status_sidebar",
+    "render_signal_card",
+    "render_signal_legend_sidebar",
+    "render_snapshot_metrics",
+    "render_why_box",
+    "sidebar_header_html",
+}
+
+
+def test_component_star_import_contract():
+    """`from dashboard.components import *` must yield exactly the documented set.
+
+    components/ is a package now, so the star-import path runs through
+    __init__.__all__. This exercises real star-import semantics rather than
+    trusting that importing the module is enough, and checks identity so a
+    stale copy re-exported from the shim cannot pass.
+    """
+    import pulseengine.local.components as canonical
+
+    assert set(canonical.__all__) == PUBLIC_COMPONENTS
+
+    namespace: dict[str, object] = {}
+    exec("from dashboard.components import *", namespace)
+    exported = set(namespace) - {"__builtins__"}
+
+    assert exported == PUBLIC_COMPONENTS
+    for name in PUBLIC_COMPONENTS:
+        assert namespace[name] is getattr(canonical, name)
+
+
+def test_dashboard_calls_only_documented_components():
+    """Every ui.<name> the dashboard calls must be in the public contract."""
+    source = (
+        Path(__file__).resolve().parents[1] / "pulseengine" / "local" / "dashboard.py"
+    ).read_text(encoding="utf-8")
+    used = set(re.findall(r"\bui\.([a-zA-Z_][a-zA-Z0-9_]*)", source))
+    assert used <= PUBLIC_COMPONENTS, f"undocumented component(s): {used - PUBLIC_COMPONENTS}"
+
+
 def test_version_is_single_sourced():
     """pulseengine.__version__ is the one place the version is written.
 

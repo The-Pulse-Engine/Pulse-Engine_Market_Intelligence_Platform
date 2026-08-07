@@ -426,8 +426,16 @@ pulse_engine_1/
       __init__.py
       dashboard.py               Streamlit dashboard controller
       scan.py                    Full-market batch scan pipeline
-      components.py              Reusable UI rendering functions
-      styles.py                  CSS theming for the dashboard
+      components/                Reusable UI rendering functions, split by concern
+        __init__.py              Public re-exports (__all__ is the compat contract)
+        sidebar.py               Logo header, signal legend, top-mover rows
+        scan_status.py           Scan freshness: sidebar line and main-panel banner
+        snapshot.py              Signal card, why-box, snapshot metric cards
+        news.py                  Article cards and clustered news section
+        analysis.py              Charts, signal breakdown, backtest, history
+        overview.py              Market heatmap and category overview table
+      styles.py                  Loads dashboard.css into Streamlit
+      dashboard.css              Retro Financial Broadsheet stylesheet
       data.py                    Cached data loaders and staleness helpers
     web/                         Restricted stateless demo surface
       __init__.py

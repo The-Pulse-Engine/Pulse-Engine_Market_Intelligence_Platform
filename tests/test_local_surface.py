@@ -41,6 +41,26 @@ def test_stylesheet_is_declared_as_package_data():
     assert any(p.endswith(".css") for p in patterns)
 
 
+def test_sidebar_logo_resolves_to_the_real_asset():
+    """_build_logo_html() must find assets/logo/, not fall back to the icon.
+
+    The helper walks up to the repo root. It moved one directory deeper when
+    components.py became components/, so the parent depth had to change with it.
+    Getting that wrong is silent: the function returns the emoji fallback and
+    nothing raises, so only asserting the real image is embedded catches it.
+
+    Scope: a source checkout, which is the documented way to run the dashboard.
+    assets/ sits outside the package and so is absent from a built wheel; both
+    the logo here and the favicon in core/config.py fall back gracefully there.
+    That is a pre-existing packaging gap, not something this test guards.
+    """
+    from pulseengine.local.components import sidebar
+
+    assert sidebar._LOGO_HTML.startswith('<img src="data:image/png;base64,'), (
+        "logo fell back to the icon — check the parents[] depth in _build_logo_html"
+    )
+
+
 def test_load_css_wraps_the_sheet_in_a_style_tag(monkeypatch):
     """load_css() injects the stylesheet; the <style> wrapper lives in Python now."""
     captured: dict[str, object] = {}

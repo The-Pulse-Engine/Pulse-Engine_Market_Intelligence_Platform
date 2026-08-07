@@ -418,12 +418,17 @@ Industry and sector fields are intentionally excluded — terms like `"Technolog
 | `_EGG_WINDOW` | `float` | Time window in seconds for easter egg click detection (2.0 s). |
 | `_EGG_URL` | `str` | URL opened when the easter egg triggers. |
 
-### Module-Level Constants (`pulseengine/local/components.py`)
+### Module-Level Constants (`pulseengine/local/components/`)
 
-| Name | Type | Description |
-|---|---|---|
-| `_BACKTEST_AVAILABLE` | `bool` | `True` if `pulseengine.core.backtest` imported successfully. Controls whether the backtest section renders. |
-| `_STORAGE_AVAILABLE` | `bool` | `True` if `pulseengine.core.storage.get_historical_features` imported successfully. Controls whether the historical context section renders. |
+Each constant lives in the submodule that uses it; none are shared across submodules.
+
+| Name | Module | Type | Description |
+|---|---|---|---|
+| `_BACKTEST_AVAILABLE` | `analysis.py` | `bool` | `True` if `pulseengine.core.backtest` imported successfully. Controls whether the backtest section renders. |
+| `_STORAGE_AVAILABLE` | `analysis.py` | `bool` | `True` if `pulseengine.core.storage.get_historical_features` imported successfully. Controls whether the historical context section renders. |
+| `_WARN_FACTOR_TYPES` | `analysis.py` | `set[str]` | Factor types rendered as warning-styled pills. |
+| `_SIGNAL_CLASS_MAP` | `snapshot.py` | `dict[str, str]` | Maps signal label to the CSS class for the signal card. |
+| `_LOGO_HTML` | `sidebar.py` | `str` | Base64-embedded logo `<img>`, built once at import. Falls back to `DASHBOARD_ICON` when `assets/logo/` is absent. |
 
 ### Singleton Scan State (via `@st.cache_resource`)
 
