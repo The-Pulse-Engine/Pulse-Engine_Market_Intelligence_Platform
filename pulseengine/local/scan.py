@@ -50,6 +50,7 @@ import json
 import logging
 import sys
 from pathlib import Path
+from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
@@ -227,10 +228,10 @@ def run_scan(verbose: bool = True, dry_run: bool = False) -> dict:
         _row_z:    list = []
         _row_text: list = []
         for _name in TRACKED_ASSETS.get(_cat, {}):
-            _chg = results.get(_cat, {}).get(_name, {}).get("change_1d")
-            if _chg is not None:
-                _row_z.append(round(_chg, 2))
-                _row_text.append(f"{_name}<br>{_chg:+.1f}%")
+            _cell_chg: float | None = results.get(_cat, {}).get(_name, {}).get("change_1d")
+            if _cell_chg is not None:
+                _row_z.append(round(_cell_chg, 2))
+                _row_text.append(f"{_name}<br>{_cell_chg:+.1f}%")
             else:
                 _row_z.append(0)
                 _row_text.append(_name)
@@ -311,7 +312,7 @@ def load_last_scan_summary() -> dict:
         return {}
 
 
-def _json_default(obj: object) -> object:
+def _json_default(obj: Any) -> Any:
     if isinstance(obj, (dt.date, dt.datetime)):
         return obj.isoformat()
     log.warning("Unexpected type in scan summary: %s — converting to string", type(obj).__name__)

@@ -277,8 +277,8 @@ if (
 # Load scan summary once per run — needed for scan status display and main content.
 _scan_refresh_epoch = int(st.session_state.get("_scan_refresh_epoch", 0))
 _summary         = cached_scan_summary(_scan_refresh_epoch)
-_summary_results = _summary.get("results", {})
-_summary_date    = _summary.get("scan_date", "")
+_summary_results: dict = _summary.get("results", {})
+_summary_date:    str  = _summary.get("scan_date", "")
 
 
 def _build_snapshot_price_cache(summary_results: dict) -> tuple[tuple[str, float], ...]:
@@ -462,7 +462,7 @@ if st.sidebar.button(
 st.sidebar.markdown("---")
 st.sidebar.markdown("**Top Movers — 24h**")
 with st.sidebar:
-    _top_movers = _summary.get("top_movers", {})
+    _top_movers: dict = _summary.get("top_movers", {})
     ui.render_mover_rows(
         _top_movers.get("gainers", []),
         _top_movers.get("losers", []),
@@ -494,7 +494,7 @@ st.button(
 
 _stale = is_data_stale(_summary)
 if _stale:
-    _scan_time = _summary.get("scan_time", "")
+    _scan_time: str = _summary.get("scan_time", "")
     _age_str = ""
     if _scan_time:
         try:
@@ -618,7 +618,7 @@ ui.render_heatmap(_summary, _summary_date)
 st.markdown("---")
 with st.expander("Category Overview", expanded=False):
     if selected_category in TRACKED_ASSETS:
-        _cat_data = _summary.get("category_rows", {}).get(selected_category, {})
+        _cat_data: dict = _summary.get("category_rows", {}).get(selected_category, {})
         ui.render_category_overview(_cat_data, _summary_date)
     else:
         st.info("Category overview is only available for the 24 tracked assets.")

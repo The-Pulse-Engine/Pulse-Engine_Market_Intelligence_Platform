@@ -255,10 +255,12 @@ def compute_rsi(series: pd.Series, period: int = 14) -> float:
     delta    = series.diff().dropna()
     gain     = delta.clip(lower=0)
     loss     = -delta.clip(upper=0)
-    avg_gain = gain.rolling(period).mean().iloc[-1]
-    avg_loss = loss.rolling(period).mean().iloc[-1]
-    if pd.isna(avg_gain) or pd.isna(avg_loss):
+    if pd.isna(gain.rolling(period).mean().iloc[-1]) or pd.isna(
+        loss.rolling(period).mean().iloc[-1]
+    ):
         return 50.0
+    avg_gain = float(gain.rolling(period).mean().iloc[-1])
+    avg_loss = float(loss.rolling(period).mean().iloc[-1])
     if avg_loss == 0:
         return 100.0
     rs = avg_gain / avg_loss

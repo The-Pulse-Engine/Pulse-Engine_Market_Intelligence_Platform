@@ -76,13 +76,17 @@ def test_sys_modules_aliasing_shims_resolve_to_core():
     That aliasing is what lets tests monkeypatch `src.engine.fetch_price_history`
     and have the core module see it. Assert the alias actually took effect.
     """
-    import pulseengine.core.app
-    import pulseengine.core.price
-    import pulseengine.core.storage
+    # Bound as names rather than `import pulseengine.core.app` three times:
+    # each of those statements binds the same top-level `pulseengine`, so the
+    # second and third look redundant even though the submodule import is what
+    # makes the attribute reachable.
+    from pulseengine.core import app as core_app
+    from pulseengine.core import price as core_price
+    from pulseengine.core import storage as core_storage
 
-    assert importlib.import_module("src.engine") is pulseengine.core.app
-    assert importlib.import_module("src.price") is pulseengine.core.price
-    assert importlib.import_module("storage.storage") is pulseengine.core.storage
+    assert importlib.import_module("src.engine") is core_app
+    assert importlib.import_module("src.price") is core_price
+    assert importlib.import_module("storage.storage") is core_storage
 
 
 def test_legacy_dashboard_entry_point_is_intact():
