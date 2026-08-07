@@ -222,7 +222,9 @@ def build_explanation(
                     "label":  "Sentiment matches price",
                     "detail": f"News is {sent_label} while price is {direction_word}",
                 })
-            elif (direction_sign > 0 and avg_sent < -0.1) or (direction_sign < 0 and avg_sent > 0.1):
+            elif (direction_sign > 0 and avg_sent < -0.1) or (
+                direction_sign < 0 and avg_sent > 0.1
+            ):
                 detail_parts.append(
                     "**News sentiment diverges from price direction.** "
                     "Possible explanations: the news was already priced in, "

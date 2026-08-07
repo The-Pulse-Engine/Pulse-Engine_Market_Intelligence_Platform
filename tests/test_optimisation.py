@@ -131,7 +131,11 @@ def test_dedup_distinct_domain_vocabularies_all_kept():
         "mixed near-dups and exact dups",
     ),
     (
-        [_make_article("Apple earnings"), _make_article("Oil supply shock"), _make_article("VIX spikes")],
+        [
+            _make_article("Apple earnings"),
+            _make_article("Oil supply shock"),
+            _make_article("VIX spikes"),
+        ],
         "all unique single-event titles",
     ),
     (

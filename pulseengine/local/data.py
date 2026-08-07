@@ -36,8 +36,11 @@ log = logging.getLogger(__name__)
 try:
     from pulseengine.local.scan import load_last_scan_summary
 except ImportError:
-    log.warning("pulseengine.local.scan could not be imported; load_last_scan_summary will return {}.")
-    def load_last_scan_summary() -> dict:  # noqa: E731
+    log.warning(
+        "pulseengine.local.scan could not be imported; "
+        "load_last_scan_summary will return {}."
+    )
+    def load_last_scan_summary() -> dict:
         return {}
 
 

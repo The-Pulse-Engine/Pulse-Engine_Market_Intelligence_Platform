@@ -64,7 +64,8 @@ def evaluate_signal_accuracy(
         )
 
     if len(snapshots) < 2:
-        return _empty_result("Insufficient historical data for backtesting.")  # not enough days to embarrass ourselves
+        # not enough days to embarrass ourselves
+        return _empty_result("Insufficient historical data for backtesting.")
 
     # Sort ascending so consecutive pairs (day N, day N+1) are adjacent
     ordered = sorted(snapshots, key=lambda s: s.get("date", ""))
@@ -132,7 +133,8 @@ def evaluate_signal_accuracy(
     hit_rate  = hits / evaluated
     avg_score = sum(abs(s) for s in scores) / len(scores)
     pct_str   = f"{hit_rate * 100:.1f}%"
-    # "strong" means we were right 65%+ of the time. a coin is 50%. we're slightly better than a coin
+    # "strong" means we were right 65%+ of the time. a coin is 50%. we're slightly better than a
+    # coin
     quality   = "strong" if hit_rate >= 0.65 else "moderate" if hit_rate >= 0.50 else "weak"
 
     message = (

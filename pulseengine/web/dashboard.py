@@ -11,7 +11,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
-from pulseengine.core import (  # noqa: E402
+from pulseengine.core import (
     DASHBOARD_ICON,
     DASHBOARD_LAYOUT,
     DASHBOARD_TITLE,
@@ -148,7 +148,11 @@ else:
 
     c1, c2, c3, c4 = st.columns(4)
     c1.metric("Signal", signal.get("label", "n/a"), f"{signal.get('score', 0.0):+.1f}")
-    c2.metric("Price", f"${metrics.get('latest_price', 0.0):,.2f}", _format_pct(metrics.get("change_1d")))
+    c2.metric(
+        "Price",
+        f"${metrics.get('latest_price', 0.0):,.2f}",
+        _format_pct(metrics.get("change_1d")),
+    )
     c3.metric("RSI", f"{momentum.get('rsi', 0.0):.1f}")
     c4.metric("ROC 10d", _format_pct(momentum.get("roc_10d")))
 
@@ -232,7 +236,7 @@ if st.button("Build market overview"):
                 hovertemplate="%{y} / %{x}<br>Change: %{z:+.2f}%<extra></extra>",
             )
         )
-        fig.update_layout(height=380, margin=dict(l=20, r=20, t=40, b=20))
+        fig.update_layout(height=380, margin={"l": 20, "r": 20, "t": 40, "b": 20})
 
         st.plotly_chart(fig, use_container_width=True)
         st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)

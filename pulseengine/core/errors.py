@@ -1,4 +1,8 @@
-"""pulseengine/core/errors.py — Shared exception types and error utilities for the data pipeline."""
+"""
+pulseengine/core/errors.py — Shared exception types and error utilities.
+
+Raised throughout the data pipeline.
+"""
 
 from __future__ import annotations
 

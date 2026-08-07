@@ -172,7 +172,10 @@ def test_fetch_price_history_raises_on_fetch_failure(mocker):
 # ── generate_keywords ─────────────────────────────────────────────────────────
 
 def test_generate_keywords_known_ticker(mocker):
-    """Known ticker returns symbol, company name tokens, and officer surnames — not sector/industry."""
+    """Known ticker returns symbol, company name tokens and officer surnames.
+
+    Sector/industry must not be included.
+    """
     mock_info = {
         "longName": "NVIDIA Corporation",
         "shortName": "NVIDIA",
@@ -268,7 +271,9 @@ def test_fetch_news_articles_uses_explicit_timeout(mocker):
     response.read.return_value = b"<rss />"
     response.__enter__.return_value = response
     response.__exit__.return_value = False
-    urlopen_mock = mocker.patch("pulseengine.core.news.urllib.request.urlopen", return_value=response)
+    urlopen_mock = mocker.patch(
+        "pulseengine.core.news.urllib.request.urlopen", return_value=response
+    )
     mocker.patch(
         "pulseengine.core.news.feedparser.parse",
         return_value=SimpleNamespace(entries=[]),

@@ -213,7 +213,9 @@ def run_scan(verbose: bool = True, dry_run: bool = False) -> dict:
     _all_movers.sort(key=lambda x: x["chg"], reverse=True)
     top_movers = {
         "gainers": _all_movers[:5],
-        "losers":  _all_movers[-5:][::-1] if len(_all_movers) >= 5 else list(reversed(_all_movers)),
+        "losers": (
+            _all_movers[-5:][::-1] if len(_all_movers) >= 5 else list(reversed(_all_movers))
+        ),
     }
 
     # Heatmap matrix
@@ -367,7 +369,7 @@ def main() -> None:
             if score is not None:
                 all_sigs.append((name, cat, score, data.get("signal_label", "")))
     all_sigs.sort(key=lambda x: -abs(x[2]))
-    for name, cat, score, label in all_sigs[:10]:
+    for name, _cat, score, label in all_sigs[:10]:
         print(f"    {name:<22s} {label:<20s} {score:+.1f}")
     print("=" * 65)
 

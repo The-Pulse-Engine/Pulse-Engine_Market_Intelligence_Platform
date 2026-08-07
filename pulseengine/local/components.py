@@ -36,15 +36,15 @@ try:
     _BACKTEST_AVAILABLE = True
 except ImportError:
     _BACKTEST_AVAILABLE = False
-    def evaluate_signal_accuracy(*_a, **_kw): return {}   # noqa: E731
-    def get_signal_streak(*_a, **_kw): return {"type": "none", "length": 0}  # noqa: E731
+    def evaluate_signal_accuracy(*_a, **_kw): return {}
+    def get_signal_streak(*_a, **_kw): return {"type": "none", "length": 0}
 
 try:
     from pulseengine.core import get_historical_features
     _STORAGE_AVAILABLE = True
 except ImportError:
     _STORAGE_AVAILABLE = False
-    def get_historical_features(*_a, **_kw): return {}    # noqa: E731
+    def get_historical_features(*_a, **_kw): return {}
 
 # ── Internal constants ─────────────────────────────────────────────────────────
 
@@ -368,7 +368,11 @@ def render_article(item: dict) -> None:
     raw_link = item.get("link", "")
     try:
         _parsed_link = urlparse(raw_link)
-        safe_link = _html.escape(raw_link, quote=True) if _parsed_link.scheme in ("http", "https") else "#"
+        safe_link = (
+            _html.escape(raw_link, quote=True)
+            if _parsed_link.scheme in ("http", "https")
+            else "#"
+        )
     except ValueError:
         safe_link = "#"
 
@@ -504,7 +508,7 @@ def _render_price_chart(history: pd.DataFrame) -> None:
     fig.add_trace(go.Scatter(
         x=history.index, y=close_col,
         mode="lines",
-        line=dict(color="#c4a35a", width=2.0),
+        line={"color": "#c4a35a", "width": 2.0},
         fill="tozeroy",
         fillcolor="rgba(196,163,90,0.06)",
         name="Close",
@@ -515,7 +519,7 @@ def _render_price_chart(history: pd.DataFrame) -> None:
         fig.add_trace(go.Scatter(
             x=history.index, y=close_col.rolling(7).mean(),
             mode="lines",
-            line=dict(color="#8a7040", width=1.4, dash="dash"),
+            line={"color": "#8a7040", "width": 1.4, "dash": "dash"},
             name="7d MA",
             hovertemplate="MA7: $%{y:,.4f}<extra></extra>",
         ))
@@ -524,29 +528,29 @@ def _render_price_chart(history: pd.DataFrame) -> None:
         fig.add_trace(go.Scatter(
             x=history.index, y=close_col.rolling(20).mean(),
             mode="lines",
-            line=dict(color="#5a5040", width=1.2, dash="dot"),
+            line={"color": "#5a5040", "width": 1.2, "dash": "dot"},
             name="20d MA",
             hovertemplate="MA20: $%{y:,.4f}<extra></extra>",
         ))
 
     fig.update_layout(
         height=CHART_HEIGHT,
-        margin=dict(l=0, r=0, t=10, b=0),
+        margin={"l": 0, "r": 0, "t": 10, "b": 0},
         plot_bgcolor="rgba(0,0,0,0)",
         paper_bgcolor="rgba(0,0,0,0)",
-        xaxis=dict(showgrid=False, color="#635a48", tickformat="%b %d"),
-        yaxis=dict(
-            showgrid=True,
-            gridcolor="rgba(82,72,64,0.2)",
-            color="#635a48",
-            tickprefix="$",
-        ),
-        legend=dict(
-            orientation="h", yanchor="bottom", y=1.02,
-            xanchor="right", x=1, font=dict(size=11, color="#9e9078"),
-        ),
+        xaxis={"showgrid": False, "color": "#635a48", "tickformat": "%b %d"},
+        yaxis={
+            "showgrid": True,
+            "gridcolor": "rgba(82,72,64,0.2)",
+            "color": "#635a48",
+            "tickprefix": "$",
+        },
+        legend={
+            "orientation": "h", "yanchor": "bottom", "y": 1.02,
+            "xanchor": "right", "x": 1, "font": {"size": 11, "color": "#9e9078"},
+        },
         hovermode="x unified",
-        font=dict(family="Georgia, 'Times New Roman', serif"),
+        font={"family": "Georgia, 'Times New Roman', serif"},
     )
     st.plotly_chart(fig, config={"responsive": True})
 
@@ -561,17 +565,17 @@ def _render_volume_chart(history: pd.DataFrame) -> None:
             vol_col = vol_col.iloc[:, 0]
         vfig = go.Figure(go.Bar(
             x=history.index, y=vol_col,
-            marker=dict(color="rgba(196,163,90,0.25)"),
+            marker={"color": "rgba(196,163,90,0.25)"},
             hovertemplate="%{y:,.0f}<extra></extra>",
         ))
         vfig.update_layout(
             height=200,
-            margin=dict(l=0, r=0, t=0, b=0),
+            margin={"l": 0, "r": 0, "t": 0, "b": 0},
             plot_bgcolor="rgba(0,0,0,0)",
             paper_bgcolor="rgba(0,0,0,0)",
-            xaxis=dict(showgrid=False, color="#635a48"),
-            yaxis=dict(showgrid=False, color="#635a48"),
-            font=dict(family="Georgia, 'Times New Roman', serif"),
+            xaxis={"showgrid": False, "color": "#635a48"},
+            yaxis={"showgrid": False, "color": "#635a48"},
+            font={"family": "Georgia, 'Times New Roman', serif"},
         )
         st.plotly_chart(vfig, config={"responsive": True})
 
@@ -593,23 +597,23 @@ def _render_signal_components(live_signal: dict) -> None:
         cfig = go.Figure(go.Bar(
             x=comp_names,
             y=comp_values,
-            marker=dict(color=colors),
+            marker={"color": colors},
             text=[f"{v:+.2f}" for v in comp_values],
             textposition="outside",
         ))
         cfig.update_layout(
             height=220,
-            margin=dict(l=0, r=0, t=10, b=0),
+            margin={"l": 0, "r": 0, "t": 10, "b": 0},
             plot_bgcolor="rgba(0,0,0,0)",
             paper_bgcolor="rgba(0,0,0,0)",
-            xaxis=dict(color="#635a48"),
-            yaxis=dict(
-                color="#635a48",
-                showgrid=True,
-                gridcolor="rgba(82,72,64,0.2)",
-                range=[-y_range, y_range],
-            ),
-            font=dict(family="Georgia, 'Times New Roman', serif", color="#9e9078"),
+            xaxis={"color": "#635a48"},
+            yaxis={
+                "color": "#635a48",
+                "showgrid": True,
+                "gridcolor": "rgba(82,72,64,0.2)",
+                "range": [-y_range, y_range],
+            },
+            font={"family": "Georgia, 'Times New Roman', serif", "color": "#9e9078"},
         )
         cfig.add_hline(y=0, line_color="#524840", line_width=1)
         st.plotly_chart(cfig, config={"responsive": True})
@@ -716,7 +720,9 @@ def _render_historical_context(selected_asset: str, snap: dict) -> None:
             )
         if t_vs_y.get("signal_score"):
             d         = t_vs_y["signal_score"]
-            direction = "higher" if d["change"] > 0 else "lower" if d["change"] < 0 else "unchanged"
+            direction = (
+                "higher" if d["change"] > 0 else "lower" if d["change"] < 0 else "unchanged"
+            )
             hf_parts.append(
                 f"Signal score today ({d['today']:+.2f}) is **{direction}** "
                 f"than yesterday ({d['yesterday']:+.2f}, change: {d['change']:+.2f})."
@@ -805,22 +811,22 @@ def render_heatmap(summary: dict, summary_date: str) -> None:
         ],
         zmid=0, zmin=-5, zmax=5,
         showscale=True,
-        colorbar=dict(
-            title=dict(text="24h %", font=dict(color="#635a48", family="Georgia, serif")),
-            tickfont=dict(color="#635a48", family="Georgia, serif"),
-            thickness=12,
-        ),
+        colorbar={
+            "title": {"text": "24h %", "font": {"color": "#635a48", "family": "Georgia, serif"}},
+            "tickfont": {"color": "#635a48", "family": "Georgia, serif"},
+            "thickness": 12,
+        },
         xgap=3, ygap=3,
         hovertemplate="%{text}<extra></extra>",
     ))
     hm_fig.update_layout(
         height=220,
-        margin=dict(l=120, r=80, t=10, b=10),
+        margin={"l": 120, "r": 80, "t": 10, "b": 10},
         plot_bgcolor="rgba(0,0,0,0)",
         paper_bgcolor="rgba(0,0,0,0)",
-        xaxis=dict(showticklabels=False, showgrid=False),
-        yaxis=dict(color="#9e9078", showgrid=False),
-        font=dict(size=10, color="#9e9078", family="Georgia, 'Times New Roman', serif"),
+        xaxis={"showticklabels": False, "showgrid": False},
+        yaxis={"color": "#9e9078", "showgrid": False},
+        font={"size": 10, "color": "#9e9078", "family": "Georgia, 'Times New Roman', serif"},
     )
     st.plotly_chart(hm_fig, config={"responsive": True})
 
@@ -874,6 +880,9 @@ def render_category_overview(cat_data: dict, summary_date: str) -> None:
     st.dataframe(styled, width="stretch", hide_index=True)
 
     if missing_names:
-        st.caption(f"No snapshot data for: {', '.join(missing_names)}. Run a full scan to populate.")
+        st.caption(
+            f"No snapshot data for: {', '.join(missing_names)}. "
+            "Run a full scan to populate."
+        )
     elif summary_date:
         st.caption(f"Data from scan: {summary_date}.")

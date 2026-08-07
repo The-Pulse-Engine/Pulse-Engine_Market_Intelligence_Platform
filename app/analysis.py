@@ -62,8 +62,8 @@ if __name__ == "__main__":
     _articles = fetch_news_articles()
     print(f"Fetched {len(_articles)} articles\n")
 
-    first_cat   = list(TRACKED_ASSETS.keys())[0]
-    first_asset = list(TRACKED_ASSETS[first_cat].keys())[0]
+    first_cat   = next(iter(TRACKED_ASSETS.keys()))
+    first_asset = next(iter(TRACKED_ASSETS[first_cat].keys()))
     first_tick  = TRACKED_ASSETS[first_cat][first_asset]
 
     result = analyse_asset(

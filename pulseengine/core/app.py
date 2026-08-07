@@ -50,8 +50,8 @@ try:
     STORAGE_AVAILABLE = True
 except ImportError:
     STORAGE_AVAILABLE = False
-    def _save_snapshot(*_a: Any, **_kw: Any) -> None: pass           # noqa: E731
-    def _get_historical_features(*_a: Any, **_kw: Any) -> dict: return {}  # noqa: E731
+    def _save_snapshot(*_a: Any, **_kw: Any) -> None: pass
+    def _get_historical_features(*_a: Any, **_kw: Any) -> dict: return {}
 
 
 # ── Single-asset analysis ─────────────────────────────────────────────────────
@@ -264,7 +264,12 @@ def run_full_scan() -> dict:
                     "news": [],
                     "clusters": {},
                     "market_ctx": None,
-                    "signal": {"score": None, "label": "Error", "components": {}, "raw_components": {}},
+                    "signal": {
+                        "score": None,
+                        "label": "Error",
+                        "components": {},
+                        "raw_components": {},
+                    },
                     "explanation": {
                         "verdict": "",
                         "factors": [],

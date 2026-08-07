@@ -5,4 +5,4 @@ All configuration now lives in pulseengine.core/config.py.
 New code should import directly from pulseengine.core.
 """
 
-from pulseengine.core.config import *  # noqa: F401, F403
+from pulseengine.core.config import *  # noqa: F403

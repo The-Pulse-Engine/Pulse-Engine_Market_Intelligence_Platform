@@ -45,7 +45,8 @@ TRACKED_ASSETS = {
         "S&P 500":          "^GSPC",
         "NASDAQ":           "^IXIC",
         "Dow Jones":        "^DJI",
-        "VIX (Fear Index)": "^VIX",  # the market's anxiety score. I genuinely did not know it existed
+        # the market's anxiety score. I genuinely did not know it existed
+        "VIX (Fear Index)": "^VIX",
     },
 }
 
@@ -85,8 +86,10 @@ MARKET_BENCHMARK = {
 
 # 12 people shouting about money simultaneously. we listen to all of them. this is fine
 NEWS_FEEDS = [
-    ("Guardian Business",    "https://www.theguardian.com/uk/business/rss"),           # replaces Reuters Business (domain dead since 2020)
-    ("TechCrunch",           "https://techcrunch.com/feed/"),                          # replaces Reuters Tech (domain dead since 2020)
+    # replaces Reuters Business (domain dead since 2020)
+    ("Guardian Business",    "https://www.theguardian.com/uk/business/rss"),
+    # replaces Reuters Tech (domain dead since 2020)
+    ("TechCrunch",           "https://techcrunch.com/feed/"),
     ("CNBC Top News",        "https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=100003114"),
     ("BBC Business",         "https://feeds.bbci.co.uk/news/business/rss.xml"),
     ("MarketWatch",          "https://feeds.marketwatch.com/marketwatch/topstories/"),
@@ -94,10 +97,12 @@ NEWS_FEEDS = [
     ("Yahoo Finance",        "https://finance.yahoo.com/news/rssindex"),
     ("Al Jazeera",           "https://www.aljazeera.com/xml/rss/all.xml"),
     ("Google News Business", "https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx6TVdZU0FtVnVHZ0pWVXlnQVAB"),
-    ("Ars Technica",         "https://feeds.arstechnica.com/arstechnica/index"),        # replaces Google News Tech (404)
+    # replaces Google News Tech (404)
+    ("Ars Technica",         "https://feeds.arstechnica.com/arstechnica/index"),
     ("NPR Business",         "https://feeds.npr.org/1006/rss.xml"),
     ("Economist Finance",    "https://www.economist.com/finance-and-economics/rss.xml"),
-    # no r/wallstreetbets because it's just memes and pump talk, not actual news. also reddit has no rss feed, so there's that
+    # no r/wallstreetbets because it's just memes and pump talk, not actual news. also reddit has
+    # no rss feed, so there's that
 ]
 
 #  4. KEYWORD MAP  — weighted terms linking assets to news
@@ -287,7 +292,8 @@ NEWS_MAX_ARTICLES = 300
 MIN_NEWS_ARTICLES_FOR_CONFIDENCE = 3
 LOW_NEWS_SENTIMENT_WEIGHT_MULTIPLIER = 0.3
 
-# Minimum raw relevance score (sum of keyword weights) for an article to be classed as highly relevant.
+# Minimum raw relevance score (sum of keyword weights) for an article to be classed as highly
+# relevant.
 # Scale: keyword weights sum as integers; 6 typically means 2+ strong keyword hits (weight 3 each).
 RELEVANCE_HIGH = 6
 # Minimum score for an article to be classed as moderately relevant; below this it is discarded.
@@ -309,10 +315,13 @@ PRICE_CACHE_TTL   = 90         # prices / metrics  → refresh ~every 1–2 min
 NEWS_CACHE_TTL    = 300        # news articles      → refresh ~every 5 min
 REQUEST_TIMEOUT = 20
 MAX_RETRIES = 3                  # three strikes before we give up. very democratic
-MAX_WORKERS = 4                  # news feed threads — reduced from 8, turns out being antisocial gets you banned
+# news feed threads — reduced from 8, turns out being antisocial gets you banned
+MAX_WORKERS = 4
 PRICE_FETCH_WORKERS = 3          # yfinance parallel workers — Yahoo has feelings too, apparently
-YFINANCE_REQUEST_DELAY = 0.75    # seconds to sleep after each yfinance call. be polite. be very polite
-YFINANCE_BACKOFF_BASE  = 1.0     # base seconds for exponential backoff. 1s → 2s → 4s. regret compounds
+# seconds to sleep after each yfinance call. be polite. be very polite
+YFINANCE_REQUEST_DELAY = 0.75
+# base seconds for exponential backoff. 1s → 2s → 4s. regret compounds
+YFINANCE_BACKOFF_BASE  = 1.0
 
 #  9. SOURCE CREDIBILITY WEIGHTS
 #     Applied as a multiplier to relevance scores.
@@ -354,7 +363,8 @@ SIGNAL_THRESHOLDS: dict[str, float] = {
 
 # Two articles are considered duplicates when ≥65% of their word-level bigrams overlap (Jaccard
 # similarity). At 0.65 near-identical rewrites are merged while distinct stories on the same topic
-# are preserved. Lower values collapse more aggressively; higher values let more duplicates through.
+# are preserved. Lower values collapse more aggressively; higher values let more duplicates
+# through.
 DEDUP_SIMILARITY_THRESHOLD = 0.65
 
 
@@ -375,12 +385,12 @@ BACKTEST_WINDOW = 20                # max signals to evaluate
 #
 #      Design rationale by class:
 #        Crypto       — momentum boosted (1.8×) because crypto prices are driven by fast-moving
-#                       momentum and liquidity cycles rather than fundamentals; context downweighted
+# momentum and liquidity cycles rather than fundamentals; context downweighted
 #                       (0.5×) because crypto is largely uncorrelated with broad macro indices.
 #        Tech Stocks  — sentiment boosted (1.6×) because earnings releases and news headlines are
 #                       the primary price-movers for large-cap tech.
 #        Commodities  — trend boosted (1.3×) to capture multi-week supply/demand cycles; RSI
-#                       downweighted (0.8×) as commodities can trend far beyond typical RSI extremes.
+# downweighted (0.8×) as commodities can trend far beyond typical RSI extremes.
 #        Market Indices — trend (1.5×) and context (1.5×) are primary because indices represent
 #                         aggregate market direction and ARE the broad macro context themselves;
 #                         RSI heavily downweighted (0.5×) as index RSI rarely gives clean signals.
@@ -388,7 +398,9 @@ BACKTEST_WINDOW = 20                # max signals to evaluate
 ASSET_CLASS_WEIGHTS: dict[str, dict[str, float]] = {
     "Cryptocurrency": {
         "trend":          1.2,
-        "momentum":       1.8,   # crypto momentum: 1.8x because crypto doesn't walk, it sprints off a cliff, some shmuck does a liquidity test every friday
+        # crypto momentum: 1.8x because crypto doesn't walk, it sprints off a cliff, some shmuck
+        # does a liquidity test every friday
+        "momentum":       1.8,
         "rsi":            0.8,
         "sentiment":      1.2,
         "trend_strength": 1.2,
