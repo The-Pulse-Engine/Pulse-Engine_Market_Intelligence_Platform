@@ -17,6 +17,15 @@
                               parameters, keeping the signature contract
         unused CSS symbol     four genuinely dead rules (.hist-box, .hist-label,
                               .bt-hit, .bt-miss) were deleted
+        incorrect type        locals read out of untyped dicts are annotated,
+                              so the `is not None` guards actually narrow
+
+      On "incorrect type" specifically: the root cause was dict.get() returning
+      Any | None, which gave the existing guards nothing to narrow and made
+      every downstream use look wrong. The fix is annotations at the point of
+      read (chg_1d: float | None = metrics.get(...)), which are erased at
+      runtime — no behaviour change, the guards simply became checkable. That
+      inspection is therefore back ON rather than suppressed.
 
       What remains, and why source cannot fix it:
 
@@ -26,16 +35,6 @@
         components/snapshot.py is the clearest example. Each was checked
         against the Python sources before disabling; the four that turned out
         to be genuinely dead were removed rather than hidden.
-
-      PyTypeChecker — every hit is "Expected type X, got Any | None" on a
-        dict.get() result that is already guarded. Sampled 8 across every
-        cluster (explanation.py 74/100, storage.py 388-389, data.py 167,
-        backtest.py 112, scan.py 167, price.py) and all sit behind an explicit
-        `is not None` test or an early return; the IDE does not narrow through
-        compound `and` conditions. compute_roc is even annotated `-> float`
-        and returns 0.0 on every early path. mypy is the type checker of
-        record: it narrows correctly, has pandas-stubs active, runs over
-        pulseengine/ in CI, and is clean.
 
       UndefinedParamsPresent — flags `python-version` and `cache` on
         actions/setup-python@v7 in .github/workflows/ci.yml. Both are valid;
@@ -48,7 +47,6 @@
         properly declared; this inspection just cannot see either file.
     -->
     <inspection_tool class="CssUnusedSymbol" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="PyTypeCheckerInspection" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="UndefinedParamsPresent" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="PyPackageRequirementsInspection" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
   </profile>

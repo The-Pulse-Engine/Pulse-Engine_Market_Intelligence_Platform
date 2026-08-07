@@ -103,7 +103,7 @@ def run_scan(verbose: bool = True, dry_run: bool = False) -> dict:
     for _cat, _cat_data in _all_price_data.items():
         for _name, _data in _cat_data.items():
             _ticker = TRACKED_ASSETS.get(_cat, {}).get(_name)
-            _chg = _data.get("metrics", {}).get("change_1d")
+            _chg: float | None = _data.get("metrics", {}).get("change_1d")
             if _ticker and _chg is not None:
                 price_cache[_ticker] = _chg
     log.info("Price cache built: %d tickers pre-fetched for context analysis.", len(price_cache))
@@ -124,12 +124,12 @@ def run_scan(verbose: bool = True, dry_run: bool = False) -> dict:
                     save=not dry_run,
                     price_cache=price_cache,
                 )
-                sig     = r["signal"]
-                metrics = r["metrics"]
-                mom     = r["momentum"]
-                expl    = r["explanation"]
+                sig:     dict = r["signal"]
+                metrics: dict = r["metrics"]
+                mom:     dict = r["momentum"]
+                expl:    dict = r["explanation"]
 
-                ctx = r.get("market_ctx") or {}
+                ctx: dict = r.get("market_ctx") or {}
                 entry = {
                     "ticker":          ticker,
                     "signal_score":    sig.get("score"),
@@ -151,7 +151,7 @@ def run_scan(verbose: bool = True, dry_run: bool = False) -> dict:
                     "is_market_wide":  ctx.get("is_market_wide", False),
                     "is_sector_wide":  ctx.get("is_sector_wide", False),
                 }
-                error = r.get("error")
+                error: dict | None = r.get("error")
                 if error:
                     entry["error"] = error
                     errors.append({**error, "asset": asset_name, "category": category})

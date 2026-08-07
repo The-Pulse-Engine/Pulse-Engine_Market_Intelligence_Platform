@@ -25,7 +25,7 @@ def test_analyse_asset_has_signal_in_range(mock_price_history, storage_dir, synt
     """Result must contain a 'signal' key with a score inside [-10, 10]."""
     result = analyse_asset("Gold", "GC=F", "Commodities", synthetic_articles,
                            with_market_ctx=False)
-    score = result.get("signal", {}).get("score")
+    score: float | None = result.get("signal", {}).get("score")
     assert score is not None
     assert -10.0 <= score <= 10.0
 

@@ -299,9 +299,9 @@ def _render_historical_context(selected_asset: str, snap: dict) -> None:
         return
 
     with st.expander("Historical context"):
-        consistency = hist_feat.get("signal_consistency")
-        persistence = hist_feat.get("trend_persistence", 0)
-        t_vs_y      = hist_feat.get("today_vs_yesterday", {})
+        consistency: float | None = hist_feat.get("signal_consistency")
+        persistence: float = hist_feat.get("trend_persistence", 0)
+        t_vs_y: dict = hist_feat.get("today_vs_yesterday", {})
 
         hf_parts: list[str] = []
         if consistency is not None:
@@ -347,7 +347,7 @@ def render_live_analysis(
     price chart, volume chart, signal components, backtest, historical context,
     and full analysis text.
     """
-    live_factors    = live_explanation.get("factors", [])
+    live_factors: list[dict] = live_explanation.get("factors", [])
     event_factors   = [f for f in live_factors if f["type"] == "event"]
     context_factors = [
         f for f in live_factors

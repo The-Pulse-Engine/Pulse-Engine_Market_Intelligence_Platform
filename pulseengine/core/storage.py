@@ -381,8 +381,8 @@ def get_historical_features(
     compare_fields = ["price", "signal_score", "rsi", "roc_10d", "trend_strength"]
     today_vs_yesterday: dict[str, dict] = {}
     for field in compare_fields:
-        t_val = today_snap.get(field)
-        y_val = yesterday_snap.get(field)
+        t_val: float | str | None = today_snap.get(field)
+        y_val: float | str | None = yesterday_snap.get(field)
         if t_val is not None and y_val is not None:
             try:
                 t_float = float(t_val)

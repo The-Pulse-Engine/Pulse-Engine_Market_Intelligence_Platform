@@ -140,11 +140,11 @@ selected = _build_live_analysis(selected_asset, _ticker, selected_category)
 if selected.get("error"):
     st.warning(selected["error"])
 else:
-    _metrics = selected["metrics"]
-    _momentum = selected["momentum"]
-    _signal = selected["signal"]
-    _explanation = selected["explanation"]
-    _history = selected["history"]
+    _metrics: dict = selected["metrics"]
+    _momentum: dict = selected["momentum"]
+    _signal: dict = selected["signal"]
+    _explanation: dict = selected["explanation"]
+    _history: pd.DataFrame | None = selected["history"]
 
     c1, c2, c3, c4 = st.columns(4)
     c1.metric("Signal", _signal.get("label", "n/a"), f"{_signal.get('score', 0.0):+.1f}")
@@ -172,7 +172,7 @@ else:
         st.caption("No relevant articles matched this asset.")
 
     st.subheader("Current market context")
-    _market_ctx = selected.get("market_ctx") or {}
+    _market_ctx: dict = selected.get("market_ctx") or {}
     context_cols = st.columns(3)
     context_cols[0].metric("Sector-wide", str(bool(_market_ctx.get("is_sector_wide"))))
     context_cols[1].metric("Market-wide", str(bool(_market_ctx.get("is_market_wide"))))
@@ -204,8 +204,8 @@ if st.button("Build market overview"):
                 _asset_map = TRACKED_ASSETS.get(_category, {})
                 if _asset_name in _asset_map:
                     data = _overview.get(_category, {}).get(_asset_name, {})
-                    _metrics = data.get("metrics", {})
-                    _momentum = data.get("momentum", {})
+                    _metrics = dict(data.get("metrics", {}))
+                    _momentum = dict(data.get("momentum", {}))
                     rows.append(
                         {
                             "Category": _category,

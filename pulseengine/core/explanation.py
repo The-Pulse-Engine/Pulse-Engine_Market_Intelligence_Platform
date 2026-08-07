@@ -62,14 +62,14 @@ def build_explanation(
     momentum = momentum or {}
     signal   = signal   or {}
 
-    price  = metrics.get("latest_price", 0.0)
-    chg_1d = metrics.get("change_1d")
-    chg_7d = metrics.get("change_7d")
-    trend  = metrics.get("trend", "unknown")
-    vol    = metrics.get("volatility", 0)
-    rsi    = momentum.get("rsi", 50.0)
-    roc    = momentum.get("roc_10d", 0.0)
-    ts     = momentum.get("trend_strength", 0.0)
+    price:  float        = metrics.get("latest_price", 0.0)
+    chg_1d: float | None = metrics.get("change_1d")
+    chg_7d: float | None = metrics.get("change_7d")
+    trend:  str          = metrics.get("trend", "unknown")
+    vol:    float        = metrics.get("volatility", 0)
+    rsi:    float        = momentum.get("rsi", 50.0)
+    roc:    float        = momentum.get("roc_10d", 0.0)
+    ts:     float        = momentum.get("trend_strength", 0.0)
 
     is_significant = chg_1d is not None and abs(chg_1d) >= PRICE_CHANGE_THRESHOLD
 
@@ -344,10 +344,10 @@ def detect_contradictions(
 ) -> list[dict]:
     """Identify tensions between different signal components."""
     contradictions: list[dict] = []
-    chg_1d = metrics.get("change_1d")
-    rsi    = momentum.get("rsi", 50.0)
-    roc    = momentum.get("roc_10d", 0.0)
-    trend  = metrics.get("trend", "sideways")
+    chg_1d: float | None = metrics.get("change_1d")
+    rsi:    float        = momentum.get("rsi", 50.0)
+    roc:    float        = momentum.get("roc_10d", 0.0)
+    trend:  str          = metrics.get("trend", "sideways")
 
     if chg_1d and chg_1d > 2 and rsi > 70:
         contradictions.append({
@@ -546,7 +546,7 @@ def _assess_confidence(
         labels = [f["label"] for f in event_factors[:2]]
         increases.append(f"event trigger detected: {', '.join(labels)}")
 
-    chg_1d = metrics.get("change_1d") if metrics else None
+    chg_1d: float | None = metrics.get("change_1d") if metrics else None
     if chg_1d is not None and abs(chg_1d) >= 2.0:
         score += 1
         increases.append(f"strong price move ({chg_1d:+.2f}%)")

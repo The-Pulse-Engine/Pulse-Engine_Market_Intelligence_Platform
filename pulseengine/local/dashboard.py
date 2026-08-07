@@ -289,7 +289,7 @@ def _build_snapshot_price_cache(summary_results: dict) -> tuple[tuple[str, float
             summary_results.get(category, {}) if isinstance(summary_results, dict) else {}
         )
         for asset_name, sym in assets.items():
-            change_1d = category_rows.get(asset_name, {}).get("change_1d")
+            change_1d: float | None = category_rows.get(asset_name, {}).get("change_1d")
             if change_1d is not None:
                 cache_items.append((sym, float(change_1d)))
     return tuple(cache_items)
@@ -529,7 +529,7 @@ snap = (
     if selected_category in TRACKED_ASSETS
     else {}
 )
-chg_1d         = snap.get("change_1d")
+chg_1d: float | None = snap.get("change_1d")
 is_significant = chg_1d is not None and abs(chg_1d) >= PRICE_CHANGE_THRESHOLD
 
 _live_loaded = st.session_state.get("_live_for") == ticker

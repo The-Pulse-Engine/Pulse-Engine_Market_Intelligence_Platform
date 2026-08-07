@@ -18,7 +18,7 @@ def _format_scan_label(scan_state: dict, summary: dict) -> tuple[str, str]:
     if scan_state["running"]:
         return "⏳ Scan running...", "#a07840"
 
-    ts = summary.get("scan_time")
+    ts: str | None = summary.get("scan_time")
     if not ts:
         return "No scan data yet", "#635a48"
 

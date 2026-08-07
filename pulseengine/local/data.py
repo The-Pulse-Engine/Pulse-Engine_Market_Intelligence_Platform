@@ -160,7 +160,7 @@ def cached_scan_summary(cache_token: int = 0) -> dict:
 
 def is_data_stale(summary: dict, ttl_hours: float = 1.0) -> bool:
     """Return True if the scan summary is older than *ttl_hours*, or missing."""
-    scan_time = summary.get("scan_time")
+    scan_time: str | None = summary.get("scan_time")
     if not scan_time:
         return True
     try:
