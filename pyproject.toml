@@ -1,14 +1,47 @@
 [build-system]
 requires = ["setuptools>=70"]
-build-backend = "setuptools.backends.legacy:build"
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "pulseengine"
-version = "0.3.2"
+dynamic = ["version"]
 requires-python = ">=3.11"
+# Direct imports only — everything else in requirements.txt is transitive.
+# Lower bounds here, exact tested pins in requirements.txt: this file says what
+# the code needs to import, that file reproduces the environment CI runs.
+dependencies = [
+    "feedparser>=6.0",
+    "pandas>=2.0",
+    "plotly>=6.0",
+    "streamlit>=1.30",
+    "vaderSentiment>=3.3",
+    "yfinance>=1.0",
+]
+
+[tool.setuptools.dynamic]
+# Single source of truth: pulseengine/__init__.py. Keeps the packaged version
+# and the importable __version__ attribute from drifting apart.
+version = { attr = "pulseengine.__version__" }
+
+[tool.setuptools]
+# Listed explicitly: flat-layout auto-discovery cannot choose between the
+# canonical `pulseengine` package and the legacy top-level compat shims
+# (app/, config/, dashboard/, src/, storage/), which are a documented interface.
+packages = [
+    "app",
+    "config",
+    "dashboard",
+    "pulseengine",
+    "pulseengine.core",
+    "pulseengine.local",
+    "pulseengine.web",
+    "src",
+    "storage",
+]
 
 [tool.ruff]
 line-length = 99
+target-version = "py311"
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "UP"]

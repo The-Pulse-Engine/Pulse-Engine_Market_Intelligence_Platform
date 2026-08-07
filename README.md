@@ -450,6 +450,7 @@ pulse_engine_1/
     test_storage_and_scan.py     Storage round-trip, retention, dry-run scan, backtest
     test_optimisation.py         Optimisation-related tests
     test_web_surface.py          Web demo surface tests
+    test_legacy_interface.py     Contract tests for the legacy top-level import paths
     MAINTENANCE.md               Guide for updating the test suite
   Docs/
     code_flow.md                 Detailed execution flow diagrams

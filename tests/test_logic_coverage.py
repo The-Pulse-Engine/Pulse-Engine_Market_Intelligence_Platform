@@ -48,7 +48,7 @@ def test_jaccard_threshold_boundary_behavior():
 
 def test_deduplicate_articles_keeps_first_duplicate_and_unique_entries():
     """Near-duplicate titles should collapse while unique titles remain."""
-    now = dt.datetime.now(dt.timezone.utc)
+    now = dt.datetime.now(dt.UTC)
     articles = [
         {
             "title": "Gold prices rally after central bank comments",
@@ -190,7 +190,7 @@ def test_detect_contradictions_each_condition_independently():
 
 def test_correlate_news_accepts_generated_keywords_for_custom_ticker():
     """Custom ticker keywords should enable matching even without curated asset entries."""
-    now = dt.datetime.now(dt.timezone.utc)
+    now = dt.datetime.now(dt.UTC)
     articles = [
         {
             "title": "Palantir wins major U.S. defense contract",

@@ -7,9 +7,9 @@ import gzip
 import json
 from pathlib import Path
 
+from pulseengine.core import storage
 from pulseengine.core.backtest import evaluate_signal_accuracy
 from pulseengine.local.scan import run_scan
-from pulseengine.core import storage
 
 
 def _write_snapshot_file(base_dir: Path, asset: str, date: dt.date, payload: dict) -> Path:

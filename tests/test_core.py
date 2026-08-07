@@ -232,7 +232,7 @@ def test_generate_keywords_timeout(mocker):
 
 def test_correlate_news_no_substring_false_positive():
     """'gold' keyword must not match articles whose only hit is a substring like 'goldman'."""
-    now = dt.datetime.now(dt.timezone.utc)
+    now = dt.datetime.now(dt.UTC)
     goldman_article = {
         "title": "goldman sachs raises forecast for major banks",
         "summary": "Goldman Sachs analysts upgraded their outlook for the banking sector.",

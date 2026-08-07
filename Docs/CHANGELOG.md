@@ -6,10 +6,23 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+- `tests/test_legacy_interface.py` — contract tests for the legacy top-level import surface (`src.*`, `app.*`, `config.settings`, `storage.storage`, `dashboard.*`). Each documented path is imported, each shim is asserted to re-export the *same object* as its canonical counterpart, and the three `sys.modules`-aliasing shims (`src/engine.py`, `src/price.py`, `storage/storage.py`) are asserted to resolve to their core modules. Previously nothing enforced this contract: the suite imports from `pulseengine.core` directly and `tests/test_web_surface.py` only greps source text, so a broken shim could not turn a test red.
+
 ### Fixed
+- **`pyproject.toml` declared a build backend that does not exist.** `build-backend` was `setuptools.backends.legacy:build`; there is no `setuptools.backends` module, so the project could not be built or installed at all. Corrected to `setuptools.build_meta`. Because `[project]` with no `[tool.setuptools]` triggers flat-layout auto-discovery — which cannot choose among the six top-level packages — an explicit `packages` list was added. `python -m build --wheel` now succeeds.
+- **`install.py` could not be parsed on Python 3.11.** Line 395 placed a backslash inside an f-string expression (`f"{bold('.\\launch.ps1')}"`), which is a `SyntaxError` before Python 3.12 (PEP 701). The project declares `requires-python = ">=3.11"` and CI runs a 3.11 job, so the installer was unusable on the minimum supported version. The literal is now bound outside the f-string.
+- **`pip install .` produced a package with no dependencies.** `[project]` declared none, so `Requires-Dist` was empty in the built metadata and a clean install pulled in neither Streamlit nor pandas/yfinance — the install succeeded and the dashboard then could not start. Latent while the backend was broken and nothing could be built; a real distribution failure the moment it could. The six direct imports (`feedparser`, `pandas`, `plotly`, `streamlit`, `vaderSentiment`, `yfinance`) are now declared with lower bounds; `requirements.txt` keeps the exact tested pins. No new dependency was introduced.
+- Package version drift: `pyproject.toml` said `0.3.2` while `pulseengine/__init__.py` said `0.3.0`. The version is now derived from `pulseengine.__version__` via `[tool.setuptools.dynamic]`, so the packaged version and the importable attribute cannot diverge again.
 - `_kw_re` in `pulseengine/core/signals.py` now applies a leading `\b` only when the keyword starts with an alphanumeric character. Previously the prefix was unconditional, so keywords beginning with a special character (e.g. a hypothetical `+term`) would generate an invalid boundary assertion. Suffix `\b` was already conditional; both guards are now symmetric.
 - Neutral signal label in `compute_signal_score` (`pulseengine/core/signals.py`) now uses `>= SIGNAL_THRESHOLDS["neutral"]` instead of `>`, so a score exactly at the neutral boundary is correctly classified as Neutral rather than Slightly Bearish.
 - `avg_signal_score` in `evaluate_signal_accuracy` (`pulseengine/core/backtest.py`) now computed as the mean of absolute scores, ensuring the reported average always reflects signal magnitude regardless of direction.
+
+### Changed
+- CI lint scope widened from `ruff check pulseengine/` to `ruff check .`. The narrow scope is why the `install.py` syntax error above, plus 15 further lint errors in `tests/` and `app/`, survived in a repository whose CI reported green. Ruff honours `.gitignore`, so `.venv/` is still skipped.
+- `target-version = "py311"` pinned under `[tool.ruff]` so syntax newer than the declared floor is reported as an error rather than silently accepted.
+- Cleared the 16 outstanding ruff findings across `tests/`, `app/`, and `install.py` (import ordering, `datetime.UTC` over `datetime.timezone.utc`, missing trailing newline). In `app/analysis.py` the curated `# Price` / `# Sentiment` group comments were dropped rather than left in place: import sorting scatters them away from the names they label, which is worse than no comment. The domain grouping remains documented in `pulseengine/core/__init__.py`.
+- `requirements.txt` is runtime-only again; `pytest` and `pytest-mock` were duplicated there and in `requirements-dev.txt` with different pins.
 
 ---
 

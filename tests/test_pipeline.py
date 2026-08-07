@@ -12,7 +12,6 @@ from __future__ import annotations
 from pulseengine.core.app import analyse_asset, run_full_scan
 from pulseengine.core.errors import DataFetchError
 
-
 # ── analyse_asset ─────────────────────────────────────────────────────────────
 
 def test_analyse_asset_runs(mock_price_history, storage_dir, synthetic_articles):

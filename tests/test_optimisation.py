@@ -26,9 +26,8 @@ import textwrap
 
 import pytest
 
-from pulseengine.core.news import deduplicate_articles, _jaccard, _normalize_title
 from pulseengine.core.config import DEDUP_SIMILARITY_THRESHOLD
-
+from pulseengine.core.news import _jaccard, _normalize_title, deduplicate_articles
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -38,7 +37,7 @@ def _make_article(title: str, hours_old: int = 1) -> dict:
         "summary":   "",
         "link":      "https://example.com",
         "source":    "Test",
-        "published": dt.datetime.now(dt.timezone.utc) - dt.timedelta(hours=hours_old),
+        "published": dt.datetime.now(dt.UTC) - dt.timedelta(hours=hours_old),
     }
 
 

@@ -25,9 +25,9 @@ Constraints:
     - Does NOT write outside the repo directory
 """
 
-import sys
 import platform
 import subprocess
+import sys
 import textwrap
 from pathlib import Path
 
@@ -392,7 +392,10 @@ def print_success(launch_path: Path) -> None:
         print(f"  {cyan('Option B')} — Run from terminal:")
         print(f"             {bold('launch.bat')}")
         print(f"  {cyan('Option C')} — PowerShell:")
-        print(f"             {bold('.\\launch.ps1')}")
+        # Bound outside the f-string: backslashes inside f-string expressions
+        # are a SyntaxError before Python 3.12, and this project targets 3.11+.
+        ps_launch = ".\\launch.ps1"
+        print(f"             {bold(ps_launch)}")
     else:
         print(f"  {cyan('Option A')} — Run from terminal:")
         print(f"             {bold('./launch.sh')}")
