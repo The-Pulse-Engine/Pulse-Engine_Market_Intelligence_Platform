@@ -64,24 +64,24 @@ Historical snapshots are persisted to compressed JSON files on disk. A backgroun
 
 ## Features
 
-| Feature | Detail |
-|---|---|
-| Signal scoring | Composite score -10 to +10 across 6 weighted components |
-| Asset classes | Commodities, Cryptocurrency, Tech Stocks, Market Indices |
-| News ingestion | 12 public RSS feeds, parallel fetch, Jaccard deduplication |
-| Sentiment engine | VADER with injected financial lexicon, keyword fallback |
-| Event detection | 8 event categories (central bank, geopolitical, earnings, etc.) |
-| Market context | Sector peer comparison and benchmark alignment analysis |
-| Background scan | Full 24-asset scan every 30 minutes via daemon thread |
-| Startup auto-refresh | Fragment poller detects scan completion and reruns the page automatically |
-| Historical storage | Compressed per-asset JSON snapshots with tiered retention |
-| Backtesting | Hit-rate evaluation by signal strength and label |
-| Retention policy | Full detail 7 days, reduced detail 30 days, deleted after 60 days |
-| Dashboard | Streamlit wide-layout with auto-refresh every 90 seconds |
-| Navigation history | Session-state back-navigation stack; ← Back button fixed to top-left of main panel |
-| Top movers | Live 24h gainers and losers in sidebar |
-| Market heatmap | Category-level 24h change heatmap |
-| Category overview | Tabular summary of all assets in selected category |
+| Feature              | Detail                                                                             |
+| -------------------- | ---------------------------------------------------------------------------------- |
+| Signal scoring       | Composite score -10 to +10 across 6 weighted components                            |
+| Asset classes        | Commodities, Cryptocurrency, Tech Stocks, Market Indices                           |
+| News ingestion       | 12 public RSS feeds, parallel fetch, Jaccard deduplication                         |
+| Sentiment engine     | VADER with injected financial lexicon, keyword fallback                            |
+| Event detection      | 8 event categories (central bank, geopolitical, earnings, etc.)                    |
+| Market context       | Sector peer comparison and benchmark alignment analysis                            |
+| Background scan      | Full 24-asset scan every 30 minutes via daemon thread                              |
+| Startup auto-refresh | Fragment poller detects scan completion and reruns the page automatically          |
+| Historical storage   | Compressed per-asset JSON snapshots with tiered retention                          |
+| Backtesting          | Hit-rate evaluation by signal strength and label                                   |
+| Retention policy     | Full detail 7 days, reduced detail 30 days, deleted after 60 days                  |
+| Dashboard            | Streamlit wide-layout with auto-refresh every 90 seconds                           |
+| Navigation history   | Session-state back-navigation stack; ← Back button fixed to top-left of main panel |
+| Top movers           | Live 24h gainers and losers in sidebar                                             |
+| Market heatmap       | Category-level 24h change heatmap                                                  |
+| Category overview    | Tabular summary of all assets in selected category                                 |
 
 ---
 
@@ -122,12 +122,12 @@ flowchart TD
 [![Tech%20Stocks](https://img.shields.io/badge/Tech%20Stocks-7%20Assets-0284c7?style=flat-square)](#asset-coverage)
 [![Market%20Indices](https://img.shields.io/badge/Market%20Indices-4%20Assets-059669?style=flat-square)](#asset-coverage)
 
-| Category | Assets |
-|---|---|
-| Commodities | Gold, Silver, Crude Oil, Natural Gas, Copper, Platinum, Wheat, Corn |
-| Cryptocurrency | Bitcoin, Ethereum, Monero, Solana, Litecoin |
-| Tech Stocks | Apple, Microsoft, NVIDIA, Google, Amazon, Meta, Tesla |
-| Market Indices | S&P 500, NASDAQ, Dow Jones, VIX (Fear Index) |
+| Category       | Assets                                                              |
+| -------------- | ------------------------------------------------------------------- |
+| Commodities    | Gold, Silver, Crude Oil, Natural Gas, Copper, Platinum, Wheat, Corn |
+| Cryptocurrency | Bitcoin, Ethereum, Monero, Solana, Litecoin                         |
+| Tech Stocks    | Apple, Microsoft, NVIDIA, Google, Amazon, Meta, Tesla               |
+| Market Indices | S&P 500, NASDAQ, Dow Jones, VIX (Fear Index)                        |
 
 ---
 
@@ -212,14 +212,14 @@ After the installer completes, launch the dashboard with:
 
 ### Dependencies
 
-| Package | Minimum Version | Purpose |
-|---|---|---|
-| streamlit | 1.54.0 | Dashboard framework |
-| yfinance | 1.2.1 | Price history via Yahoo Finance |
-| pandas | 2.3.3 | DataFrame operations |
-| plotly | 6.6.0 | Interactive charts and heatmap |
-| feedparser | 6.0.12 | RSS feed ingestion |
-| vaderSentiment | 3.3.2 | Sentiment analysis |
+| Package        | Minimum Version | Purpose                         |
+| -------------- | --------------- | ------------------------------- |
+| streamlit      | 1.54.0          | Dashboard framework             |
+| yfinance       | 1.2.1           | Price history via Yahoo Finance |
+| pandas         | 2.3.3           | DataFrame operations            |
+| plotly         | 6.6.0           | Interactive charts and heatmap  |
+| feedparser     | 6.0.12          | RSS feed ingestion              |
+| vaderSentiment | 3.3.2           | Sentiment analysis              |
 
 Install the pinned runtime dependencies first:
 
@@ -303,36 +303,36 @@ Output is written to:
 
 All tunable values are in `pulseengine/core/config.py`. No magic numbers exist anywhere else in the codebase. `config/settings.py` is a backward-compat shim pointing to the canonical location.
 
-| Constant | Default | Description |
-|---|---|---|
-| `LOOKBACK_DAYS` | 30 | Price history window in days |
-| `NEWS_MAX_AGE_HOURS` | 96 | Maximum article age accepted |
-| `NEWS_MAX_ARTICLES` | 300 | Article pool cap before correlation |
-| `PRICE_CACHE_TTL` | 90 s | Dashboard price cache lifetime |
-| `NEWS_CACHE_TTL` | 300 s | Dashboard news cache lifetime |
-| `SCAN_INTERVAL_MINUTES` | 30 | Background scan frequency |
-| `MAX_WORKERS` | 4 | Parallel threads for data fetching |
-| `RSI_PERIOD` | 14 | RSI calculation window |
-| `MOMENTUM_PERIOD` | 10 | Rate-of-change calculation window |
-| `DEDUP_SIMILARITY_THRESHOLD` | 0.65 | Jaccard cutoff for deduplication |
-| `PRICE_CHANGE_THRESHOLD` | 2.0 % | Threshold for significant move alert |
-| `RELEVANCE_HIGH` | 6 | Score threshold for high-relevance news |
-| `RELEVANCE_MEDIUM` | 3 | Score threshold for medium-relevance news |
-| `STORAGE_FULL_DETAIL_DAYS` | 7 | Days to retain full snapshots |
-| `STORAGE_REDUCED_DETAIL_DAYS` | 30 | Days to retain reduced snapshots |
-| `STORAGE_MAX_DAYS` | 60 | Days before snapshot deletion |
+| Constant                      | Default | Description                               |
+| ----------------------------- | ------- | ----------------------------------------- |
+| `LOOKBACK_DAYS`               | 30      | Price history window in days              |
+| `NEWS_MAX_AGE_HOURS`          | 96      | Maximum article age accepted              |
+| `NEWS_MAX_ARTICLES`           | 300     | Article pool cap before correlation       |
+| `PRICE_CACHE_TTL`             | 90 s    | Dashboard price cache lifetime            |
+| `NEWS_CACHE_TTL`              | 300 s   | Dashboard news cache lifetime             |
+| `SCAN_INTERVAL_MINUTES`       | 30      | Background scan frequency                 |
+| `MAX_WORKERS`                 | 4       | Parallel threads for data fetching        |
+| `RSI_PERIOD`                  | 14      | RSI calculation window                    |
+| `MOMENTUM_PERIOD`             | 10      | Rate-of-change calculation window         |
+| `DEDUP_SIMILARITY_THRESHOLD`  | 0.65    | Jaccard cutoff for deduplication          |
+| `PRICE_CHANGE_THRESHOLD`      | 2.0 %   | Threshold for significant move alert      |
+| `RELEVANCE_HIGH`              | 6       | Score threshold for high-relevance news   |
+| `RELEVANCE_MEDIUM`            | 3       | Score threshold for medium-relevance news |
+| `STORAGE_FULL_DETAIL_DAYS`    | 7       | Days to retain full snapshots             |
+| `STORAGE_REDUCED_DETAIL_DAYS` | 30      | Days to retain reduced snapshots          |
+| `STORAGE_MAX_DAYS`            | 60      | Days before snapshot deletion             |
 
 ### Signal Thresholds
 
-| Label | Score Range |
-|---|---|
-| Strong Bullish | >= 6.0 |
-| Bullish | >= 3.0 |
-| Slightly Bullish | >= 1.0 |
-| Neutral | -1.0 to 1.0 |
-| Slightly Bearish | >= -3.0 |
-| Bearish | >= -6.0 |
-| Strong Bearish | < -6.0 |
+| Label            | Score Range |
+| ---------------- | ----------- |
+| Strong Bullish   | >= 6.0      |
+| Bullish          | >= 3.0      |
+| Slightly Bullish | >= 1.0      |
+| Neutral          | -1.0 to 1.0 |
+| Slightly Bearish | >= -3.0     |
+| Bearish          | >= -6.0     |
+| Strong Bearish   | < -6.0      |
 
 ## Signal Interpretation
 
@@ -340,26 +340,26 @@ Signal scores are a compact summary of price action, momentum, sentiment, and co
 Use the ranges below as a quick interpretation guide when scanning assets in the dashboard:
 
 | Score Range | Interpretation |
-|---|---|
-| +6 to +10 | Strong Bullish |
-| +2 to +6 | Bullish |
-| -2 to +2 | Neutral |
-| -6 to -2 | Bearish |
-| -10 to -6 | Strong Bearish |
+| ----------- | -------------- |
+| +6 to +10   | Strong Bullish |
+| +2 to +6    | Bullish        |
+| -2 to +2    | Neutral        |
+| -6 to -2    | Bearish        |
+| -10 to -6   | Strong Bearish |
 
 These ranges are intentionally broad so the label remains readable even as individual
 signal components shift over time.
 
 ### Per-Asset-Class Signal Weights
 
-| Component | Crypto | Tech Stocks | Commodities | Indices |
-|---|---|---|---|---|
-| Trend | 1.2x | 1.2x | 1.3x | 1.5x |
-| Momentum | 1.8x | 1.0x | 1.0x | 1.2x |
-| RSI | 0.8x | 1.0x | 0.8x | 0.5x |
-| Sentiment | 1.2x | 1.6x | 1.2x | 1.0x |
-| Trend Strength | 1.2x | 1.0x | 1.0x | 1.2x |
-| Context | 0.5x | 1.2x | 1.2x | 1.5x |
+| Component      | Crypto | Tech Stocks | Commodities | Indices |
+| -------------- | ------ | ----------- | ----------- | ------- |
+| Trend          | 1.2x   | 1.2x        | 1.3x        | 1.5x    |
+| Momentum       | 1.8x   | 1.0x        | 1.0x        | 1.2x    |
+| RSI            | 0.8x   | 1.0x        | 0.8x        | 0.5x    |
+| Sentiment      | 1.2x   | 1.6x        | 1.2x        | 1.0x    |
+| Trend Strength | 1.2x   | 1.0x        | 1.0x        | 1.2x    |
+| Context        | 0.5x   | 1.2x        | 1.2x        | 1.5x    |
 
 ---
 
@@ -377,11 +377,11 @@ market_data/
 
 ### Retention Tiers
 
-| Age | Fields Retained |
-|---|---|
-| 0 – 7 days | Full snapshot including top 5 headlines |
+| Age         | Fields Retained                                                                            |
+| ----------- | ------------------------------------------------------------------------------------------ |
+| 0 – 7 days  | Full snapshot including top 5 headlines                                                    |
 | 8 – 30 days | Reduced: price, change_1d, signal_score, signal_label, trend, rsi, roc_10d, trend_strength |
-| > 60 days | Deleted automatically after each scan |
+| > 60 days   | Deleted automatically after each scan                                                      |
 
 ---
 
@@ -426,8 +426,16 @@ pulse_engine_1/
       __init__.py
       dashboard.py               Streamlit dashboard controller
       scan.py                    Full-market batch scan pipeline
-      components.py              Reusable UI rendering functions
-      styles.py                  CSS theming for the dashboard
+      components/                Reusable UI rendering functions, split by concern
+        __init__.py              Public re-exports (__all__ is the compat contract)
+        sidebar.py               Logo header, signal legend, top-mover rows
+        scan_status.py           Scan freshness: sidebar line and main-panel banner
+        snapshot.py              Signal card, why-box, snapshot metric cards
+        news.py                  Article cards and clustered news section
+        analysis.py              Charts, signal breakdown, backtest, history
+        overview.py              Market heatmap and category overview table
+      styles.py                  Loads dashboard.css into Streamlit
+      dashboard.css              Retro Financial Broadsheet stylesheet
       data.py                    Cached data loaders and staleness helpers
     web/                         Restricted stateless demo surface
       __init__.py
@@ -450,6 +458,7 @@ pulse_engine_1/
     test_storage_and_scan.py     Storage round-trip, retention, dry-run scan, backtest
     test_optimisation.py         Optimisation-related tests
     test_web_surface.py          Web demo surface tests
+    test_legacy_interface.py     Contract tests for the legacy top-level import paths
     MAINTENANCE.md               Guide for updating the test suite
   Docs/
     code_flow.md                 Detailed execution flow diagrams
@@ -482,15 +491,15 @@ pulse_engine_1/
 
 ## Documentation
 
-| Document | Description |
-|---|---|
-| [Docs/code_flow.md](Docs/code_flow.md) | Step-by-step execution flow for every pipeline with Mermaid diagrams |
+| Document                                       | Description                                                           |
+| ---------------------------------------------- | --------------------------------------------------------------------- |
+| [Docs/code_flow.md](Docs/code_flow.md)         | Step-by-step execution flow for every pipeline with Mermaid diagrams  |
 | [Docs/variable_list.md](Docs/variable_list.md) | Complete reference of all variables, constants, and return structures |
-| [CONTRIBUTING.md](CONTRIBUTING.md) | How to report issues, propose changes, and submit pull requests |
-| [Docs/CONTRIBUTORS.md](Docs/CONTRIBUTORS.md) | All project contributors |
-| [Docs/DISCLAIMER.md](Docs/DISCLAIMER.md) | Financial, legal, and data accuracy disclaimers |
-| [Docs/CHANGELOG.md](Docs/CHANGELOG.md) | All notable changes by version |
-| [Docs/ROADMAP.md](Docs/ROADMAP.md) | Project direction, milestones, and contributor lanes |
+| [CONTRIBUTING.md](CONTRIBUTING.md)             | How to report issues, propose changes, and submit pull requests       |
+| [Docs/CONTRIBUTORS.md](Docs/CONTRIBUTORS.md)   | All project contributors                                              |
+| [Docs/DISCLAIMER.md](Docs/DISCLAIMER.md)       | Financial, legal, and data accuracy disclaimers                       |
+| [Docs/CHANGELOG.md](Docs/CHANGELOG.md)         | All notable changes by version                                        |
+| [Docs/ROADMAP.md](Docs/ROADMAP.md)             | Project direction, milestones, and contributor lanes                  |
 
 ---
 

@@ -17,6 +17,7 @@ import math
 import tempfile
 import threading
 import time
+from typing import Any
 
 import pandas as pd
 import yfinance as yf
@@ -147,11 +148,13 @@ def compute_price_metrics(df: pd.DataFrame | None) -> dict:
     if df is None or df.empty:
         return {}
 
-    close = df["Close"]
-    if isinstance(close, pd.DataFrame):
-        close = close.iloc[:, 0]
-    if not isinstance(close, pd.Series):
-        close = pd.Series([float(close)])
+    raw_close: Any = df["Close"]
+    if isinstance(raw_close, pd.DataFrame):
+        close: pd.Series = raw_close.iloc[:, 0]
+    elif isinstance(raw_close, pd.Series):
+        close = raw_close
+    else:
+        close = pd.Series([float(raw_close)])
 
     latest = float(close.iloc[-1])
     if not math.isfinite(latest):
@@ -212,9 +215,10 @@ def compute_momentum_metrics(df: pd.DataFrame | None) -> dict:
     if df is None or df.empty:
         return defaults
 
-    close = df["Close"]
-    if isinstance(close, pd.DataFrame):
-        close = close.iloc[:, 0]
+    raw_close: Any = df["Close"]
+    close: pd.Series = (
+        raw_close.iloc[:, 0] if isinstance(raw_close, pd.DataFrame) else raw_close
+    )
     close = close.dropna()
 
     if len(close) < 2:
@@ -255,10 +259,12 @@ def compute_rsi(series: pd.Series, period: int = 14) -> float:
     delta    = series.diff().dropna()
     gain     = delta.clip(lower=0)
     loss     = -delta.clip(upper=0)
-    avg_gain = gain.rolling(period).mean().iloc[-1]
-    avg_loss = loss.rolling(period).mean().iloc[-1]
-    if pd.isna(avg_gain) or pd.isna(avg_loss):
+    if pd.isna(gain.rolling(period).mean().iloc[-1]) or pd.isna(
+        loss.rolling(period).mean().iloc[-1]
+    ):
         return 50.0
+    avg_gain = float(gain.rolling(period).mean().iloc[-1])
+    avg_loss = float(loss.rolling(period).mean().iloc[-1])
     if avg_loss == 0:
         return 100.0
     rs = avg_gain / avg_loss

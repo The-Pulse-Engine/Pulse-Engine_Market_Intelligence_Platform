@@ -10,4 +10,4 @@ Architectural layers:
     web        - Restricted Streamlit demo (no file I/O, no local model inference)
 """
 
-__version__ = "0.3.0"
+__version__ = "0.3.2"

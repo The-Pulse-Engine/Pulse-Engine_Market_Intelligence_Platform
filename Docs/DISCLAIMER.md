@@ -69,19 +69,19 @@ This limitation applies regardless of whether the damages are based on contract,
 
 This software fetches data from the following third-party sources:
 
-| Source | Type | License / Terms |
-|---|---|---|
-| Yahoo Finance | Price history (OHLCV) | Yahoo Finance Terms of Service |
-| Reuters | News RSS feed | Reuters Terms of Use |
-| CNBC | News RSS feed | CNBC Terms of Service |
-| BBC Business | News RSS feed | BBC Terms of Use |
-| MarketWatch | News RSS feed | MarketWatch Terms of Service |
-| CoinDesk | News RSS feed | CoinDesk Terms of Use |
-| Al Jazeera | News RSS feed | Al Jazeera Terms of Use |
-| Google News | News RSS feed | Google Terms of Service |
-| NPR Business | News RSS feed | NPR Terms of Service |
-| The Economist | News RSS feed | The Economist Terms of Use |
-| Yahoo Finance (news) | News RSS feed | Yahoo Finance Terms of Service |
+| Source               | Type                  | License / Terms                |
+| -------------------- | --------------------- | ------------------------------ |
+| Yahoo Finance        | Price history (OHLCV) | Yahoo Finance Terms of Service |
+| Reuters              | News RSS feed         | Reuters Terms of Use           |
+| CNBC                 | News RSS feed         | CNBC Terms of Service          |
+| BBC Business         | News RSS feed         | BBC Terms of Use               |
+| MarketWatch          | News RSS feed         | MarketWatch Terms of Service   |
+| CoinDesk             | News RSS feed         | CoinDesk Terms of Use          |
+| Al Jazeera           | News RSS feed         | Al Jazeera Terms of Use        |
+| Google News          | News RSS feed         | Google Terms of Service        |
+| NPR Business         | News RSS feed         | NPR Terms of Service           |
+| The Economist        | News RSS feed         | The Economist Terms of Use     |
+| Yahoo Finance (news) | News RSS feed         | Yahoo Finance Terms of Service |
 
 The authors of this software are not affiliated with any of the above providers. Use of their data feeds is subject to their respective terms of service. It is your responsibility to ensure your use of this software complies with the terms of service of all third-party data providers.
 
@@ -101,7 +101,7 @@ This software is made available internationally. Financial regulations vary by j
 
 ## 9. Software License
 
-This disclaimer is provided in addition to, and does not replace, the limitations and exclusions set out in the [MIT License](LICENSE) under which this software is distributed.
+This disclaimer is provided in addition to, and does not replace, the limitations and exclusions set out in the [MIT License](../LICENSE) under which this software is distributed.
 
 ---
 

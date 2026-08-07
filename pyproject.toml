@@ -1,18 +1,87 @@
 [build-system]
 requires = ["setuptools>=70"]
-build-backend = "setuptools.backends.legacy:build"
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "pulseengine"
-version = "0.3.2"
+dynamic = ["version"]
 requires-python = ">=3.11"
+# Direct imports only — everything else in requirements.txt is transitive.
+# Lower bounds here, exact tested pins in requirements.txt: this file says what
+# the code needs to import, that file reproduces the environment CI runs.
+dependencies = [
+    "feedparser>=6.0",
+    "pandas>=2.0",
+    "plotly>=6.0",
+    "streamlit>=1.30",
+    "vaderSentiment>=3.3",
+    "yfinance>=1.0",
+]
+
+[project.optional-dependencies]
+# `pip install -e ".[dev]"` gets the full toolchain. Declared here as well as in
+# requirements-dev.txt because tooling reads project metadata, not loose
+# requirements files: without this, IDEs flag every `import pytest` in tests/ as
+# an undeclared dependency. requirements-dev.txt keeps the exact pins.
+dev = [
+    "mypy>=1.13",
+    # Upper bound is deliberate: stubs for a newer pandas major describe an API
+    # this project does not run. Keep in step with the pandas pin.
+    "pandas-stubs>=2.3,<3",
+    "pytest>=7.4",
+    "pytest-mock>=3.12",
+    "ruff>=0.6",
+]
+
+[tool.setuptools.dynamic]
+# Single source of truth: pulseengine/__init__.py. Keeps the packaged version
+# and the importable __version__ attribute from drifting apart.
+version = { attr = "pulseengine.__version__" }
+
+[tool.setuptools]
+# Listed explicitly: flat-layout auto-discovery cannot choose between the
+# canonical `pulseengine` package and the legacy top-level compat shims
+# (app/, config/, dashboard/, src/, storage/), which are a documented interface.
+packages = [
+    "app",
+    "config",
+    "dashboard",
+    "pulseengine",
+    "pulseengine.core",
+    "pulseengine.local",
+    "pulseengine.local.components",
+    "pulseengine.web",
+    "src",
+    "storage",
+]
+
+[tool.setuptools.package-data]
+# dashboard.css is read at runtime via importlib.resources; without this it
+# would be absent from the wheel and the dashboard would render unstyled.
+"pulseengine.local" = ["*.css"]
 
 [tool.ruff]
 line-length = 99
+target-version = "py311"
 
 [tool.ruff.lint]
-select = ["E", "F", "W", "I", "UP"]
-ignore = ["E501"]
+# B/C4/SIM/RET/RUF added on top of the original E/F/W/I/UP.
+# Deliberately NOT enabled:
+#   PL  — 99 PLR2004 magic-value hits in what is largely a config and dashboard
+#         codebase; satisfying it means inventing constants nobody reads.
+#   ARG — Streamlit callbacks and the compat shims legitimately take arguments
+#         they do not use; the signature is the contract.
+#   PTH, N — churn against working stdlib calls and established naming.
+select = ["E", "F", "W", "I", "UP", "B", "C4", "SIM", "RET", "RUF"]
+# E501 is no longer ignored: line-length was already set to 99, so ignoring the
+# rule that enforces it left the setting decorative.
+ignore = [
+    # The box-drawing section headers (# ── … ─) and em-dashes are house style
+    # used in every file, and these rules only flag them as visually ambiguous.
+    "RUF001",
+    "RUF002",
+    "RUF003",
+]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["S101"]

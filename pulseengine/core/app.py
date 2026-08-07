@@ -18,17 +18,16 @@ pulseengine/core/explanation.
 from __future__ import annotations
 
 import logging
-from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from typing import Any
 
 from .config import (
     LOOKBACK_DAYS,
     PRICE_FETCH_WORKERS,
+    SNAPSHOT_LOAD_LIMIT,
     TRACKED_ASSETS,
 )
 from .context import analyse_market_context
-from .errors import DataFetchError, _build_error_payload
+from .errors import DataFetchError, build_error_payload
 from .explanation import build_explanation
 from .news import cluster_articles, fetch_news_articles
 from .price import (
@@ -41,17 +40,34 @@ from .signals import compute_signal_score, correlate_news
 log = logging.getLogger(__name__)
 
 
-_save_snapshot: Callable[..., Any]
-_get_historical_features: Callable[..., Any]
-
+# The fallbacks mirror the real signatures exactly. A catch-all (*_a, **_kw)
+# would accept calls the real functions reject, so a bad call site would work
+# only on machines where storage failed to import. The parameters are unused on
+# purpose: the signature is the contract.
 try:
     from .storage import get_historical_features as _get_historical_features
     from .storage import save_snapshot as _save_snapshot
     STORAGE_AVAILABLE = True
 except ImportError:
     STORAGE_AVAILABLE = False
-    def _save_snapshot(*_a: Any, **_kw: Any) -> None: pass           # noqa: E731
-    def _get_historical_features(*_a: Any, **_kw: Any) -> dict: return {}  # noqa: E731
+
+    def _save_snapshot(
+        asset_name: str,
+        metrics: dict,
+        momentum: dict,
+        signal: dict,
+        top_headlines: list[dict],
+        market_ctx: dict | None = None,
+    ) -> None:
+        _ = asset_name, metrics, momentum, signal, top_headlines, market_ctx
+
+    def _get_historical_features(
+        asset_name: str,
+        limit: int = SNAPSHOT_LOAD_LIMIT,
+        strict: bool = False,
+    ) -> dict:
+        _ = asset_name, limit, strict
+        return {}
 
 
 # ── Single-asset analysis ─────────────────────────────────────────────────────
@@ -91,7 +107,7 @@ def analyse_asset(
     try:
         history = fetch_price_history(ticker)
     except DataFetchError as exc:
-        fetch_error = _build_error_payload(
+        fetch_error = build_error_payload(
             "price_history",
             exc,
             asset=asset_name,
@@ -249,7 +265,7 @@ def run_full_scan() -> dict:
                 results.setdefault(cat, {})[name] = res
             except Exception as exc:
                 cat, name = futures[future]
-                error = _build_error_payload(
+                error = build_error_payload(
                     "full_scan",
                     exc,
                     asset=name,
@@ -264,7 +280,12 @@ def run_full_scan() -> dict:
                     "news": [],
                     "clusters": {},
                     "market_ctx": None,
-                    "signal": {"score": None, "label": "Error", "components": {}, "raw_components": {}},
+                    "signal": {
+                        "score": None,
+                        "label": "Error",
+                        "components": {},
+                        "raw_components": {},
+                    },
                     "explanation": {
                         "verdict": "",
                         "factors": [],

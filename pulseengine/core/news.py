@@ -11,7 +11,8 @@ Pipeline role (steps 2 and 2.5 of the full engine):
   - generate_keywords     : auto-build a keyword list for any ticker from Yahoo Finance metadata
 
 This module does NOT score sentiment or match articles to assets — those
-responsibilities belong to pulseengine/core/sentiment.py and pulseengine/core/signals.py respectively.
+responsibilities belong to pulseengine/core/sentiment.py and
+pulseengine/core/signals.py respectively.
 """
 
 from __future__ import annotations
@@ -157,7 +158,7 @@ def deduplicate_articles(articles: list[dict]) -> list[dict]:
     deduped: list[dict] = []
 
     for article in articles:
-        tokens = set(_normalize_title(article["title"]).split())
+        tokens = set(normalize_title(article["title"]).split())
         if not tokens:
             deduped.append(article)
             continue
@@ -175,7 +176,7 @@ def deduplicate_articles(articles: list[dict]) -> list[dict]:
                     candidates.append(prev_set)
 
         is_dup = any(
-            _jaccard(tokens, prev) >= DEDUP_SIMILARITY_THRESHOLD
+            jaccard(tokens, prev) >= DEDUP_SIMILARITY_THRESHOLD
             for prev in candidates
         )
         if not is_dup:
@@ -373,11 +374,11 @@ def _strip_html(raw: str) -> str:
     return _RE_STRIP_HTML.sub("", raw).strip()[:600]
 
 
-def _normalize_title(text: str) -> str:
+def normalize_title(text: str) -> str:
     return _RE_NORMALIZE_TITLE.sub("", text.lower())
 
 
-def _jaccard(a: set, b: set) -> float:
+def jaccard(a: set, b: set) -> float:
     if not a or not b:
         return 0.0
     return len(a & b) / len(a | b)

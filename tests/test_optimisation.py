@@ -26,9 +26,8 @@ import textwrap
 
 import pytest
 
-from pulseengine.core.news import deduplicate_articles, _jaccard, _normalize_title
 from pulseengine.core.config import DEDUP_SIMILARITY_THRESHOLD
-
+from pulseengine.core.news import deduplicate_articles, jaccard, normalize_title
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -38,7 +37,7 @@ def _make_article(title: str, hours_old: int = 1) -> dict:
         "summary":   "",
         "link":      "https://example.com",
         "source":    "Test",
-        "published": dt.datetime.now(dt.timezone.utc) - dt.timedelta(hours=hours_old),
+        "published": dt.datetime.now(dt.UTC) - dt.timedelta(hours=hours_old),
     }
 
 
@@ -47,11 +46,11 @@ def _dedup_naive(articles: list[dict]) -> list[dict]:
     seen: list[set] = []
     deduped: list[dict] = []
     for a in articles:
-        tokens = set(_normalize_title(a["title"]).split())
+        tokens = set(normalize_title(a["title"]).split())
         if not tokens:
             deduped.append(a)
             continue
-        if not any(_jaccard(tokens, p) >= DEDUP_SIMILARITY_THRESHOLD for p in seen):
+        if not any(jaccard(tokens, p) >= DEDUP_SIMILARITY_THRESHOLD for p in seen):
             seen.append(tokens)
             deduped.append(a)
     return deduped
@@ -132,7 +131,11 @@ def test_dedup_distinct_domain_vocabularies_all_kept():
         "mixed near-dups and exact dups",
     ),
     (
-        [_make_article("Apple earnings"), _make_article("Oil supply shock"), _make_article("VIX spikes")],
+        [
+            _make_article("Apple earnings"),
+            _make_article("Oil supply shock"),
+            _make_article("VIX spikes"),
+        ],
         "all unique single-event titles",
     ),
     (

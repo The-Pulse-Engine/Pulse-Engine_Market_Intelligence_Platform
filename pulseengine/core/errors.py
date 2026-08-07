@@ -1,4 +1,8 @@
-"""pulseengine/core/errors.py — Shared exception types and error utilities for the data pipeline."""
+"""
+pulseengine/core/errors.py — Shared exception types and error utilities.
+
+Raised throughout the data pipeline.
+"""
 
 from __future__ import annotations
 
@@ -9,7 +13,7 @@ def _snake_case(name: str) -> str:
     return re.sub(r"(?<!^)(?=[A-Z])", "_", name).lower()
 
 
-def _build_error_payload(stage: str, exc: Exception, **context) -> dict:
+def build_error_payload(stage: str, exc: Exception, **context) -> dict:
     payload = {
         "type": _snake_case(exc.__class__.__name__),
         "exception": exc.__class__.__name__,

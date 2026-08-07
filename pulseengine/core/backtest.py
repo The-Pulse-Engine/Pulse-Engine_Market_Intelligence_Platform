@@ -64,7 +64,8 @@ def evaluate_signal_accuracy(
         )
 
     if len(snapshots) < 2:
-        return _empty_result("Insufficient historical data for backtesting.")  # not enough days to embarrass ourselves
+        # not enough days to embarrass ourselves
+        return _empty_result("Insufficient historical data for backtesting.")
 
     # Sort ascending so consecutive pairs (day N, day N+1) are adjacent
     ordered = sorted(snapshots, key=lambda s: s.get("date", ""))
@@ -81,8 +82,8 @@ def evaluate_signal_accuracy(
         # Skip pairs separated by more than 4 calendar days (weekend + holiday).
         # A larger gap means the "next-day" prediction spans multiple sessions,
         # which inflates or deflates apparent accuracy.
-        curr_date_str = curr.get("date")
-        nxt_date_str  = nxt.get("date")
+        curr_date_str: str | None = curr.get("date")
+        nxt_date_str:  str | None = nxt.get("date")
         if not curr_date_str or not nxt_date_str:
             continue
         try:
@@ -93,9 +94,9 @@ def evaluate_signal_accuracy(
         except (ValueError, TypeError):
             continue  # malformed date — skip the pair entirely, don't evaluate it
 
-        sig_score  = curr.get("signal_score")
-        curr_price = curr.get("price")
-        next_price = nxt.get("price")
+        sig_score:  float | None = curr.get("signal_score")
+        curr_price: float | None = curr.get("price")
+        next_price: float | None = nxt.get("price")
 
         if sig_score is None or curr_price is None or next_price is None:
             continue
@@ -132,7 +133,8 @@ def evaluate_signal_accuracy(
     hit_rate  = hits / evaluated
     avg_score = sum(abs(s) for s in scores) / len(scores)
     pct_str   = f"{hit_rate * 100:.1f}%"
-    # "strong" means we were right 65%+ of the time. a coin is 50%. we're slightly better than a coin
+    # "strong" means we were right 65%+ of the time. a coin is 50%. we're slightly better than a
+    # coin
     quality   = "strong" if hit_rate >= 0.65 else "moderate" if hit_rate >= 0.50 else "weak"
 
     message = (

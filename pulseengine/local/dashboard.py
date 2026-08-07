@@ -132,6 +132,17 @@ def _get_scan_state() -> dict:
     }
 
 
+def _bump_scan_refresh_epoch() -> None:
+    """Invalidate scan-derived cached data by advancing the refresh epoch.
+
+    Three call sites previously inlined this, one of them without the int()
+    coercion, so a non-numeric session value would have raised there and not
+    in the others.
+    """
+    current = int(st.session_state.get("_scan_refresh_epoch", 0))
+    st.session_state["_scan_refresh_epoch"] = current + 1
+
+
 def _scan_summary_mtime() -> float:
     """Return mtime of the scan summary file, or 0.0 when absent."""
     p = Path(STORAGE_DIR) / "_scan_summary.json.gz"
@@ -196,7 +207,7 @@ def _poll_scan_completion() -> None:
         and not st.session_state.get("_scan_rerun_done", False)
     ):
         st.session_state["_scan_rerun_done"] = True
-        st.session_state["_scan_refresh_epoch"] = int(st.session_state.get("_scan_refresh_epoch", 0)) + 1
+        _bump_scan_refresh_epoch()
         st.rerun(scope="app")
 
 
@@ -258,7 +269,7 @@ if (
     and not st.session_state.get("_scan_rerun_done", False)
 ):
     st.session_state["_scan_rerun_done"] = True
-    st.session_state["_scan_refresh_epoch"] = int(st.session_state.get("_scan_refresh_epoch", 0)) + 1
+    _bump_scan_refresh_epoch()
     st.rerun()
 
 
@@ -266,17 +277,19 @@ if (
 # Load scan summary once per run — needed for scan status display and main content.
 _scan_refresh_epoch = int(st.session_state.get("_scan_refresh_epoch", 0))
 _summary         = cached_scan_summary(_scan_refresh_epoch)
-_summary_results = _summary.get("results", {})
-_summary_date    = _summary.get("scan_date", "")
+_summary_results: dict = _summary.get("results", {})
+_summary_date:    str  = _summary.get("scan_date", "")
 
 
 def _build_snapshot_price_cache(summary_results: dict) -> tuple[tuple[str, float], ...]:
     """Build a hashable {ticker: change_1d} cache from the latest snapshot."""
     cache_items: list[tuple[str, float]] = []
     for category, assets in TRACKED_ASSETS.items():
-        category_rows = summary_results.get(category, {}) if isinstance(summary_results, dict) else {}
+        category_rows = (
+            summary_results.get(category, {}) if isinstance(summary_results, dict) else {}
+        )
         for asset_name, sym in assets.items():
-            change_1d = category_rows.get(asset_name, {}).get("change_1d")
+            change_1d: float | None = category_rows.get(asset_name, {}).get("change_1d")
             if change_1d is not None:
                 cache_items.append((sym, float(change_1d)))
     return tuple(cache_items)
@@ -400,7 +413,11 @@ st.sidebar.markdown("---")
 with st.sidebar.expander("Export & Offline (Coming in v0.5)", expanded=False):
     st.button("Export to CSV", disabled=True, help="Coming in v0.5")
     st.button("Export to PDF", disabled=True, help="Coming in v0.5")
-    st.button("Enable Offline Mode", disabled=True, help="Coming in v0.5 — caches data for offline use")
+    st.button(
+        "Enable Offline Mode",
+        disabled=True,
+        help="Coming in v0.5 — caches data for offline use",
+    )
     st.caption("These features are planned for v0.5. Local Intelligence update.")
 
 st.sidebar.markdown("---")
@@ -411,7 +428,7 @@ st.sidebar.caption(f"Sentiment engine: {'VADER' if VADER_AVAILABLE else 'Keyword
 st.sidebar.caption(f"Page rendered: {dt.datetime.now().strftime('%H:%M:%S')}")
 
 if st.sidebar.button("Refresh Data"):
-    st.session_state["_scan_refresh_epoch"] = st.session_state.get("_scan_refresh_epoch", 0) + 1
+    _bump_scan_refresh_epoch()
     st.session_state.pop("_stale_refresh_triggered", None)
     st.rerun()
 
@@ -424,12 +441,15 @@ ui.render_signal_legend_sidebar()
 if st.sidebar.button(
     "Run full scan now",
     disabled=_scan_state["running"],
-    help=f"Scans all {sum(len(v) for v in TRACKED_ASSETS.values())} tracked assets and saves snapshots",
+    help=(
+        f"Scans all {sum(len(v) for v in TRACKED_ASSETS.values())} tracked assets "
+        "and saves snapshots"
+    ),
 ):
     if not _scan_state["running"] and _scan_state["lock"].acquire(blocking=False):
         _scan_state["last_started"] = time.time()
         _scan_state["running"]      = True
-        st.session_state["_scan_refresh_epoch"] = st.session_state.get("_scan_refresh_epoch", 0) + 1
+        _bump_scan_refresh_epoch()
         st.session_state["_scan_rerun_done"] = False
         threading.Thread(
             target=_run_background_scan,
@@ -442,7 +462,7 @@ if st.sidebar.button(
 st.sidebar.markdown("---")
 st.sidebar.markdown("**Top Movers — 24h**")
 with st.sidebar:
-    _top_movers = _summary.get("top_movers", {})
+    _top_movers: dict = _summary.get("top_movers", {})
     ui.render_mover_rows(
         _top_movers.get("gainers", []),
         _top_movers.get("losers", []),
@@ -474,7 +494,7 @@ st.button(
 
 _stale = is_data_stale(_summary)
 if _stale:
-    _scan_time = _summary.get("scan_time", "")
+    _scan_time: str = _summary.get("scan_time", "")
     _age_str = ""
     if _scan_time:
         try:
@@ -509,7 +529,7 @@ snap = (
     if selected_category in TRACKED_ASSETS
     else {}
 )
-chg_1d         = snap.get("change_1d")
+chg_1d: float | None = snap.get("change_1d")
 is_significant = chg_1d is not None and abs(chg_1d) >= PRICE_CHANGE_THRESHOLD
 
 _live_loaded = st.session_state.get("_live_for") == ticker
@@ -598,7 +618,7 @@ ui.render_heatmap(_summary, _summary_date)
 st.markdown("---")
 with st.expander("Category Overview", expanded=False):
     if selected_category in TRACKED_ASSETS:
-        _cat_data = _summary.get("category_rows", {}).get(selected_category, {})
+        _cat_data: dict = _summary.get("category_rows", {}).get(selected_category, {})
         ui.render_category_overview(_cat_data, _summary_date)
     else:
         st.info("Category overview is only available for the 24 tracked assets.")

@@ -16,4 +16,4 @@ _root = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(_root))
 
 _canonical = _root / "pulseengine" / "local" / "dashboard.py"
-exec(compile(_canonical.read_text(encoding="utf-8"), str(_canonical), "exec"))  # noqa: S102
+exec(compile(_canonical.read_text(encoding="utf-8"), str(_canonical), "exec"))

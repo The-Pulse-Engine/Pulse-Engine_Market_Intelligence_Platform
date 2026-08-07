@@ -5,7 +5,6 @@ from __future__ import annotations
 import ast
 from pathlib import Path
 
-
 WEB_DASHBOARD = Path(__file__).resolve().parents[1] / "pulseengine" / "web" / "dashboard.py"
 WEB_INIT = Path(__file__).resolve().parents[1] / "pulseengine" / "web" / "__init__.py"
 

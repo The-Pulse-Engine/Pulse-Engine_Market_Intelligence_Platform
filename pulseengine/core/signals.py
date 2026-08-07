@@ -217,7 +217,7 @@ def compute_signal_score(
     # 6. Market context alignment
     ctx_score = 0.0
     if market_ctx:
-        chg_1d = metrics.get("change_1d")
+        chg_1d: float | None = metrics.get("change_1d")
         if chg_1d is not None:
             direction = 1.0 if chg_1d > 0 else -1.0
             if market_ctx.get("is_market_wide"):

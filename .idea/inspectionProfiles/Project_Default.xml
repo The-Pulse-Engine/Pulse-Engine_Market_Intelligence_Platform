@@ -1,0 +1,53 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+
+    <!--
+      Four inspections are disabled. Each is something the repository cannot
+      fix in source, with the evidence recorded. Everything the IDE reported
+      that COULD be fixed was fixed instead of suppressed:
+
+        unused imports        the star-import shims became explicit
+                              `from X import Y as Y` re-exports
+        no generic font name  every use site now names its generic fallback
+        protected member      jaccard, normalize_title, detect_contradictions
+                              and build_error_payload were made public, since
+                              other modules and the tests already used them
+        unused local          the optional-import fallbacks `del` their
+                              parameters, keeping the signature contract
+        unused CSS symbol     four genuinely dead rules (.hist-box, .hist-label,
+                              .bt-hit, .bt-miss) were deleted
+        incorrect type        locals read out of untyped dicts are annotated,
+                              so the `is not None` guards actually narrow
+
+      On "incorrect type" specifically: the root cause was dict.get() returning
+      Any | None, which gave the existing guards nothing to narrow and made
+      every downstream use look wrong. The fix is annotations at the point of
+      read (chg_1d: float | None = metrics.get(...)), which are erased at
+      runtime — no behaviour change, the guards simply became checkable. That
+      inspection is therefore back ON rather than suppressed.
+
+      What remains, and why source cannot fix it:
+
+      CssUnusedSymbol — the 37 remaining selectors are all emitted at runtime.
+        Some come from Streamlit's own DOM (.stApp, .stAlert), the rest from
+        class names built in Python f-strings; _SIGNAL_CLASS_MAP in
+        components/snapshot.py is the clearest example. Each was checked
+        against the Python sources before disabling; the four that turned out
+        to be genuinely dead were removed rather than hidden.
+
+      UndefinedParamsPresent — flags `python-version` and `cache` on
+        actions/setup-python@v7 in .github/workflows/ci.yml. Both are valid;
+        the bundled GitHub Actions schema is behind the action version. There
+        is nothing to change in the workflow.
+
+      PyPackageRequirements — reads requirements.txt only. The dev toolchain is
+        declared in pyproject.toml under [project.optional-dependencies] and
+        pinned in requirements-dev.txt, so `import pytest` in tests/ is
+        properly declared; this inspection just cannot see either file.
+    -->
+    <inspection_tool class="CssUnusedSymbol" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="UndefinedParamsPresent" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="PyPackageRequirementsInspection" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
+  </profile>
+</component>

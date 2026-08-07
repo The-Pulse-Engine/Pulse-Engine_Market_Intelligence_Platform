@@ -12,6 +12,7 @@ Retention tiers:
 
 from __future__ import annotations
 
+import contextlib
 import datetime as dt
 import gzip
 import json
@@ -82,7 +83,9 @@ def _snapshot_path(asset_name: str, date: dt.date) -> Path:
     try:
         candidate.resolve().relative_to(_storage_path.resolve())
     except ValueError:
-        raise StorageError(f"Path traversal blocked for asset name: {asset_name!r}")
+        # relative_to raising just means "outside the root"; the domain error is
+        # the informative one, so the original is suppressed rather than chained.
+        raise StorageError(f"Path traversal blocked for asset name: {asset_name!r}") from None
     return candidate
 
 
@@ -105,22 +108,23 @@ def _write_gz(path: Path, data: dict) -> None:
     # uuid suffix means two concurrent writers for the same asset never clobber each other's draft.
     # corruption is for politicians, not our files
     raw = json.dumps(data, ensure_ascii=False).encode("utf-8")
-    uid = uuid.uuid4().hex[:12]  # 12 hex chars — astronomically unlikely to collide. unlike my trades
+    # 12 hex chars — astronomically unlikely to collide. unlike my trades
+    uid = uuid.uuid4().hex[:12]
     tmp = path.with_name(f"{path.stem}.{uid}.tmp")
     try:
-        os.makedirs(path.parent, exist_ok=True)  # directory must exist. no excuses. no FileNotFoundError
+        # directory must exist. no excuses. no FileNotFoundError
+        os.makedirs(path.parent, exist_ok=True)
         with gzip.open(tmp, "wb", compresslevel=6) as fh:
             fh.write(raw)
         if tmp.exists():  # belt AND suspenders — only replace if the temp actually landed
-            os.replace(tmp, path)  # atomic on POSIX; best-effort on Windows. still better than nothing
+            # atomic on POSIX; best-effort on Windows. still better than nothing
+            os.replace(tmp, path)
         else:
             raise FileNotFoundError(f"Temp file vanished before replace: {tmp}")
     except Exception as _write_exc:
         log.error("Snapshot write failed for %s: %s", path.name, _write_exc)
-        try:
+        with contextlib.suppress(OSError):
             tmp.unlink(missing_ok=True)  # clean up the evidence before we raise
-        except OSError:
-            pass
         raise
 
 
@@ -164,10 +168,8 @@ def _snapshot_unchanged(path: Path, new_data: dict) -> bool:
     # signal score: only skip if delta is noise
     es = float(existing.get("signal_score") or 0.0)
     ns = float(new_data.get("signal_score") or 0.0)
-    if abs(es - ns) > _SCORE_WRITE_THRESHOLD:
-        return False
-
-    return True  # nothing meaningful changed. we are too lazy to write. and that is correct
+    # nothing meaningful changed. we are too lazy to write. and that is correct
+    return abs(es - ns) <= _SCORE_WRITE_THRESHOLD
 
 
 def save_snapshot(
@@ -379,8 +381,8 @@ def get_historical_features(
     compare_fields = ["price", "signal_score", "rsi", "roc_10d", "trend_strength"]
     today_vs_yesterday: dict[str, dict] = {}
     for field in compare_fields:
-        t_val = today_snap.get(field)
-        y_val = yesterday_snap.get(field)
+        t_val: float | str | None = today_snap.get(field)
+        y_val: float | str | None = yesterday_snap.get(field)
         if t_val is not None and y_val is not None:
             try:
                 t_float = float(t_val)

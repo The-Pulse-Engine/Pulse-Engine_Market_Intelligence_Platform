@@ -38,11 +38,18 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements-dev.txt
 
+      # Whole repo, not just pulseengine/: a scope of `pulseengine/` alone let a
+      # Python 3.11 syntax error sit in install.py and 15 lint errors sit in
+      # tests/ and app/ without ever failing CI.
       - name: Lint with ruff
-        run: ruff check pulseengine/
+        run: ruff check .
 
+      # Whole package, not just core/: local/ and web/ were unchecked, which is
+      # how three mismatched optional-import fallback stubs went unnoticed.
+      # tests/ and the compat shims stay out — the shims exist to be
+      # dynamically re-exported and fight mypy for no gain.
       - name: Type-check with mypy
-        run: mypy pulseengine/core/
+        run: mypy pulseengine/
 
   tests:
     name: Tests (py${{ matrix.python-version }})

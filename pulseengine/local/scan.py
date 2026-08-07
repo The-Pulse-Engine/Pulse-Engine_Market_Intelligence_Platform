@@ -50,6 +50,7 @@ import json
 import logging
 import sys
 from pathlib import Path
+from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
@@ -69,7 +70,7 @@ from pulseengine.core import (
 from pulseengine.core import (
     cleanup_old_snapshots as _cleanup_old_snapshots,
 )
-from pulseengine.core.errors import _build_error_payload
+from pulseengine.core.errors import build_error_payload
 
 log = logging.getLogger(__name__)
 
@@ -103,7 +104,7 @@ def run_scan(verbose: bool = True, dry_run: bool = False) -> dict:
     for _cat, _cat_data in _all_price_data.items():
         for _name, _data in _cat_data.items():
             _ticker = TRACKED_ASSETS.get(_cat, {}).get(_name)
-            _chg = _data.get("metrics", {}).get("change_1d")
+            _chg: float | None = _data.get("metrics", {}).get("change_1d")
             if _ticker and _chg is not None:
                 price_cache[_ticker] = _chg
     log.info("Price cache built: %d tickers pre-fetched for context analysis.", len(price_cache))
@@ -124,12 +125,12 @@ def run_scan(verbose: bool = True, dry_run: bool = False) -> dict:
                     save=not dry_run,
                     price_cache=price_cache,
                 )
-                sig     = r["signal"]
-                metrics = r["metrics"]
-                mom     = r["momentum"]
-                expl    = r["explanation"]
+                sig:     dict = r["signal"]
+                metrics: dict = r["metrics"]
+                mom:     dict = r["momentum"]
+                expl:    dict = r["explanation"]
 
-                ctx = r.get("market_ctx") or {}
+                ctx: dict = r.get("market_ctx") or {}
                 entry = {
                     "ticker":          ticker,
                     "signal_score":    sig.get("score"),
@@ -151,7 +152,7 @@ def run_scan(verbose: bool = True, dry_run: bool = False) -> dict:
                     "is_market_wide":  ctx.get("is_market_wide", False),
                     "is_sector_wide":  ctx.get("is_sector_wide", False),
                 }
-                error = r.get("error")
+                error: dict | None = r.get("error")
                 if error:
                     entry["error"] = error
                     errors.append({**error, "asset": asset_name, "category": category})
@@ -174,7 +175,7 @@ def run_scan(verbose: bool = True, dry_run: bool = False) -> dict:
                         )
 
             except Exception as exc:
-                error = _build_error_payload(
+                error = build_error_payload(
                     "scan_asset", exc,
                     asset=asset_name, category=category, ticker=ticker,
                 )
@@ -213,7 +214,9 @@ def run_scan(verbose: bool = True, dry_run: bool = False) -> dict:
     _all_movers.sort(key=lambda x: x["chg"], reverse=True)
     top_movers = {
         "gainers": _all_movers[:5],
-        "losers":  _all_movers[-5:][::-1] if len(_all_movers) >= 5 else list(reversed(_all_movers)),
+        "losers": (
+            _all_movers[-5:][::-1] if len(_all_movers) >= 5 else list(reversed(_all_movers))
+        ),
     }
 
     # Heatmap matrix
@@ -225,10 +228,10 @@ def run_scan(verbose: bool = True, dry_run: bool = False) -> dict:
         _row_z:    list = []
         _row_text: list = []
         for _name in TRACKED_ASSETS.get(_cat, {}):
-            _chg = results.get(_cat, {}).get(_name, {}).get("change_1d")
-            if _chg is not None:
-                _row_z.append(round(_chg, 2))
-                _row_text.append(f"{_name}<br>{_chg:+.1f}%")
+            _cell_chg: float | None = results.get(_cat, {}).get(_name, {}).get("change_1d")
+            if _cell_chg is not None:
+                _row_z.append(round(_cell_chg, 2))
+                _row_text.append(f"{_name}<br>{_cell_chg:+.1f}%")
             else:
                 _row_z.append(0)
                 _row_text.append(_name)
@@ -309,7 +312,7 @@ def load_last_scan_summary() -> dict:
         return {}
 
 
-def _json_default(obj: object) -> object:
+def _json_default(obj: Any) -> Any:
     if isinstance(obj, (dt.date, dt.datetime)):
         return obj.isoformat()
     log.warning("Unexpected type in scan summary: %s — converting to string", type(obj).__name__)
@@ -367,7 +370,7 @@ def main() -> None:
             if score is not None:
                 all_sigs.append((name, cat, score, data.get("signal_label", "")))
     all_sigs.sort(key=lambda x: -abs(x[2]))
-    for name, cat, score, label in all_sigs[:10]:
+    for name, _cat, score, label in all_sigs[:10]:
         print(f"    {name:<22s} {label:<20s} {score:+.1f}")
     print("=" * 65)
 

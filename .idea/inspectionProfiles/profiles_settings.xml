@@ -1,0 +1,9 @@
+<component name="InspectionProjectProfileManager">
+  <settings>
+    <!-- true so the committed Project_Default.xml is actually used. With false,
+         each machine falls back to the IDE defaults and the shared profile is
+         silently ignored. -->
+    <option name="USE_PROJECT_PROFILE" value="true" />
+    <version value="1.0" />
+  </settings>
+</component>

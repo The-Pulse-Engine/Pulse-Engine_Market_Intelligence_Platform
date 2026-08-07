@@ -7,9 +7,9 @@ import gzip
 import json
 from pathlib import Path
 
+from pulseengine.core import storage
 from pulseengine.core.backtest import evaluate_signal_accuracy
 from pulseengine.local.scan import run_scan
-from pulseengine.core import storage
 
 
 def _write_snapshot_file(base_dir: Path, asset: str, date: dt.date, payload: dict) -> Path:
@@ -105,7 +105,12 @@ def test_run_scan_dry_run_completes_without_writing(mocker):
                 "volatility": 0.0,
                 "trend": "sideways",
             },
-            "momentum": {"rsi": 50.0, "roc_10d": 0.0, "trend_strength": 0.0, "momentum_accel": 0.0},
+            "momentum": {
+                "rsi": 50.0,
+                "roc_10d": 0.0,
+                "trend_strength": 0.0,
+                "momentum_accel": 0.0,
+            },
             "explanation": {"confidence": "low", "verdict": "Test"},
             "error": None,
         },
@@ -133,19 +138,37 @@ def test_evaluate_signal_accuracy_with_synthetic_snapshots(storage_dir):
         storage_dir,
         asset,
         d1,
-        {"asset": asset, "date": d1.isoformat(), "price": 100.0, "signal_score": 2.0, "signal_label": "Bullish"},
+        {
+            "asset": asset,
+            "date": d1.isoformat(),
+            "price": 100.0,
+            "signal_score": 2.0,
+            "signal_label": "Bullish",
+        },
     )
     _write_snapshot_file(
         storage_dir,
         asset,
         d2,
-        {"asset": asset, "date": d2.isoformat(), "price": 102.0, "signal_score": -2.0, "signal_label": "Bearish"},
+        {
+            "asset": asset,
+            "date": d2.isoformat(),
+            "price": 102.0,
+            "signal_score": -2.0,
+            "signal_label": "Bearish",
+        },
     )
     _write_snapshot_file(
         storage_dir,
         asset,
         d3,
-        {"asset": asset, "date": d3.isoformat(), "price": 101.0, "signal_score": 1.0, "signal_label": "Bullish"},
+        {
+            "asset": asset,
+            "date": d3.isoformat(),
+            "price": 101.0,
+            "signal_score": 1.0,
+            "signal_label": "Bullish",
+        },
     )
 
     result = evaluate_signal_accuracy(asset, lookback=10)

@@ -150,6 +150,8 @@ __all__ = [
     "DEDUP_SIMILARITY_THRESHOLD",
     "DEFAULT_CATEGORY",
     "EVENT_TRIGGERS",
+    # Sentiment
+    "FINANCE_LEXICON",
     "LOOKBACK_DAYS",
     "MARKET_BENCHMARK",
     "MAX_RETRIES",
@@ -167,11 +169,14 @@ __all__ = [
     "SIGNAL_THRESHOLDS",
     "SNAPSHOT_LOAD_LIMIT",
     "SOURCE_WEIGHTS",
+    # App
+    "STORAGE_AVAILABLE",
     "STORAGE_DIR",
     "STORAGE_FULL_DETAIL_DAYS",
     "STORAGE_MAX_DAYS",
     "STORAGE_REDUCED_DETAIL_DAYS",
     "TRACKED_ASSETS",
+    "VADER_AVAILABLE",
     "YFINANCE_BACKOFF_BASE",
     "YFINANCE_REQUEST_DELAY",
     # Errors
@@ -179,47 +184,42 @@ __all__ = [
     "PipelineError",
     "SignalComputationError",
     "StorageError",
+    "analyse_asset",
+    # Context
+    "analyse_market_context",
+    # Storage
+    "apply_retention_policy",
+    # Explanation
+    "build_explanation",
     # Price
     "classify_trend",
+    "cleanup_old_snapshots",
+    # News
+    "cluster_articles",
     "compute_momentum_metrics",
     "compute_price_metrics",
     "compute_roc",
     "compute_rsi",
-    "fetch_price_history",
-    # News
-    "cluster_articles",
-    "deduplicate_articles",
-    "fetch_news_articles",
-    "generate_keywords",
-    "get_display_clusters",
-    # Sentiment
-    "FINANCE_LEXICON",
-    "VADER_AVAILABLE",
-    "score_sentiment",
     # Signals
     "compute_signal_score",
     "correlate_news",
+    "deduplicate_articles",
     "detect_events",
-    # Context
-    "analyse_market_context",
-    "find_category",
-    # Explanation
-    "build_explanation",
-    # App
-    "STORAGE_AVAILABLE",
-    "analyse_asset",
-    "fetch_all_metrics_parallel",
-    "run_full_scan",
-    # Storage
-    "apply_retention_policy",
-    "cleanup_old_snapshots",
-    "get_historical_features",
-    "load_recent_snapshots",
-    "load_snapshots",
-    "list_tracked_assets_with_history",
-    "save_snapshot",
     # Backtest
     "evaluate_all_assets",
     "evaluate_signal_accuracy",
+    "fetch_all_metrics_parallel",
+    "fetch_news_articles",
+    "fetch_price_history",
+    "find_category",
+    "generate_keywords",
+    "get_display_clusters",
+    "get_historical_features",
     "get_signal_streak",
+    "list_tracked_assets_with_history",
+    "load_recent_snapshots",
+    "load_snapshots",
+    "run_full_scan",
+    "save_snapshot",
+    "score_sentiment",
 ]

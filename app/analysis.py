@@ -10,44 +10,37 @@ New code should import directly from pulseengine.core.
 import logging
 
 # ── Re-exports from pulseengine.core ──────────────────────────────────────────
-
+# Names are listed alphabetically. For the grouping by domain (price, sentiment,
+# news, signals, context, explanation), see pulseengine/core/__init__.py.
 from pulseengine.core import (  # noqa:F401
-    # Price
-    fetch_price_history,
-    compute_price_metrics,
-    compute_momentum_metrics,
-    compute_rsi,
-    compute_roc,
-    classify_trend,
-    # Sentiment
-    VADER_AVAILABLE,
-    score_sentiment,
     FINANCE_LEXICON,
-    # News
-    fetch_news_articles,
-    deduplicate_articles,
-    cluster_articles,
-    get_display_clusters,
-    generate_keywords,
-    # Signals
-    correlate_news,
-    detect_events,
-    compute_signal_score,
-    # Context
-    analyse_market_context,
-    find_category,
-    # Explanation
-    build_explanation,
-    # Errors
+    STORAGE_AVAILABLE,
+    VADER_AVAILABLE,
     DataFetchError,
     PipelineError,
     SignalComputationError,
     StorageError,
-    # App
     analyse_asset,
-    run_full_scan,
+    analyse_market_context,
+    build_explanation,
+    classify_trend,
+    cluster_articles,
+    compute_momentum_metrics,
+    compute_price_metrics,
+    compute_roc,
+    compute_rsi,
+    compute_signal_score,
+    correlate_news,
+    deduplicate_articles,
+    detect_events,
     fetch_all_metrics_parallel,
-    STORAGE_AVAILABLE,
+    fetch_news_articles,
+    fetch_price_history,
+    find_category,
+    generate_keywords,
+    get_display_clusters,
+    run_full_scan,
+    score_sentiment,
 )
 
 # ── CLI entry point ───────────────────────────────────────────────────────────
@@ -69,8 +62,8 @@ if __name__ == "__main__":
     _articles = fetch_news_articles()
     print(f"Fetched {len(_articles)} articles\n")
 
-    first_cat   = list(TRACKED_ASSETS.keys())[0]
-    first_asset = list(TRACKED_ASSETS[first_cat].keys())[0]
+    first_cat   = next(iter(TRACKED_ASSETS.keys()))
+    first_asset = next(iter(TRACKED_ASSETS[first_cat].keys()))
     first_tick  = TRACKED_ASSETS[first_cat][first_asset]
 
     result = analyse_asset(

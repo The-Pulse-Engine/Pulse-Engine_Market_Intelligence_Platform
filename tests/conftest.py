@@ -14,7 +14,6 @@ import pytest
 
 import storage.storage as storage
 
-
 # ── Price series ──────────────────────────────────────────────────────────────
 
 @pytest.fixture
@@ -58,7 +57,7 @@ def ohlcv_df():
 @pytest.fixture
 def synthetic_articles():
     """5 articles: 2 gold, 1 near-duplicate, 1 clearly negative, 1 clearly positive."""
-    now = dt.datetime.now(dt.timezone.utc)
+    now = dt.datetime.now(dt.UTC)
     return [
         {"title": "gold bullion prices surge on central bank demand",
          "summary": "Gold hits new highs.", "link": "https://example.com/1",
