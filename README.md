@@ -11,6 +11,8 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-brightgreen?style=flat-square)](CONTRIBUTING.md)
 [![Disclaimer](https://img.shields.io/badge/Disclaimer-Not%20Financial%20Advice-red?style=flat-square)](Docs/DISCLAIMER.md)
 
+> **Written up in full:** [codex-crusader.github.io/projects/pulse-engine/](https://codex-crusader.github.io/projects/pulse-engine/) covers the problem, the architecture, the results and what it deliberately does not do.
+
 Originally Created by *Bhargavaram Krishnapur (Codex-Crusader)*
 
 _LINK TO LIVE DEPLOYMENT: [HERE!!!](https://pulseengine.streamlit.app/)_
