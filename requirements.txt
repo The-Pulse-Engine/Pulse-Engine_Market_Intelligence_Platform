@@ -37,7 +37,7 @@ six==1.17.0
 streamlit==1.54.0
 tenacity==9.1.4
 toml==0.10.2
-tornado==6.5.5
+tornado==6.5.8
 typing_extensions==4.15.0
 tzdata==2026.1
 urllib3==2.6.3
