@@ -11,7 +11,7 @@ requires-python = ">=3.11"
 # the code needs to import, that file reproduces the environment CI runs.
 dependencies = [
     "feedparser>=6.0",
-    "pandas>=2.0",
+    "pandas>=3.0.5",
     "plotly>=6.0",
     "streamlit>=1.30",
     "vaderSentiment>=3.3",
