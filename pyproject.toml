@@ -15,7 +15,7 @@ dependencies = [
     "plotly>=6.0",
     "streamlit>=1.30",
     "vaderSentiment>=3.3",
-    "yfinance>=1.0",
+    "yfinance>=1.7.0",
 ]
 
 [project.optional-dependencies]
