@@ -10,7 +10,7 @@ requires-python = ">=3.11"
 # Lower bounds here, exact tested pins in requirements.txt: this file says what
 # the code needs to import, that file reproduces the environment CI runs.
 dependencies = [
-    "feedparser>=6.0",
+    "feedparser>=6.0.14",
     "pandas>=2.0",
     "plotly>=6.0",
     "streamlit>=1.30",
