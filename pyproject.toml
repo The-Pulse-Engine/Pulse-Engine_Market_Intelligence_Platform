@@ -59,6 +59,8 @@ packages = [
 # dashboard.css is read at runtime via importlib.resources; without this it
 # would be absent from the wheel and the dashboard would render unstyled.
 "pulseengine.local" = ["*.css"]
+# PEP 561 marker: tells type checkers that importers get the inline annotations.
+"pulseengine" = ["py.typed"]
 
 [tool.ruff]
 line-length = 99
