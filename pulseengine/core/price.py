@@ -143,6 +143,17 @@ def _fetch_via_ticker_history(ticker: str, days: int) -> pd.DataFrame | None:
 
 # ── Price metrics ────────────────────────────────────────────────────────────
 
+def safe_pct(close: pd.Series, latest: float, n: int) -> float | None:
+    """Return the % change from the bar *n* steps back to *latest*, or None."""
+    if n < 1 or len(close) <= n:
+        return None
+    old = float(close.iloc[-(n + 1)])
+    if abs(old) < 1e-9 or not math.isfinite(old):
+        return None
+    pct = ((latest - old) / old) * 100
+    return round(pct, 2) if math.isfinite(pct) else None
+
+
 def compute_price_metrics(df: pd.DataFrame | None) -> dict:
     """Return a dict of price analytics derived from a price DataFrame."""
     if df is None or df.empty:
@@ -160,17 +171,6 @@ def compute_price_metrics(df: pd.DataFrame | None) -> dict:
     if not math.isfinite(latest):
         return {}
 
-    def safe_pct(n: int) -> float | None:
-        if n < 1:
-            return None
-        if len(close) > n:
-            old = float(close.iloc[-(n + 1)])
-            if abs(old) < 1e-9 or not math.isfinite(old):
-                return None
-            pct = ((latest - old) / old) * 100
-            return round(pct, 2) if math.isfinite(pct) else None
-        return None
-
     vol = (
         round(float(close.pct_change(fill_method=None).std() * 100), 4)
         if len(close) > 1 else 0.0
@@ -178,9 +178,9 @@ def compute_price_metrics(df: pd.DataFrame | None) -> dict:
 
     return {
         "latest_price": round(latest, 4),
-        "change_1d":    safe_pct(1),
-        "change_7d":    safe_pct(7),
-        "change_30d":   safe_pct(min(30, len(close) - 1)),
+        "change_1d":    safe_pct(close, latest, 1),
+        "change_7d":    safe_pct(close, latest, 7),
+        "change_30d":   safe_pct(close, latest, min(30, len(close) - 1)),
         "high_30d":     round(float(close.max()), 4),
         "low_30d":      round(float(close.min()), 4),
         "volatility":   vol,

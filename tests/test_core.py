@@ -27,6 +27,7 @@ from pulseengine.core import (
     generate_keywords,
     score_sentiment,
 )
+from pulseengine.core.price import safe_pct
 
 # Aliases retained so test function names stay meaningful
 src_score_sentiment = score_sentiment
@@ -74,6 +75,15 @@ def test_price_metrics_runs(ohlcv_df, price_series_rising):
     assert isinstance(result, dict)
     assert result.get("latest_price") is not None
     assert result["latest_price"] > 0
+
+
+def test_safe_pct_edges():
+    """safe_pct returns None for short series, zero bases, and n < 1."""
+    close = pd.Series([0.0, 100.0, 110.0])
+    assert safe_pct(close, 110.0, 1) == 10.0
+    assert safe_pct(close, 110.0, 2) is None   # base price is zero
+    assert safe_pct(close, 110.0, 3) is None   # not enough bars
+    assert safe_pct(close, 110.0, 0) is None
 
 
 # ── Signal score ──────────────────────────────────────────────────────────────
