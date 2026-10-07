@@ -30,7 +30,7 @@ pydeck==0.9.1
 python-dateutil==2.9.0.post0
 pytz==2026.1
 referencing==0.36.2
-requests==2.33.0
+requests==2.34.2
 rpds-py==0.27.1
 sgmllib3k==1.0.0
 six==1.17.0
