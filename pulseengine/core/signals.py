@@ -14,6 +14,7 @@ Pipeline role (steps 4, 5, and 5.5 of the full engine):
 from __future__ import annotations
 
 import datetime as dt
+import functools
 import logging
 import re
 
@@ -30,20 +31,16 @@ from .sentiment import score_sentiment
 
 log = logging.getLogger(__name__)
 
-# Compiled keyword patterns, built once and reused across all correlate_news calls.
-# Word boundaries (\b) on each alphanumeric end prevent substring false-positives
-# (e.g. "gold" matching "goldman", "oil" matching "broil").
-_KW_PATTERN_CACHE: dict[str, re.Pattern] = {}
-
-
+# Compiled keyword patterns are cached, so each one is built once and reused across
+# all correlate_news calls. Word boundaries (\b) on each alphanumeric end prevent
+# substring false-positives (e.g. "gold" matching "goldman", "oil" matching "broil").
+@functools.cache
 def _kw_re(kw: str) -> re.Pattern:
     """Return a compiled regex that matches *kw* as a whole token in lowercase text."""
-    if kw not in _KW_PATTERN_CACHE:
-        escaped = re.escape(kw)
-        prefix  = r'\b' if kw and kw[0].isalnum() else ''
-        suffix  = r'\b' if kw and kw[-1].isalnum() else ''
-        _KW_PATTERN_CACHE[kw] = re.compile(prefix + escaped + suffix)
-    return _KW_PATTERN_CACHE[kw]
+    escaped = re.escape(kw)
+    prefix  = r'\b' if kw and kw[0].isalnum() else ''
+    suffix  = r'\b' if kw and kw[-1].isalnum() else ''
+    return re.compile(prefix + escaped + suffix)
 
 
 # ── News-asset correlation ────────────────────────────────────────────────────
