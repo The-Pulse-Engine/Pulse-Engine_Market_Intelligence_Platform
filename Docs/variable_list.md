@@ -362,10 +362,9 @@ Takes no parameters. Fetches news once, then analyses every tracked asset in par
 
 ## pulseengine/core/signals.py — Module-Level Constants
 
-| Name                | Type                    | Description                                                                                                                                                        |
-| ------------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `_KW_PATTERN_CACHE` | `dict[str, re.Pattern]` | Module-level cache of compiled keyword regex patterns, keyed by keyword string. Patterns are built once on first use and reused across all `correlate_news` calls. |
-| `log`               | `logging.Logger`        | Module-level logger named after `__name__`.                                                                                                                        |
+| Name  | Type             | Description                                 |
+| ----- | ---------------- | ------------------------------------------- |
+| `log` | `logging.Logger` | Module-level logger named after `__name__`. |
 
 #### `_kw_re(kw)`
 
@@ -373,7 +372,7 @@ Takes no parameters. Fetches news once, then analyses every tracked asset in par
 | --------- | ----- | ------------------------------------------------------------------------------ |
 | `kw`      | `str` | Lowercase keyword string from `ASSET_KEYWORDS` or the auto-appended asset name |
 
-Returns a `re.Pattern` that matches `kw` as a whole token. A leading `\b` is added only when `kw` starts with an alphanumeric character; a trailing `\b` is added only when `kw` ends with an alphanumeric character. Both guards are independent, so a keyword like `opec+` (alphanumeric start, special-char end) produces `\bopec\+` with no trailing boundary. Results are cached in `_KW_PATTERN_CACHE`.
+Returns a `re.Pattern` that matches `kw` as a whole token. A leading `\b` is added only when `kw` starts with an alphanumeric character; a trailing `\b` is added only when `kw` ends with an alphanumeric character. Both guards are independent, so a keyword like `opec+` (alphanumeric start, special-char end) produces `\bopec\+` with no trailing boundary. Results are cached by `functools.cache`, so each pattern is compiled once and reused across all `correlate_news` calls. `_kw_re.cache_info()` shows the cache size.
 
 ---
 
