@@ -29,6 +29,7 @@ from .config import (
     PRICE_FETCH_WORKERS,
     REQUEST_TIMEOUT,
     RSI_PERIOD,
+    TREND_BAND_PCT,
     YFINANCE_BACKOFF_BASE,
     YFINANCE_REQUEST_DELAY,
 )
@@ -197,9 +198,9 @@ def classify_trend(series: pd.Series) -> str:
     ma30   = float(series.rolling(window).mean().iloc[-1])
     if not math.isfinite(ma7) or not math.isfinite(ma30) or ma30 == 0:
         return "sideways"
-    if ma7 > ma30 * 1.01:
+    if ma7 > ma30 * (1 + TREND_BAND_PCT):
         return "uptrend"
-    if ma7 < ma30 * 0.99:
+    if ma7 < ma30 * (1 - TREND_BAND_PCT):
         return "downtrend"
     return "sideways"
 

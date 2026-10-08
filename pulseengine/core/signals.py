@@ -24,7 +24,18 @@ from .config import (
     EVENT_TRIGGERS,
     LOW_NEWS_SENTIMENT_WEIGHT_MULTIPLIER,
     MIN_NEWS_ARTICLES_FOR_CONFIDENCE,
+    RSI_LEAN_BEARISH,
+    RSI_LEAN_BULLISH,
+    RSI_OVERBOUGHT,
+    RSI_OVERSOLD,
+    SIGNAL_CONTEXT_STEP,
+    SIGNAL_MOMENTUM_CAP,
+    SIGNAL_MOMENTUM_NORMALISER,
+    SIGNAL_SENTIMENT_CAP,
+    SIGNAL_SENTIMENT_SCALE,
     SIGNAL_THRESHOLDS,
+    SIGNAL_TREND_SCORE,
+    SIGNAL_TREND_STRENGTH_NORMALISER,
     SOURCE_WEIGHTS,
 )
 from .sentiment import score_sentiment
@@ -178,21 +189,25 @@ def compute_signal_score(
 
     # 1. Price trend
     trend = metrics.get("trend", "sideways")
-    raw["trend"] = {"uptrend": 2.0, "downtrend": -2.0, "sideways": 0.0}.get(trend, 0.0)
+    raw["trend"] = {
+        "uptrend": SIGNAL_TREND_SCORE, "downtrend": -SIGNAL_TREND_SCORE,
+    }.get(trend, 0.0)
 
     # 2. ROC momentum
     roc = momentum.get("roc_10d", 0.0)
-    raw["momentum"] = round(max(-2.0, min(2.0, roc / 5.0)), 2)
+    raw["momentum"] = round(
+        max(-SIGNAL_MOMENTUM_CAP, min(SIGNAL_MOMENTUM_CAP, roc / SIGNAL_MOMENTUM_NORMALISER)), 2
+    )
 
     # 3. RSI positioning
     rsi = momentum.get("rsi", 50.0)
-    if rsi > 70:
-        raw["rsi"] = -1.0       # overbought
-    elif rsi < 30:
-        raw["rsi"] = 1.0        # oversold (mean-reversion bullish)
-    elif rsi > 55:
+    if rsi > RSI_OVERBOUGHT:
+        raw["rsi"] = -1.0
+    elif rsi < RSI_OVERSOLD:
+        raw["rsi"] = 1.0        # mean-reversion bullish
+    elif rsi > RSI_LEAN_BULLISH:
         raw["rsi"] = 0.5
-    elif rsi < 45:
+    elif rsi < RSI_LEAN_BEARISH:
         raw["rsi"] = -0.5
     else:
         raw["rsi"] = 0.0
@@ -200,16 +215,20 @@ def compute_signal_score(
     # 4. News sentiment
     if news:
         avg_sent = sum(a.get("sentiment", {}).get("compound", 0.0) for a in news) / len(news)
-        sentiment_raw = max(-2.0, min(2.0, avg_sent * 4.0))
+        sentiment_raw = max(
+            -SIGNAL_SENTIMENT_CAP, min(SIGNAL_SENTIMENT_CAP, avg_sent * SIGNAL_SENTIMENT_SCALE)
+        )
         if low_news_confidence:
             sentiment_raw *= LOW_NEWS_SENTIMENT_WEIGHT_MULTIPLIER
         raw["sentiment"] = round(sentiment_raw, 2)
     else:
         raw["sentiment"] = 0.0
 
-    # 5. Trend strength (3 % MA divergence = full 1.0 score)
+    # 5. Trend strength
     ts = momentum.get("trend_strength", 0.0)
-    raw["trend_strength"] = round(max(-1.0, min(1.0, ts / 3.0)), 2)
+    raw["trend_strength"] = round(
+        max(-1.0, min(1.0, ts / SIGNAL_TREND_STRENGTH_NORMALISER)), 2
+    )
 
     # 6. Market context alignment
     ctx_score = 0.0
@@ -218,9 +237,9 @@ def compute_signal_score(
         if chg_1d is not None:
             direction = 1.0 if chg_1d > 0 else -1.0
             if market_ctx.get("is_market_wide"):
-                ctx_score += direction * 0.5
+                ctx_score += direction * SIGNAL_CONTEXT_STEP
             if market_ctx.get("is_sector_wide"):
-                ctx_score += direction * 0.5
+                ctx_score += direction * SIGNAL_CONTEXT_STEP
     raw["context"] = round(ctx_score, 2)
 
     # Apply per-class multipliers
