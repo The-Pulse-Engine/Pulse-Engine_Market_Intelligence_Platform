@@ -359,6 +359,27 @@ SIGNAL_THRESHOLDS: dict[str, float] = {
     # below -6: strong_bearish
 }
 
+# Component scaling for compute_signal_score. Each raw component is clamped to
+# +/- its cap before the per-class weights in ASSET_CLASS_WEIGHTS apply.
+SIGNAL_TREND_SCORE = 2.0                # raw score for an uptrend (negated for a downtrend)
+SIGNAL_MOMENTUM_CAP = 2.0               # max |raw momentum| score
+SIGNAL_MOMENTUM_NORMALISER = 5.0        # 10-day ROC (%) that earns 1.0 point
+SIGNAL_SENTIMENT_CAP = 2.0              # max |raw sentiment| score
+SIGNAL_SENTIMENT_SCALE = 4.0            # multiplier on the mean VADER compound (-1..1)
+SIGNAL_TREND_STRENGTH_NORMALISER = 3.0  # MA divergence (%) that earns the full 1.0 point
+SIGNAL_CONTEXT_STEP = 0.5               # added per market-wide or sector-wide alignment
+
+# RSI bands for the RSI component: past the outer bands is a reversal signal
+# (+/- 1.0), between a lean band and the 50 midline is a weak trend (+/- 0.5).
+RSI_OVERBOUGHT = 70.0
+RSI_OVERSOLD = 30.0
+RSI_LEAN_BULLISH = 55.0
+RSI_LEAN_BEARISH = 45.0
+
+# classify_trend: the 7-day MA must sit this fraction above or below the 30-day
+# MA to count as an uptrend or downtrend. 0.01 = a 1 % band.
+TREND_BAND_PCT = 0.01
+
 #  12. NEWS DEDUPLICATION
 
 # Two articles are considered duplicates when ≥65% of their word-level bigrams overlap (Jaccard

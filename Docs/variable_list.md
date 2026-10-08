@@ -91,6 +91,23 @@ This document lists every significant constant, module-level variable, function 
 | ------------------- | ------------------ | ------ | ------------------------------------------------------------------------------------------------------------------------------------------- |
 | `SIGNAL_THRESHOLDS` | `dict[str, float]` | 6 keys | Maps signal label identifiers to the minimum score for that label. Labels below the `bearish` threshold are classified as `strong_bearish`. |
 
+Component scaling used by `compute_signal_score` and `classify_trend`:
+
+| Name                               | Type    | Default | Description                                                                      |
+| ---------------------------------- | ------- | ------- | -------------------------------------------------------------------------------- |
+| `SIGNAL_TREND_SCORE`               | `float` | 2.0     | Raw trend score for an uptrend. A downtrend gets the negative value.             |
+| `SIGNAL_MOMENTUM_CAP`              | `float` | 2.0     | Maximum absolute raw momentum score.                                             |
+| `SIGNAL_MOMENTUM_NORMALISER`       | `float` | 5.0     | 10-day ROC in percent that earns 1.0 momentum point.                             |
+| `SIGNAL_SENTIMENT_CAP`             | `float` | 2.0     | Maximum absolute raw sentiment score.                                            |
+| `SIGNAL_SENTIMENT_SCALE`           | `float` | 4.0     | Multiplier on the mean VADER compound score (-1 to 1).                           |
+| `SIGNAL_TREND_STRENGTH_NORMALISER` | `float` | 3.0     | MA divergence in percent that earns the full 1.0 trend-strength point.           |
+| `SIGNAL_CONTEXT_STEP`              | `float` | 0.5     | Context points added for each market-wide or sector-wide alignment.              |
+| `RSI_OVERBOUGHT`                   | `float` | 70.0    | RSI above this gives -1.0 (overbought).                                          |
+| `RSI_OVERSOLD`                     | `float` | 30.0    | RSI below this gives +1.0 (oversold, mean-reversion bullish).                    |
+| `RSI_LEAN_BULLISH`                 | `float` | 55.0    | RSI above this, but not overbought, gives +0.5.                                  |
+| `RSI_LEAN_BEARISH`                 | `float` | 45.0    | RSI below this, but not oversold, gives -0.5.                                    |
+| `TREND_BAND_PCT`                   | `float` | 0.01    | Fraction the 7-day MA must sit above or below the 30-day MA to count as a trend. |
+
 ### 10. Asset Class Weights
 
 | Name                  | Type                          | Shape                        | Description                                                                                                            |
