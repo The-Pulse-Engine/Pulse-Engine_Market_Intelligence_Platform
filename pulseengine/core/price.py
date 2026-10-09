@@ -253,19 +253,26 @@ def compute_momentum_metrics(df: pd.DataFrame | None) -> dict:
     }
 
 
+def _wilder_average(values: pd.Series, period: int) -> float:
+    """Wilder smoothing: seed with the first *period* mean, then
+    avg = (prev * (period - 1) + value) / period for each later value."""
+    avg = float(values.iloc[:period].mean())
+    for value in values.iloc[period:]:
+        avg = (avg * (period - 1) + float(value)) / period
+    return avg
+
+
 def compute_rsi(series: pd.Series, period: int = 14) -> float:
     """Compute Wilder RSI. Returns 50.0 when there is insufficient data."""
     if len(series) < period + 1:
         return 50.0
     delta    = series.diff().dropna()
-    gain     = delta.clip(lower=0)
-    loss     = -delta.clip(upper=0)
-    if pd.isna(gain.rolling(period).mean().iloc[-1]) or pd.isna(
-        loss.rolling(period).mean().iloc[-1]
-    ):
+    if len(delta) < period:
         return 50.0
-    avg_gain = float(gain.rolling(period).mean().iloc[-1])
-    avg_loss = float(loss.rolling(period).mean().iloc[-1])
+    avg_gain = _wilder_average(delta.clip(lower=0), period)
+    avg_loss = _wilder_average(-delta.clip(upper=0), period)
+    if not math.isfinite(avg_gain) or not math.isfinite(avg_loss):
+        return 50.0
     if avg_loss == 0:
         return 100.0
     rs = avg_gain / avg_loss

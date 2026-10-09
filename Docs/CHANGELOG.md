@@ -37,6 +37,7 @@ All notable changes to this project will be documented in this file.
 - Cleared the 16 outstanding ruff findings across `tests/`, `app/`, and `install.py` (import ordering, `datetime.UTC` over `datetime.timezone.utc`, missing trailing newline). In `app/analysis.py` the curated `# Price` / `# Sentiment` group comments were dropped rather than left in place: import sorting scatters them away from the names they label, which is worse than no comment. The domain grouping remains documented in `pulseengine/core/__init__.py`.
 - `requirements.txt` is runtime-only again; `pytest` and `pytest-mock` were duplicated there and in `requirements-dev.txt` with different pins.
 - `requirements-dev.txt` now pins the toolchain (`pytest`, `pytest-mock`, `ruff`, `mypy`) instead of declaring floors. CI installs that file, so `ruff>=0.6` meant CI linted with whatever was newest on PyPI that day — a latent source of unrelated red builds now that the lint scope is the whole repository. Dependabot already covers pip weekly and will propose bumps with CI validating each.
+- `compute_rsi` now uses Wilder smoothing (seed with the first 14-bar mean, then `avg = (prev * 13 + value) / 14`) instead of a 14-bar simple rolling mean. RSI values now match TradingView and StockCharts. The RSI component of the signal score can move by a few points for the same data, so stored snapshots from before this change are not directly comparable on `rsi`. (#58)
 
 ---
 
