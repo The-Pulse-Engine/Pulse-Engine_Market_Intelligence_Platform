@@ -126,7 +126,7 @@ flowchart TD
     NULLCHECK -->|No| CLOSE[Extract Close series]
 
     CLOSE --> RSI_CHECK{len >= RSI_PERIOD + 1?}
-    RSI_CHECK -->|Yes| RSI_CALC[_compute_rsi\nEWM gain loss ratio\n14-period]
+    RSI_CHECK -->|Yes| RSI_CALC[compute_rsi\nWilder-smoothed gain loss ratio\n14-period]
     RSI_CHECK -->|No| RSI_NONE[rsi = None]
 
     CLOSE --> ROC_CHECK{len >= MOMENTUM_PERIOD + 1?}

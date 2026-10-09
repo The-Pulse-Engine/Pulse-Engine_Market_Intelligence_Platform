@@ -44,6 +44,16 @@ def test_rsi_always_in_range(price_series_rising, price_series_falling, price_se
         assert 0.0 <= result <= 100.0
 
 
+def test_rsi_matches_wilder_reference():
+    """RSI(14) on the StockCharts reference closes is about 57.97 (Wilder smoothing).
+    The reference sheet rounds its averages, hence the 0.1 tolerance."""
+    closes = pd.Series([
+        44.34, 44.09, 44.15, 43.61, 44.33, 44.83, 45.10, 45.42, 45.84, 46.08,
+        45.89, 46.03, 45.61, 46.28, 46.28, 46.00, 46.03, 46.41, 46.22, 45.64,
+    ])
+    assert compute_rsi(closes, 14) == pytest.approx(57.97, abs=0.1)
+
+
 def test_rsi_direction(price_series_rising, price_series_falling):
     """Rising series → RSI above 50. Falling → RSI below 50."""
     assert compute_rsi(price_series_rising) > 50
