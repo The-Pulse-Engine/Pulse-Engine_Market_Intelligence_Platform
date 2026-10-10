@@ -350,19 +350,24 @@ def main() -> None:
     args = parser.parse_args()
 
     scan_summary = run_scan(verbose=not args.quiet, dry_run=args.dry_run)
+    for line in format_scan_summary(scan_summary):
+        log.info("%s", line)
 
-    print()
-    print("=" * 65)
-    print(f"  Market Scan — {scan_summary['scan_date']}")
-    print(f"  Assets processed: {scan_summary['succeeded']}/{scan_summary['total']}")
+
+def format_scan_summary(scan_summary: dict, top_n: int = 10) -> list[str]:
+    """Return the end-of-scan report as text lines: counts, errors, top signals."""
+    lines = [
+        "=" * 65,
+        f"  Market Scan — {scan_summary['scan_date']}",
+        f"  Assets processed: {scan_summary['succeeded']}/{scan_summary['total']}",
+    ]
     if scan_summary["errors"]:
-        print(f"  Errors ({len(scan_summary['errors'])}):")
+        lines.append(f"  Errors ({len(scan_summary['errors'])}):")
         for e in scan_summary["errors"]:
             err_type = e.get("type", "error")
             message = e.get("message", e.get("error", ""))
-            print(f"    [{e['category']}] {e['asset']} ({err_type}): {message}")
-    print()
-    print("  Top signals by magnitude:")
+            lines.append(f"    [{e['category']}] {e['asset']} ({err_type}): {message}")
+    lines.append("  Top signals by magnitude:")
     all_sigs: list[tuple] = []
     for cat, assets in scan_summary["results"].items():
         for name, data in assets.items():
@@ -370,9 +375,10 @@ def main() -> None:
             if score is not None:
                 all_sigs.append((name, cat, score, data.get("signal_label", "")))
     all_sigs.sort(key=lambda x: -abs(x[2]))
-    for name, _cat, score, label in all_sigs[:10]:
-        print(f"    {name:<22s} {label:<20s} {score:+.1f}")
-    print("=" * 65)
+    for name, _cat, score, label in all_sigs[:top_n]:
+        lines.append(f"    {name:<22s} {label:<20s} {score:+.1f}")
+    lines.append("=" * 65)
+    return lines
 
 
 if __name__ == "__main__":

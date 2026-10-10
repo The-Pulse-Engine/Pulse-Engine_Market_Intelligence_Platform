@@ -9,7 +9,7 @@ from pathlib import Path
 
 from pulseengine.core import storage
 from pulseengine.core.backtest import evaluate_signal_accuracy
-from pulseengine.local.scan import run_scan
+from pulseengine.local.scan import format_scan_summary, run_scan
 
 
 def _write_snapshot_file(base_dir: Path, asset: str, date: dt.date, payload: dict) -> Path:
@@ -123,6 +123,27 @@ def test_run_scan_dry_run_completes_without_writing(mocker):
     assert result["succeeded"] == result["total"]
     assert result["errors"] == []
     save_summary.assert_not_called()
+
+
+def test_format_scan_summary_orders_by_magnitude_and_lists_errors():
+    """The CLI report lists errors and ranks signals by absolute score."""
+    summary = {
+        "scan_date": "2026-10-04",
+        "succeeded": 2,
+        "total": 3,
+        "errors": [{"category": "Crypto", "asset": "Monero", "message": "timeout"}],
+        "results": {
+            "Crypto": {
+                "Bitcoin": {"signal_score": 2.0, "signal_label": "Slightly Bullish"},
+                "Monero": {"signal_score": None, "signal_label": "Error"},
+            },
+            "Indices": {"VIX": {"signal_score": -7.5, "signal_label": "Strong Bearish"}},
+        },
+    }
+    text = "\n".join(format_scan_summary(summary))
+    assert "Assets processed: 2/3" in text
+    assert "[Crypto] Monero (error): timeout" in text
+    assert text.index("VIX") < text.index("Bitcoin")
 
 
 def test_evaluate_signal_accuracy_with_synthetic_snapshots(storage_dir):
