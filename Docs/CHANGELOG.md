@@ -38,6 +38,7 @@ All notable changes to this project will be documented in this file.
 - `requirements.txt` is runtime-only again; `pytest` and `pytest-mock` were duplicated there and in `requirements-dev.txt` with different pins.
 - `requirements-dev.txt` now pins the toolchain (`pytest`, `pytest-mock`, `ruff`, `mypy`) instead of declaring floors. CI installs that file, so `ruff>=0.6` meant CI linted with whatever was newest on PyPI that day — a latent source of unrelated red builds now that the lint scope is the whole repository. Dependabot already covers pip weekly and will propose bumps with CI validating each.
 - `compute_rsi` now uses Wilder smoothing (seed with the first 14-bar mean, then `avg = (prev * 13 + value) / 14`) instead of a 14-bar simple rolling mean. RSI values now match TradingView and StockCharts. The RSI component of the signal score can move by a few points for the same data, so stored snapshots from before this change are not directly comparable on `rsi`. (#58)
+- `python -m pulseengine.local.scan` writes its end-of-scan report through the `logging` module instead of `print()`, as CONTRIBUTING requires for `scan.py`. The report text is built by the new `format_scan_summary` function, which a test now covers. Each report line carries the normal log prefix and now goes to stderr, the logging default, instead of stdout. A script that captures only stdout no longer sees the report.
 
 ---
 
