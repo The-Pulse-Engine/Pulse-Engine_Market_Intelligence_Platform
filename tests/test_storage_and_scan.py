@@ -7,8 +7,11 @@ import gzip
 import json
 from pathlib import Path
 
+import pytest
+
 from pulseengine.core import storage
 from pulseengine.core.backtest import evaluate_signal_accuracy
+from pulseengine.core.errors import StorageError
 from pulseengine.local.scan import format_scan_summary, run_scan
 
 
@@ -43,6 +46,28 @@ def test_storage_round_trip_save_then_load(storage_dir):
     assert snap["price"] == 2100.5
     assert snap["signal_score"] == 4.4
     assert snap["signal_label"] == "Bullish"
+
+
+def test_corrupted_snapshots_are_skipped_and_overwritten(storage_dir):
+    """Truncated and corrupt gzip files are skipped on load and replaced on save."""
+    good = gzip.compress(json.dumps({"asset": "Gold", "date": "x"}).encode() * 20)
+    today = dt.date.today()
+    bad_files = {
+        today: good[: len(good) // 2],                                      # EOFError
+        today - dt.timedelta(days=1): good[:10] + b"\xff" * 40 + good[-8:],  # zlib.error
+        today - dt.timedelta(days=2): b"not gzip",                          # BadGzipFile
+    }
+    for date, data in bad_files.items():
+        _write_snapshot_file(storage_dir, "Gold", date, {}).write_bytes(data)
+
+    assert storage.load_snapshots("Gold", days=5) == []
+    with pytest.raises(StorageError):
+        storage.load_snapshots("Gold", days=5, strict=True)
+
+    signal = {"score": 1.0, "label": "Slightly Bullish"}
+    storage.save_snapshot("Gold", {"latest_price": 1.0}, {}, signal, [])
+    loaded = storage.load_snapshots("Gold", days=0, strict=True)
+    assert loaded[0]["signal_label"] == "Slightly Bullish"
 
 
 def test_retention_policy_and_cleanup_with_temp_dir(storage_dir):

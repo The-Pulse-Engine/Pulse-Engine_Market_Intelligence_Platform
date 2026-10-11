@@ -20,6 +20,7 @@ import logging
 import os
 import threading
 import uuid
+import zlib
 from pathlib import Path
 
 from .config import (
@@ -34,6 +35,13 @@ from .errors import StorageError
 
 log = logging.getLogger(__name__)
 _storage_path = Path(STORAGE_DIR)
+
+# What a snapshot read can raise: file errors (BadGzipFile is an OSError), a
+# truncated file (EOFError), a corrupt deflate stream (zlib.error), bad UTF-8 or
+# a bad date in the filename (ValueError), bad JSON or shape (StorageError).
+_READ_ERRORS = (OSError, EOFError, zlib.error, ValueError, StorageError)
+# What a snapshot write can raise: file errors, or data json.dumps rejects.
+_WRITE_ERRORS = (OSError, TypeError, ValueError)
 
 # per-asset write locks — one bouncer per asset. orderly queue. no shoving
 _asset_locks: dict[str, threading.Lock] = {}
@@ -121,7 +129,7 @@ def _write_gz(path: Path, data: dict) -> None:
             os.replace(tmp, path)
         else:
             raise FileNotFoundError(f"Temp file vanished before replace: {tmp}")
-    except Exception as _write_exc:
+    except OSError as _write_exc:
         log.error("Snapshot write failed for %s: %s", path.name, _write_exc)
         with contextlib.suppress(OSError):
             tmp.unlink(missing_ok=True)  # clean up the evidence before we raise
@@ -146,7 +154,7 @@ def _snapshot_unchanged(path: Path, new_data: dict) -> bool:
         return False
     try:
         existing = _read_gz(path)
-    except (OSError, ValueError, StorageError):
+    except _READ_ERRORS:
         return False  # corrupted existing file — overwrite it. no mercy
 
     # qualitative fields: any change → write immediately
@@ -245,7 +253,7 @@ def save_snapshot(
         try:
             _write_gz(path, snapshot)
             log.debug("Saved snapshot: %s", path.name)
-        except Exception as exc:
+        except _WRITE_ERRORS as exc:
             log.warning("Snapshot write failed for %s: %s", asset_name, exc)
 
 
@@ -268,7 +276,7 @@ def load_snapshots(asset_name: str, days: int = 30, strict: bool = False) -> lis
             if date < cutoff:
                 continue
             snapshots.append(_read_gz(path))
-        except Exception as exc:
+        except _READ_ERRORS as exc:
             if strict:
                 raise StorageError(f"Snapshot read failed for {path.name}") from exc
             log.warning("Snapshot read failed (%s): %s", path.name, exc)
@@ -309,7 +317,7 @@ def load_recent_snapshots(
     for _, path in candidates:
         try:
             snapshots.append(_read_gz(path))
-        except Exception as exc:
+        except _READ_ERRORS as exc:
             if strict:
                 raise StorageError(f"Snapshot read failed for {path.name}") from exc
             log.warning("Snapshot read failed (%s): %s", path.name, exc)
@@ -442,7 +450,7 @@ def apply_retention_policy() -> int:
             _write_gz(path, reduced)
             rewritten += 1
             log.debug("Applied reduced retention to %s", path.name)
-        except Exception as exc:
+        except _READ_ERRORS + _WRITE_ERRORS as exc:
             log.warning("Retention policy failed for %s: %s", path.name, exc)
 
     if rewritten:
