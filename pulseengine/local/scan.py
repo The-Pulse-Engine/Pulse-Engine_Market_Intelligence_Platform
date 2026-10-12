@@ -175,12 +175,12 @@ def run_scan(verbose: bool = True, dry_run: bool = False) -> dict:
                         )
 
             except Exception as exc:
-                error = build_error_payload(
+                failure = build_error_payload(
                     "scan_asset", exc,
                     asset=asset_name, category=category, ticker=ticker,
                 )
                 log.error("[%d/%d] FAILED %-22s: %s", done, total, asset_name, exc)
-                errors.append(error)
+                errors.append(failure)
                 results.setdefault(category, {})[asset_name] = {
                     "ticker": ticker,
                     "signal_score": None,
@@ -199,7 +199,7 @@ def run_scan(verbose: bool = True, dry_run: bool = False) -> dict:
                     "momentum_accel": None,
                     "confidence": "none",
                     "verdict": "",
-                    "error": error,
+                    "error": failure,
                 }
 
     # Precompute global views so dashboard reads are O(1) per user.
