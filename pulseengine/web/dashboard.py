@@ -130,9 +130,12 @@ def _render_locked_features() -> None:
 st.sidebar.header("Demo controls")
 categories = list(TRACKED_ASSETS.keys())
 default_index = categories.index(DEFAULT_CATEGORY) if DEFAULT_CATEGORY in categories else 0
-selected_category = st.sidebar.selectbox("Category", categories, index=default_index)
+# selectbox returns None only for an empty options list; the fallbacks keep the type str.
+selected_category = (
+    st.sidebar.selectbox("Category", categories, index=default_index) or categories[0]
+)
 asset_names = list(TRACKED_ASSETS[selected_category].keys())
-selected_asset = st.sidebar.selectbox("Asset", asset_names)
+selected_asset = st.sidebar.selectbox("Asset", asset_names) or asset_names[0]
 _ticker = TRACKED_ASSETS[selected_category][selected_asset]
 
 selected = _build_live_analysis(selected_asset, _ticker, selected_category)

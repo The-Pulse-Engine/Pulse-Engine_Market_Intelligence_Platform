@@ -172,10 +172,10 @@ def compute_price_metrics(df: pd.DataFrame | None) -> dict:
     if not math.isfinite(latest):
         return {}
 
-    vol = (
-        round(float(close.pct_change(fill_method=None).std() * 100), 4)
-        if len(close) > 1 else 0.0
-    )
+    # Sample std (ddof=1) of daily returns, as pandas computes it. Fewer than two
+    # returns give 0.0 rather than NaN.
+    returns = close.pct_change(fill_method=None).dropna().to_numpy(dtype=float)
+    vol = round(float(returns.std(ddof=1)) * 100, 4) if len(returns) > 1 else 0.0
 
     return {
         "latest_price": round(latest, 4),
