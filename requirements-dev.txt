@@ -17,5 +17,5 @@ mypy==2.3.0
 # different pandas major, and the result is an IDE full of "incompatible stub
 # package" warnings plus type errors that describe an API you are not running.
 pandas-stubs==2.3.3.260113
-setuptools>=70
+setuptools>=84.0.0
 # Install production deps separately: pip install -r requirements.txt
