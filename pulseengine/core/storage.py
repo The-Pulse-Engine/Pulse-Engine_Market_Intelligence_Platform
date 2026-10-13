@@ -248,7 +248,7 @@ def save_snapshot(
         log.debug("Snapshot unchanged for %s — skipping write.", asset_name)
         return
 
-    # one writer per asset at a time. no queue jumping, no temp-file collisions
+    # one writer per asset at a time. no queue-jumping, no temp-file collisions
     with _get_asset_lock(asset_name):
         try:
             _write_gz(path, snapshot)
@@ -414,7 +414,7 @@ def get_historical_features(
 def apply_retention_policy() -> int:
     """
     Re-write older snapshots to reduced-detail format to save space.
-    # spring cleaning but for market data. Marie Kondo said delete anything that doesn't spark joy
+    # spring-cleaning but for market data. Marie Kondo said delete anything that doesn't spark joy
     Snapshots between STORAGE_FULL_DETAIL_DAYS+1 and STORAGE_REDUCED_DETAIL_DAYS
     days old are stripped of heavy fields (headlines, change_7d, change_30d,
     volatility, momentum_accel) if they still contain those fields.

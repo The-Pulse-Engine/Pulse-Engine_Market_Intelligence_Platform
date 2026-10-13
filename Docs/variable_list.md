@@ -130,7 +130,7 @@ Component scaling used by `compute_signal_score` and `classify_trend`:
 
 ## pulseengine/core/app.py — Orchestration Module
 
-`app/analysis.py` is a backward-compat re-export shim. All domain logic now lives in `pulseengine/core/`. Module-level variables listed below are defined in the `pulseengine/core/` sub-modules and re-exported by `pulseengine/core/__init__.py`. `VADER_AVAILABLE` and `STORAGE_AVAILABLE` are re-exported from `pulseengine/core/sentiment.py` and `pulseengine/core/app.py` respectively.
+`app/analysis.py` is a backward-compat re-export shim. All domain logic now lives in `pulseengine/core/`. Module-level variables listed below are defined in the `pulseengine/core/` submodules and re-exported by `pulseengine/core/__init__.py`. `VADER_AVAILABLE` and `STORAGE_AVAILABLE` are re-exported from `pulseengine/core/sentiment.py` and `pulseengine/core/app.py` respectively.
 
 ### Module-Level
 
@@ -363,7 +363,7 @@ Fetches price metrics and momentum for every tracked asset in parallel using `PR
 {category: {asset_name: {"metrics": <price_metrics_dict>, "momentum": <momentum_dict>}}}
 ```
 
-Called by `pulseengine/local/scan.py` during the batch pipeline to pre-build the `price_cache` before the per-asset loop (eliminating ~50–80 redundant yfinance calls). Also available for external use. The dashboard heatmap and category overview use `cached_scan_summary()` in `pulseengine/local/data.py` rather than calling this directly.
+Called by `pulseengine/local/scan.py` during the batch pipeline to pre-build the `price_cache` before the per-asset loop (eliminating ~50–80 redundant yfinance calls). Also, available for external use. The dashboard heatmap and category overview use `cached_scan_summary()` in `pulseengine/local/data.py` rather than calling this directly.
 
 ---
 

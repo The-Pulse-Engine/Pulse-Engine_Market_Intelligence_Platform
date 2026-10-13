@@ -2,12 +2,21 @@
   <dictionary name="project">
     <words>
       <w>aapl</w>
+      <w>abnorm</w>
+      <w>agefilt</w>
       <w>amzn</w>
+      <w>artloop</w>
+      <w>asuccess</w>
       <w>backtest</w>
       <w>backtesting</w>
       <w>bezos</w>
       <w>bhargavaram</w>
+      <w>bhargavaramkrishnapur</w>
       <w>blackwell</w>
+      <w>buildtasks</w>
+      <w>capcheck</w>
+      <w>clstc</w>
+      <w>ctxfactor</w>
       <w>cupertino</w>
       <w>cybertruck</w>
       <w>debugpy</w>
@@ -16,32 +25,64 @@
       <w>deduplication</w>
       <w>djia</w>
       <w>dups</w>
+      <w>emptyret</w>
+      <w>ensuredir</w>
+      <w>errlog</w>
+      <w>exccheck</w>
       <w>feedparser</w>
+      <w>fetchnews</w>
+      <w>fileloop</w>
       <w>fomc</w>
       <w>garamond</w>
       <w>gigafactory</w>
       <w>gridcolor</w>
       <w>iloc</w>
+      <w>infocheck</w>
       <w>jassy</w>
+      <w>jensen</w>
+      <w>kondo</w>
+      <w>kress</w>
       <w>krishnapur</w>
+      <w>kwlookup</w>
+      <w>kwscan</w>
+      <w>lastexitcode</w>
       <w>litecoin</w>
       <w>lookback</w>
+      <w>loopstart</w>
+      <w>mainpanel</w>
       <w>monero</w>
       <w>monkeypatching</w>
       <w>msft</w>
+      <w>mtimecheck</w>
       <w>nadella</w>
+      <w>navdetect</w>
+      <w>nobonus</w>
+      <w>notreal</w>
+      <w>nullcheck</w>
       <w>nvda</w>
       <w>nvidia</w>
       <w>opec</w>
       <w>paywalled</w>
       <w>plotly</w>
+      <w>pmetrics</w>
+      <w>pollercheck</w>
       <w>powell</w>
       <w>pulseengine</w>
       <w>pytest</w>
+      <w>ratecheck</w>
       <w>reddit</w>
+      <w>retdict</w>
+      <w>returncode</w>
+      <w>runscan</w>
+      <w>sachs</w>
+      <w>safepct</w>
+      <w>scanret</w>
       <w>selectbox</w>
+      <w>sentfactor</w>
+      <w>setrunning</w>
       <w>showgrid</w>
       <w>showticklabels</w>
+      <w>srcweight</w>
       <w>streamlit</w>
       <w>technica</w>
       <w>testpaths</w>
@@ -49,9 +90,15 @@
       <w>tickformat</w>
       <w>tickprefix</w>
       <w>tozeroy</w>
+      <w>trendbranch</w>
+      <w>trendlabel</w>
+      <w>trendunk</w>
       <w>tsla</w>
       <w>vader</w>
       <w>vadersentiment</w>
+      <w>volbranch</w>
+      <w>volcalc</w>
+      <w>volzero</w>
       <w>winget</w>
       <w>xanchor</w>
       <w>yanchor</w>

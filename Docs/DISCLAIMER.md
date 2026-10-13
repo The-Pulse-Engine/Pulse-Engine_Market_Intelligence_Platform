@@ -48,7 +48,7 @@ Backtesting results and historical hit rates displayed by this platform reflect 
 
 ## 4. Market Risk
 
-All financial markets involve risk. The value of investments can decrease as well as increase. You may receive back less than you invest. Cryptocurrency markets in particular are highly volatile and largely unregulated. Commodity and equity markets are subject to macro-economic, geopolitical, and regulatory risks that are beyond the scope of any automated analysis tool.
+All financial markets involve risk. The value of investments can decrease as well as increase. You may receive back less than you invest. Cryptocurrency markets in particular are highly volatile and largely unregulated. Commodity and equity markets are subject to macroeconomic, geopolitical, and regulatory risks that are beyond the scope of any automated analysis tool.
 
 ---
 

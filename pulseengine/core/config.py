@@ -419,7 +419,7 @@ BACKTEST_WINDOW = 20                # max signals to evaluate
 ASSET_CLASS_WEIGHTS: dict[str, dict[str, float]] = {
     "Cryptocurrency": {
         "trend":          1.2,
-        # crypto momentum: 1.8x because crypto doesn't walk, it sprints off a cliff, some shmuck
+        # crypto momentum: 1.8x because crypto doesn't walk, it sprints off a cliff, some schmuck
         # does a liquidity test every friday
         "momentum":       1.8,
         "rsi":            0.8,
