@@ -25,7 +25,7 @@ platformdirs==4.4.0
 plotly==6.6.0
 protobuf==6.33.6
 pyarrow==24.0.0
-pycparser==2.23
+pycparser==3.0
 pydeck==0.9.1
 python-dateutil==2.9.0.post0
 pytz==2026.1
