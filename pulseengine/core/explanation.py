@@ -5,7 +5,7 @@ Single responsibility: turn structured analysis data into human-readable
 narrative output.
 
 Pipeline role (step 10 of the full engine):
-  - build_explanation     : produce verdict, factor list, markdown detail,
+  - build_explanation     : produce verdict, factor list, Markdown detail,
                             confidence assessment, contradictions, and a
                             concise "why it matters" insight
   - detect_contradictions: identify tensions between signal components
@@ -42,7 +42,7 @@ def build_explanation(
     Produce a structured explanation with:
       verdict          — one-line summary
       factors          — contributing factor dicts
-      detail           — long-form markdown
+      detail           — long-form Markdown
       confidence       — "high" / "medium" / "low" (backward-compat)
       confidence_info  — dict with score + reasoning
       contradictions   — detected signal contradictions

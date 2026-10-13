@@ -58,7 +58,7 @@ The platform processes data from two independent sources on each analysis cycle:
 - **Price data** — 30-day OHLCV history fetched from Yahoo Finance via `yfinance`
 - **News data** — up to 300 articles ingested in parallel from 12 curated RSS feeds, deduplicated using Jaccard similarity, and scored using VADER sentiment analysis augmented with a financial lexicon
 
-These two streams are merged into a composite signal score ranging from -10 (Strong Bearish) to +10 (Strong Bullish) using weighted contributions from six sub-components: trend direction, price momentum, RSI oscillator reading, news sentiment, trend strength, and market/sector context. Each asset class applies its own weighting profile to reflect how different market types respond to different signal types.
+These two streams are merged into a composite signal score ranging from -10 (Strong Bearish) to +10 (Strong Bullish) using weighted contributions from six subcomponents: trend direction, price momentum, RSI oscillator reading, news sentiment, trend strength, and market/sector context. Each asset class applies its own weighting profile to reflect how different market types respond to different signal types.
 
 Historical snapshots are persisted to compressed JSON files on disk. A background scan thread processes all 24 assets every 30 minutes without blocking the dashboard UI.
 

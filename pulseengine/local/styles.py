@@ -5,7 +5,7 @@ Retro Financial Broadsheet palette.  Call load_css() once at the top of
 dashboard.py, immediately after st.set_page_config().
 
 The stylesheet itself lives in dashboard.css next to this module rather than in
-a Python string, so editors syntax-highlight it and it is not subject to Python
+a Python string, so editors syntax-highlight it, and it is not subject to Python
 line-length rules. It is read through importlib.resources, which resolves both
 from a source checkout and from an installed wheel — a __file__-relative path
 would work in the checkout and silently lose all styling once installed.

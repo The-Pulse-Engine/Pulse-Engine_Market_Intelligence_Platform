@@ -66,7 +66,7 @@ log = logging.getLogger(__name__)
 # Streamlit's root logger defaults to WARNING, which silently drops every
 # log.info() call from the scan pipeline.  Attach a dedicated StreamHandler
 # to the "pulseengine" logger so scan progress reaches the terminal regardless
-# of Streamlit's logging configuration.  propagate=False prevents double-
+# of Streamlit's logging configuration.  propagate=False prevents double
 # printing if a root handler is also present (e.g. when running via CLI).
 _pe_log = logging.getLogger("pulseengine")
 if not _pe_log.handlers:

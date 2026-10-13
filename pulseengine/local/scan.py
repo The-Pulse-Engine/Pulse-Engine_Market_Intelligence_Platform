@@ -10,35 +10,10 @@ Usage:
     python -m pulseengine.local.scan --quiet      # suppress per-asset log lines
     python -m pulseengine.local.scan --dry-run    # show what would run, save nothing
 
-Structure of the scan summary (market_data/_scan_summary.json.gz):
-    {
-      "scan_date":  "2026-03-31",
-      "scan_time":  "2026-03-31T14:00:00",
-      "total":      24,
-      "succeeded":  24,
-      "errors":     [],
-      "results": {
-        "Commodities": {
-          "Gold": {
-            "ticker":          "GC=F",
-            "signal_score":    4.5,
-            "signal_label":    "Bullish",
-            "price":           2150.43,
-            "change_1d":       1.25,
-            "change_7d":       3.45,
-            "trend":           "uptrend",
-            "rsi":             65.3,
-            "roc_10d":         3.45,
-            "confidence":      "high",
-            "verdict":         "Gold is up 1.25% today ...",
-            "is_market_wide":  false,
-            "is_sector_wide":  true
-          },
-          ...
-        },
-        ...
-      }
-    }
+The scan summary (market_data/_scan_summary.json.gz) holds scan_date,
+scan_time, total, succeeded, errors, and results keyed by category, then by
+asset. Docs/variable_list.md lists every field under
+"pulseengine/local/scan.py — Return Structures".
 """
 
 from __future__ import annotations

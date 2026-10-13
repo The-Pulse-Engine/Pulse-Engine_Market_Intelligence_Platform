@@ -2,7 +2,7 @@
 PulseEngine — Market Intelligence Platform
 
 A comprehensive system for real-time market analysis combining price data,
-news feeds, sentiment analysis, and multi-factor signal generation.
+news feeds, sentiment analysis, and multifactor signal generation.
 
 Architectural layers:
     core       - Headless engine module (shared by local/ and web/)

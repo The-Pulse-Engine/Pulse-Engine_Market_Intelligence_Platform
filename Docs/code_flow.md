@@ -17,28 +17,28 @@ When `streamlit run pulseengine/local/dashboard.py` is executed, Streamlit re-ru
 
 ```mermaid
 flowchart TD
-    START([streamlit run pulseengine/local/dashboard.py]) --> IMPORT[Imports resolved\npulseengine.core.config / pulseengine.core.app / pulseengine.core.backtest / pulseengine.core.storage]
-    IMPORT --> SINGLETON[_get_scan_state called\nLock and status dict created once\nvia cache_resource]
+    START([streamlit run pulseengine/local/dashboard.py]) --> IMPORT[Imports resolved<br/>pulseengine.core.config / pulseengine.core.app / pulseengine.core.backtest / pulseengine.core.storage]
+    IMPORT --> SINGLETON[_get_scan_state called<br/>Lock and status dict created once<br/>via cache_resource]
     SINGLETON --> TRIGGER[_maybe_trigger_scan]
 
-    TRIGGER --> RATECHECK{session _scan_check_ts\n< 60 s ago?}
+    TRIGGER --> RATECHECK{session _scan_check_ts<br/>< 60 s ago?}
     RATECHECK -->|Yes — skip| SIDEBAR
     RATECHECK -->|No — proceed| MTIMECHECK
 
-    MTIMECHECK{_scan_summary.json.gz\nmtime < SCAN_INTERVAL?}
+    MTIMECHECK{_scan_summary.json.gz<br/>mtime < SCAN_INTERVAL?}
     MTIMECHECK -->|Recent enough| SIDEBAR
     MTIMECHECK -->|Missing or stale| LOCKCHECK
 
-    LOCKCHECK{lock.acquire\nblocking=False}
+    LOCKCHECK{lock.acquire<br/>blocking=False}
     LOCKCHECK -->|Already held| SIDEBAR
     LOCKCHECK -->|Acquired| THREAD
 
-    THREAD[Spawn daemon thread\n_run_background_scan] --> SIDEBAR
+    THREAD[Spawn daemon thread<br/>_run_background_scan] --> SIDEBAR
 
-    SIDEBAR[Render sidebar\ncategory and asset selectors\nscan status badge] --> NAVDETECT
-    NAVDETECT[_push_nav_if_changed\ndetect category / asset change\npush snapshot to _nav_history] --> MAINPANEL
-    MAINPANEL[Render main panel\nBack button + selected asset content] --> POLLER
-    POLLER[_scan_completion_poller\nst.fragment run_every=5s\ncheck scan running flag] --> POLLERCHECK{Scan just\nfinished?}
+    SIDEBAR[Render sidebar<br/>category and asset selectors<br/>scan status badge] --> NAVDETECT
+    NAVDETECT[_push_nav_if_changed<br/>detect category / asset change<br/>push snapshot to _nav_history] --> MAINPANEL
+    MAINPANEL[Render main panel<br/>Back button + selected asset content] --> POLLER
+    POLLER[_scan_completion_poller<br/>st.fragment run_every=5s<br/>check scan running flag] --> POLLERCHECK{Scan just<br/>finished?}
     POLLERCHECK -->|Yes| RERUN([st.rerun — full page refresh])
     POLLERCHECK -->|No| AUTOREFRESH{90 s elapsed?}
     AUTOREFRESH -->|Yes| TRIGGER
@@ -57,29 +57,29 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    ENTRY([_run_background_scan thread starts]) --> SETRUNNING[state running = True\nstate error = empty\nstate assets_done = 0]
+    ENTRY([_run_background_scan thread starts]) --> SETRUNNING[state running = True<br/>state error = empty<br/>state assets_done = 0]
 
-    SETRUNNING --> RUNSCAN[scan.run_scan\nverbose=False]
+    SETRUNNING --> RUNSCAN[scan.run_scan<br/>verbose=False]
 
-    RUNSCAN --> FETCHNEWS[fetch_news_articles\nall 12 RSS feeds in parallel\ndeduplication applied]
+    RUNSCAN --> FETCHNEWS[fetch_news_articles<br/>all 12 RSS feeds in parallel<br/>deduplication applied]
 
-    FETCHNEWS --> LOOPSTART{Next asset in\nTRACKED_ASSETS?}
+    FETCHNEWS --> LOOPSTART{Next asset in<br/>TRACKED_ASSETS?}
 
-    LOOPSTART -->|More assets| ANALYSE[analyse_asset\nasset_name ticker category articles\nwith_market_ctx=True\nsave=True\nprice_cache=price_cache]
+    LOOPSTART -->|More assets| ANALYSE[analyse_asset<br/>asset_name ticker category articles<br/>with_market_ctx=True<br/>save=True<br/>price_cache=price_cache]
     LOOPSTART -->|All done| SUMMARY
 
     ANALYSE --> ASUCCESS{Success?}
-    ASUCCESS -->|Yes — extract fields| ENTRY_DICT[Build entry dict\nticker signal_score price\nchange_1d trend rsi verdict]
-    ASUCCESS -->|Exception| ERRLOG[Log error\nappend to errors list]
+    ASUCCESS -->|Yes — extract fields| ENTRY_DICT[Build entry dict<br/>ticker signal_score price<br/>change_1d trend rsi verdict]
+    ASUCCESS -->|Exception| ERRLOG[Log error<br/>append to errors list]
 
-    ENTRY_DICT --> SNAPSHOT[save_snapshot called inside\nanalyse_asset when save=True\nwrites AssetName_YYYYMMDD.json.gz]
+    ENTRY_DICT --> SNAPSHOT[save_snapshot called inside<br/>analyse_asset when save=True<br/>writes AssetName_YYYYMMDD.json.gz]
     ERRLOG --> LOOPSTART
     SNAPSHOT --> LOOPSTART
 
-    SUMMARY[_save_summary\nwrites _scan_summary.json.gz] --> RETENTION[apply_retention_policy\ncleanup_old_snapshots]
-    RETENTION --> SCANRET[run_scan returns\nsummary dict]
+    SUMMARY[_save_summary<br/>writes _scan_summary.json.gz] --> RETENTION[apply_retention_policy<br/>cleanup_old_snapshots]
+    RETENTION --> SCANRET[run_scan returns<br/>summary dict]
 
-    SCANRET --> DONE[state running = False\nstate assets_done = summary.succeeded\nlock released]
+    SCANRET --> DONE[state running = False<br/>state assets_done = summary.succeeded<br/>lock released]
     DONE --> EXIT([Thread exits])
 ```
 
@@ -91,23 +91,23 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    CALL([compute_price_metrics called]) --> NULLCHECK{df is None\nor empty?}
+    CALL([compute_price_metrics called]) --> NULLCHECK{df is None<br/>or empty?}
 
     NULLCHECK -->|Yes| EMPTYRET([Return empty dict])
-    NULLCHECK -->|No| EXTRACT[Extract Close series\nhandle DataFrame vs Series]
+    NULLCHECK -->|No| EXTRACT[Extract Close series<br/>handle DataFrame vs Series]
 
     EXTRACT --> LATEST[latest = close.iloc last]
 
-    LATEST --> SAFEPCT[safe_pct helper\ncompute 1d 7d 30d changes]
+    LATEST --> SAFEPCT[safe_pct helper<br/>compute 1d 7d 30d changes]
 
     SAFEPCT --> VOLBRANCH{len close > 1?}
-    VOLBRANCH -->|Yes| VOLCALC[vol = pct_change fill_method=None\n.std * 100]
+    VOLBRANCH -->|Yes| VOLCALC[vol = pct_change fill_method=None<br/>.std * 100]
     VOLBRANCH -->|No| VOLZERO[vol = 0.0]
 
-    VOLCALC --> TREND[_classify_trend\n7-day MA vs 30-day MA]
+    VOLCALC --> TREND[_classify_trend<br/>7-day MA vs 30-day MA]
     VOLZERO --> TREND
 
-    TREND --> TRENDBRANCH{Enough history\nfor MAs?}
+    TREND --> TRENDBRANCH{Enough history<br/>for MAs?}
     TRENDBRANCH -->|Yes — compare MAs| TRENDLABEL[uptrend / downtrend / sideways]
     TRENDBRANCH -->|No| TRENDUNK[trend = unknown]
 
@@ -121,24 +121,24 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    CALL([compute_momentum_metrics called]) --> NULLCHECK{df is None\nor empty?}
+    CALL([compute_momentum_metrics called]) --> NULLCHECK{df is None<br/>or empty?}
     NULLCHECK -->|Yes| EMPTY([Return empty dict])
     NULLCHECK -->|No| CLOSE[Extract Close series]
 
     CLOSE --> RSI_CHECK{len >= RSI_PERIOD + 1?}
-    RSI_CHECK -->|Yes| RSI_CALC[compute_rsi\nWilder-smoothed gain loss ratio\n14-period]
+    RSI_CHECK -->|Yes| RSI_CALC[compute_rsi<br/>Wilder-smoothed gain loss ratio<br/>14-period]
     RSI_CHECK -->|No| RSI_NONE[rsi = None]
 
     CLOSE --> ROC_CHECK{len >= MOMENTUM_PERIOD + 1?}
-    ROC_CHECK -->|Yes| ROC_CALC[_compute_roc\nclose now vs close N days ago\nas percentage]
+    ROC_CHECK -->|Yes| ROC_CALC[_compute_roc<br/>close now vs close N days ago<br/>as percentage]
     ROC_CHECK -->|No| ROC_NONE[roc_10d = None]
 
     CLOSE --> TS_CHECK{len >= 30?}
-    TS_CHECK -->|Yes| TS_CALC[trend_strength\n7d MA minus 30d MA\ndivided by 30d MA * 100]
+    TS_CHECK -->|Yes| TS_CALC[trend_strength<br/>7d MA minus 30d MA<br/>divided by 30d MA * 100]
     TS_CHECK -->|No| TS_NONE[trend_strength = None]
 
     CLOSE --> ACCEL_CHECK{len >= 11?}
-    ACCEL_CHECK -->|Yes| ACCEL_CALC[momentum_accel\nrecent 5d ROC minus prior 5d ROC]
+    ACCEL_CHECK -->|Yes| ACCEL_CALC[momentum_accel<br/>recent 5d ROC minus prior 5d ROC]
     ACCEL_CHECK -->|No| ACCEL_NONE[momentum_accel = None]
 
     RSI_CALC --> MERGE
@@ -159,21 +159,21 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    CALL([fetch_news_articles called]) --> PARALLEL[ThreadPoolExecutor\nMAX_WORKERS = 4\nfetch each of 12 feeds]
+    CALL([fetch_news_articles called]) --> PARALLEL[ThreadPoolExecutor<br/>MAX_WORKERS = 4<br/>fetch each of 12 feeds]
 
-    PARALLEL --> PARSE[feedparser.parse each URL\nwith REQUEST_TIMEOUT = 20s]
+    PARALLEL --> PARSE[feedparser.parse each URL<br/>with REQUEST_TIMEOUT = 20s]
 
-    PARSE --> AGEFILT{article pub_date\n< NEWS_MAX_AGE_HOURS?}
+    PARSE --> AGEFILT{article pub_date<br/>< NEWS_MAX_AGE_HOURS?}
     AGEFILT -->|Too old| DISCARD1[Discard]
-    AGEFILT -->|Recent| SENTIMENT[score_sentiment on title + summary\nVADER with financial lexicon\nor keyword fallback]
+    AGEFILT -->|Recent| SENTIMENT[score_sentiment on title + summary<br/>VADER with financial lexicon<br/>or keyword fallback]
 
-    SENTIMENT --> POOL[Collect all articles\ninto pool]
+    SENTIMENT --> POOL[Collect all articles<br/>into pool]
 
-    POOL --> CAPCHECK{len pool\n> NEWS_MAX_ARTICLES?}
-    CAPCHECK -->|Over cap| TRUNCATE[Sort by relevance\ntake top 300]
+    POOL --> CAPCHECK{len pool<br/>> NEWS_MAX_ARTICLES?}
+    CAPCHECK -->|Over cap| TRUNCATE[Sort by relevance<br/>take top 300]
     CAPCHECK -->|Under cap| DEDUP
 
-    TRUNCATE --> DEDUP[deduplicate_articles\nJaccard similarity on title tokens\nthreshold = 0.65]
+    TRUNCATE --> DEDUP[deduplicate_articles<br/>Jaccard similarity on title tokens<br/>threshold = 0.65]
     DEDUP --> RETURN([Return deduplicated list])
 ```
 
@@ -185,29 +185,29 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    CALL([generate_keywords called\nticker]) --> UPPER[Normalise ticker to uppercase]
+    CALL([generate_keywords called<br/>ticker]) --> UPPER[Normalise ticker to uppercase]
 
-    UPPER --> THREAD[Start daemon thread\nthread.join timeout=REQUEST_TIMEOUT]
+    UPPER --> THREAD[Start daemon thread<br/>thread.join timeout=REQUEST_TIMEOUT]
 
     THREAD --> FETCH[yf.Ticker ticker .info]
 
-    FETCH --> ALIVE{thread.is_alive\nafter join?}
+    FETCH --> ALIVE{thread.is_alive<br/>after join?}
     ALIVE -->|Yes — timed out| FALLBACK([Return ticker])
     ALIVE -->|No| EXCCHECK
 
-    EXCCHECK{Exception\nraised in thread?}
+    EXCCHECK{Exception<br/>raised in thread?}
     EXCCHECK -->|Yes| FALLBACK
     EXCCHECK -->|No| INFOCHECK
 
-    INFOCHECK{info dict has\nlongName?}
+    INFOCHECK{info dict has<br/>longName?}
     INFOCHECK -->|No — unknown ticker| FALLBACK
     INFOCHECK -->|Yes| BUILD
 
-    BUILD[Add ticker symbol] --> NAMES[Add longName and shortName\nfull string plus individual tokens\nstrip _CORP_SUFFIXES words]
+    BUILD[Add ticker symbol] --> NAMES[Add longName and shortName<br/>full string plus individual tokens<br/>strip _CORP_SUFFIXES words]
 
-    NAMES --> OFFICERS[Add surnames from\ncompanyOfficers top 5]
+    NAMES --> OFFICERS[Add surnames from<br/>companyOfficers top 5]
 
-    OFFICERS --> DEDUP[Deduplicate preserving order\nfilter tokens < 3 chars]
+    OFFICERS --> DEDUP[Deduplicate preserving order<br/>filter tokens < 3 chars]
 
     DEDUP --> RETURN([Return keyword list])
 ```
@@ -218,25 +218,25 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    CALL([correlate_news called\nasset_name articles]) --> KWLOOKUP[Load ASSET_KEYWORDS\nfor this asset]
+    CALL([correlate_news called<br/>asset_name articles]) --> KWLOOKUP[Load ASSET_KEYWORDS<br/>for this asset]
 
     KWLOOKUP --> ARTLOOP{Next article?}
     ARTLOOP -->|Done| SORT
 
-    ARTLOOP -->|Process| TEXT[Combine title + summary text\nlowercase]
-    TEXT --> KWSCAN[Scan each keyword via _kw_re\nword-boundary regex match\naccumulate weighted score]
+    ARTLOOP -->|Process| TEXT[Combine title + summary text<br/>lowercase]
+    TEXT --> KWSCAN[Scan each keyword via _kw_re<br/>word-boundary regex match<br/>accumulate weighted score]
 
     KWSCAN --> RECENCY{pub_date age?}
     RECENCY -->|< 24 h| BONUS2[Add recency bonus +2]
     RECENCY -->|< 48 h| BONUS1[Add recency bonus +1]
     RECENCY -->|Older| NOBONUS[No bonus]
 
-    BONUS2 --> SRCWEIGHT[Multiply by SOURCE_WEIGHTS\nmultiplier for this feed]
+    BONUS2 --> SRCWEIGHT[Multiply by SOURCE_WEIGHTS<br/>multiplier for this feed]
     BONUS1 --> SRCWEIGHT
     NOBONUS --> SRCWEIGHT
 
-    SRCWEIGHT --> THRESHOLD{relevance_score\n> 0?}
-    THRESHOLD -->|Yes — include| EVENTS[detect_events\nidentify event type labels]
+    SRCWEIGHT --> THRESHOLD{relevance_score<br/>> 0?}
+    THRESHOLD -->|Yes — include| EVENTS[detect_events<br/>identify event type labels]
     THRESHOLD -->|No| ARTLOOP
 
     EVENTS --> ARTLOOP
@@ -252,14 +252,14 @@ Six components are computed from separate data sources, each multiplied by an as
 
 ```mermaid
 flowchart TD
-    CALL([compute_signal_score called]) --> WEIGHTS[Load ASSET_CLASS_WEIGHTS\nfor this category]
+    CALL([compute_signal_score called]) --> WEIGHTS[Load ASSET_CLASS_WEIGHTS<br/>for this category]
 
-    WEIGHTS --> TREND_C[Trend component\n+2.0 uptrend / -2.0 downtrend / 0 sideways\nmultiplied by class weight]
-    WEIGHTS --> MOM_C[Momentum component\nROC capped at +/- 2.0\nmultiplied by class weight]
-    WEIGHTS --> RSI_C[RSI component\n+/- 1.0 on overbought/oversold\nmultiplied by class weight]
-    WEIGHTS --> SENT_C[Sentiment component\navg compound * 4.0 capped +/- 2.0\nmultiplied by class weight]
-    WEIGHTS --> TS_C[Trend strength component\nMA divergence capped +/- 1.0\nmultiplied by class weight]
-    WEIGHTS --> CTX_C[Context component\npeer and benchmark alignment +/- 1.0\nmultiplied by class weight]
+    WEIGHTS --> TREND_C[Trend component<br/>+2.0 uptrend / -2.0 downtrend / 0 sideways<br/>multiplied by class weight]
+    WEIGHTS --> MOM_C[Momentum component<br/>ROC capped at +/- 2.0<br/>multiplied by class weight]
+    WEIGHTS --> RSI_C[RSI component<br/>+/- 1.0 on overbought/oversold<br/>multiplied by class weight]
+    WEIGHTS --> SENT_C[Sentiment component<br/>avg compound * 4.0 capped +/- 2.0<br/>multiplied by class weight]
+    WEIGHTS --> TS_C[Trend strength component<br/>MA divergence capped +/- 1.0<br/>multiplied by class weight]
+    WEIGHTS --> CTX_C[Context component<br/>peer and benchmark alignment +/- 1.0<br/>multiplied by class weight]
 
     TREND_C --> SUM
     MOM_C --> SUM
@@ -269,7 +269,7 @@ flowchart TD
     CTX_C --> SUM
 
     SUM[Sum all components] --> CLAMP[Clamp to -10.0 / +10.0]
-    CLAMP --> LABEL[Map score to label\nusing SIGNAL_THRESHOLDS]
+    CLAMP --> LABEL[Map score to label<br/>using SIGNAL_THRESHOLDS]
     LABEL --> RETURN([Return score and label dict])
 ```
 
@@ -279,17 +279,17 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    CALL([analyse_market_context called\nasset_name category asset_change]) --> PEERS[Load SECTOR_PEERS\nfor this asset]
-    PEERS --> BENCHMARK[Load MARKET_BENCHMARK\nfor this category]
+    CALL([analyse_market_context called<br/>asset_name category asset_change]) --> PEERS[Load SECTOR_PEERS<br/>for this asset]
+    PEERS --> BENCHMARK[Load MARKET_BENCHMARK<br/>for this category]
 
-    PEERS --> PEER_FETCH[Fetch 1d change\nfor each peer in parallel]
-    BENCHMARK --> BENCH_FETCH[Fetch 1d change\nfor benchmark ticker]
+    PEERS --> PEER_FETCH[Fetch 1d change<br/>for each peer in parallel]
+    BENCHMARK --> BENCH_FETCH[Fetch 1d change<br/>for benchmark ticker]
 
-    PEER_FETCH --> PEER_DIR{Count peers moving\nsame direction as asset}
+    PEER_FETCH --> PEER_DIR{Count peers moving<br/>same direction as asset}
     PEER_DIR -->|>= 60% same direction| SECTOR_WIDE[is_sector_wide = True]
     PEER_DIR -->|< 60%| NOT_SECTOR[is_sector_wide = False]
 
-    BENCH_FETCH --> BENCH_DIR{Benchmark moved\n> 0.5% same direction?}
+    BENCH_FETCH --> BENCH_DIR{Benchmark moved<br/>> 0.5% same direction?}
     BENCH_DIR -->|Yes| MARKET_WIDE[is_market_wide = True]
     BENCH_DIR -->|No| NOT_MARKET[is_market_wide = False]
 
@@ -298,7 +298,7 @@ flowchart TD
     MARKET_WIDE --> SPECIFIC_CHECK
     NOT_MARKET --> SPECIFIC_CHECK
 
-    SPECIFIC_CHECK{Neither sector\nnor market wide?}
+    SPECIFIC_CHECK{Neither sector<br/>nor market wide?}
     SPECIFIC_CHECK -->|Yes| ASSET_SPECIFIC[is_asset_specific = True]
     SPECIFIC_CHECK -->|No| NOT_SPECIFIC[is_asset_specific = False]
 
@@ -312,7 +312,7 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    CALL([build_explanation called]) --> ABNORM{Z-score of 1d change\nvs historical volatility}
+    CALL([build_explanation called]) --> ABNORM{Z-score of 1d change<br/>vs historical volatility}
     ABNORM -->|Abnormal move| ADD_VOL[Add volatility factor]
     ABNORM -->|Normal| SKIP_VOL[Skip]
 
@@ -321,12 +321,12 @@ flowchart TD
     RSI_CHK -->|< 30 oversold| ADD_UNDER[Add RSI oversold factor]
     RSI_CHK -->|Normal range| SKIP_RSI[Skip]
 
-    CALL --> CTX_CHK{Market context\navailable?}
-    CTX_CHK -->|Yes| CTXFACTOR[Add sector_wide / market_wide\nor asset_specific factor]
+    CALL --> CTX_CHK{Market context<br/>available?}
+    CTX_CHK -->|Yes| CTXFACTOR[Add sector_wide / market_wide<br/>or asset_specific factor]
     CTX_CHK -->|No| SKIP_CTX[Skip]
 
-    CALL --> NEWS_CHK{High-relevance\nnews present?}
-    NEWS_CHK -->|Yes| SENTFACTOR[Add sentiment factor\nwith event labels]
+    CALL --> NEWS_CHK{High-relevance<br/>news present?}
+    NEWS_CHK -->|Yes| SENTFACTOR[Add sentiment factor<br/>with event labels]
     NEWS_CHK -->|No| SKIP_NEWS[Skip]
 
     ADD_VOL --> CONTRA
@@ -339,19 +339,19 @@ flowchart TD
     SENTFACTOR --> CONTRA
     SKIP_NEWS --> CONTRA
 
-    CONTRA{Signal direction\ncontradicts news sentiment?}
+    CONTRA{Signal direction<br/>contradicts news sentiment?}
     CONTRA -->|Yes| ADD_CONTRA[Append contradiction to list]
     CONTRA -->|No| SKIP_CONTRA[Skip]
 
     ADD_CONTRA --> CONFIDENCE
     SKIP_CONTRA --> CONFIDENCE
 
-    CONFIDENCE{Factor count\nand contradiction count}
+    CONFIDENCE{Factor count<br/>and contradiction count}
     CONFIDENCE -->|Many factors no contra| HIGH[confidence = high]
     CONFIDENCE -->|Some factors or 1 contra| MEDIUM[confidence = medium]
     CONFIDENCE -->|Few factors or many contra| LOW[confidence = low]
 
-    HIGH --> VERDICT[Build verdict one-liner\nbuild why_it_matters\nbuild detail markdown]
+    HIGH --> VERDICT[Build verdict one-liner<br/>build why_it_matters<br/>build detail markdown]
     MEDIUM --> VERDICT
     LOW --> VERDICT
 
@@ -364,15 +364,15 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    CALL([save_snapshot called\nasset_name metrics momentum signal top_headlines]) --> ENSUREDIR[_ensure_dir\ncreate market_data if absent]
+    CALL([save_snapshot called<br/>asset_name metrics momentum signal top_headlines]) --> ENSUREDIR[_ensure_dir<br/>create market_data if absent]
 
-    ENSUREDIR --> PATH[Build path\nmarket_data/AssetName_YYYYMMDD.json.gz]
+    ENSUREDIR --> PATH[Build path<br/>market_data/AssetName_YYYYMMDD.json.gz]
 
-    PATH --> HEADLINES[Trim and normalise\ntop 5 headlines\nextract compound sentiment float]
+    PATH --> HEADLINES[Trim and normalise<br/>top 5 headlines<br/>extract compound sentiment float]
 
-    HEADLINES --> BUILD[Assemble snapshot dict\n15 fields including price trend\nrsi signal_score headlines]
+    HEADLINES --> BUILD[Assemble snapshot dict<br/>15 fields including price trend<br/>rsi signal_score headlines]
 
-    BUILD --> WRITE[gzip compress JSON\nwrite to file\noverwrite existing for today]
+    BUILD --> WRITE[gzip compress JSON<br/>write to file<br/>overwrite existing for today]
 
     WRITE --> DONE([Return])
 ```
@@ -385,17 +385,17 @@ Run automatically at the end of each scan.
 
 ```mermaid
 flowchart TD
-    CALL([apply_retention_policy called]) --> LISTFILES[Glob market_data\nfor all *.json.gz excluding summary]
+    CALL([apply_retention_policy called]) --> LISTFILES[Glob market_data<br/>for all *.json.gz excluding summary]
 
     LISTFILES --> FILELOOP{Next file?}
-    FILELOOP -->|Done| CLEANUP[cleanup_old_snapshots\ndelete files older than STORAGE_MAX_DAYS]
+    FILELOOP -->|Done| CLEANUP[cleanup_old_snapshots<br/>delete files older than STORAGE_MAX_DAYS]
     FILELOOP -->|Process| AGECHECK{File age in days}
 
     AGECHECK -->|<= STORAGE_FULL_DETAIL_DAYS| KEEP_FULL[Keep full snapshot unchanged]
     AGECHECK -->|<= STORAGE_REDUCED_DETAIL_DAYS| REDUCED_CHECK{Already reduced?}
     AGECHECK -->|> STORAGE_REDUCED_DETAIL_DAYS| KEEP_FULL
 
-    REDUCED_CHECK -->|Has headlines field| REWRITE[Rewrite with only _REDUCED_FIELDS\nstrip headlines and extra fields]
+    REDUCED_CHECK -->|Has headlines field| REWRITE[Rewrite with only _REDUCED_FIELDS<br/>strip headlines and extra fields]
     REDUCED_CHECK -->|Already reduced| KEEP_FULL
 
     KEEP_FULL --> FILELOOP
@@ -410,15 +410,15 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    CALL([evaluate_signal_accuracy called\nasset_name lookback]) --> LOAD[load_recent_snapshots\nup to lookback + 1 snapshots]
+    CALL([evaluate_signal_accuracy called<br/>asset_name lookback]) --> LOAD[load_recent_snapshots<br/>up to lookback + 1 snapshots]
 
     LOAD --> ENOUGH{At least 2 snapshots?}
     ENOUGH -->|No| EMPTY([Return empty result])
-    ENOUGH -->|Yes| PAIR[Pair consecutive snapshots\nday N signal vs day N+1 price change]
+    ENOUGH -->|Yes| PAIR[Pair consecutive snapshots<br/>day N signal vs day N+1 price change]
 
     PAIR --> EVAL_LOOP{Next pair?}
     EVAL_LOOP -->|Done| AGGREGATE
-    EVAL_LOOP -->|Process| DIRECTION{signal_score direction\nmatch price change direction?}
+    EVAL_LOOP -->|Process| DIRECTION{signal_score direction<br/>match price change direction?}
 
     DIRECTION -->|Match| HIT[correct = True]
     DIRECTION -->|Mismatch| MISS[correct = False]
@@ -434,7 +434,7 @@ flowchart TD
     MODERATE --> EVAL_LOOP
     WEAK --> EVAL_LOOP
 
-    AGGREGATE[Compute hit_rate\nby_signal_strength\nby_label\navg_signal_score] --> STREAK[get_signal_streak\ncurrent win or loss run]
+    AGGREGATE[Compute hit_rate<br/>by_signal_strength<br/>by_label<br/>avg_signal_score] --> STREAK[get_signal_streak<br/>current win or loss run]
 
     STREAK --> RETURN([Return result dict])
 ```
@@ -447,7 +447,7 @@ This is the top-level function called by both `pulseengine/local/scan.py` and di
 
 ```mermaid
 flowchart TD
-    CALL([analyse_asset called\nasset_name ticker category articles\nwith_market_ctx]) --> PRICE[fetch_price_history ticker]
+    CALL([analyse_asset called<br/>asset_name ticker category articles<br/>with_market_ctx]) --> PRICE[fetch_price_history ticker]
 
     PRICE --> PCHECK{DataFrame returned?}
     PCHECK -->|None or empty| METRICS_EMPTY[compute_price_metrics returns empty dict]
@@ -458,23 +458,23 @@ flowchart TD
     MOMENTUM --> CORR[correlate_news asset_name articles]
     CORR --> CLUSTER[cluster_articles correlated news]
 
-    CLUSTER --> CTX_CHECK{with_market_ctx\nand change_1d available?}
+    CLUSTER --> CTX_CHECK{with_market_ctx<br/>and change_1d available?}
     CTX_CHECK -->|Yes| CTX[analyse_market_context]
     CTX_CHECK -->|No| CTX_NONE[market_ctx = None]
 
     CTX --> SIGNAL
     CTX_NONE --> SIGNAL
 
-    SIGNAL[compute_signal_score\nmetrics momentum news\nmarket_ctx category] --> EXPLAIN[build_explanation]
+    SIGNAL[compute_signal_score<br/>metrics momentum news<br/>market_ctx category] --> EXPLAIN[build_explanation]
 
-    EXPLAIN --> STORAGE_CHECK{save=True\nand STORAGE_AVAILABLE?}
-    STORAGE_CHECK -->|Yes| SNAP[_save_snapshot\nsilent on error]
-    STORAGE_CHECK -->|No| SKIP_SNAP[Skip\ndashboard calls use save=False]
+    EXPLAIN --> STORAGE_CHECK{save=True<br/>and STORAGE_AVAILABLE?}
+    STORAGE_CHECK -->|Yes| SNAP[_save_snapshot<br/>silent on error]
+    STORAGE_CHECK -->|No| SKIP_SNAP[Skip<br/>dashboard calls use save=False]
 
     SNAP --> HIST
     SKIP_SNAP --> HIST
 
-    HIST[get_historical_features\nfrom stored snapshots] --> RETURN([Return full result dict])
+    HIST[get_historical_features<br/>from stored snapshots] --> RETURN([Return full result dict])
 ```
 
 ---
@@ -485,11 +485,11 @@ Note: `fetch_all_metrics_parallel` is defined in `pulseengine/core/app.py`, but 
 
 ```mermaid
 flowchart TD
-    CALL([fetch_all_metrics_parallel called\ndays=LOOKBACK_DAYS]) --> BUILDTASKS[Build task list\nall category+asset+ticker triples]
+    CALL([fetch_all_metrics_parallel called<br/>days=LOOKBACK_DAYS]) --> BUILDTASKS[Build task list<br/>all category+asset+ticker triples]
 
-    BUILDTASKS --> POOL[ThreadPoolExecutor\nPRICE_FETCH_WORKERS threads]
+    BUILDTASKS --> POOL[ThreadPoolExecutor<br/>PRICE_FETCH_WORKERS threads]
 
-    POOL --> WORKER[_fetch_one_asset\ncat name tkr days]
+    POOL --> WORKER[_fetch_one_asset<br/>cat name tkr days]
 
     WORKER --> FETCH[fetch_price_history ticker days]
     FETCH --> PMETRICS[compute_price_metrics]
@@ -498,11 +498,11 @@ flowchart TD
     PMETRICS --> COLLECT
     MMETRICS --> COLLECT
 
-    COLLECT[Collect result tuple\ncat name metrics momentum] --> MORE{More futures?}
+    COLLECT[Collect result tuple<br/>cat name metrics momentum] --> MORE{More futures?}
     MORE -->|Yes| WORKER
     MORE -->|Done| ASSEMBLE
 
-    ASSEMBLE[Assemble nested dict\ncategory -> asset -> metrics+momentum] --> RETURN([Return all_results dict])
+    ASSEMBLE[Assemble nested dict<br/>category -> asset -> metrics+momentum] --> RETURN([Return all_results dict])
 ```
 
 ---
@@ -513,30 +513,30 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    WRAPPER([install.sh or install.ps1]) --> PYDETECT[Iterate candidate interpreter names\npython3.14 → python3.11 → python3 → python]
-    PYDETECT --> FOUND{Compatible Python\n3.11–3.14 found?}
+    WRAPPER([install.sh or install.ps1]) --> PYDETECT[Iterate candidate interpreter names<br/>python3.14 → python3.11 → python3 → python]
+    PYDETECT --> FOUND{Compatible Python<br/>3.11–3.14 found?}
     FOUND -->|No| ABORT0([Exit 1 — install hint])
     FOUND -->|Yes| DELEGATE[exec / & install.py]
 
-    DELEGATE --> ENTRY([install.py starts]) --> RECONFIGURE[Reconfigure stdout/stderr\nto UTF-8 on Windows]
+    DELEGATE --> ENTRY([install.py starts]) --> RECONFIGURE[Reconfigure stdout/stderr<br/>to UTF-8 on Windows]
     RECONFIGURE --> BANNER[Print banner]
-    BANNER --> PY_CHECK[check_python_version\nverify 3.11 ≤ version ≤ 3.14]
+    BANNER --> PY_CHECK[check_python_version<br/>verify 3.11 ≤ version ≤ 3.14]
 
     PY_CHECK --> PY_OK{In range?}
     PY_OK -->|No| ABORT1([sys.exit 1])
-    PY_OK -->|Yes| VENV[create_venv\n.venv/ via python -m venv\nskip if already exists]
+    PY_OK -->|Yes| VENV[create_venv<br/>.venv/ via python -m venv<br/>skip if already exists]
 
-    VENV --> VENV_OK{Created or\nalready exists?}
-    VENV_OK -->|Error| ABORT2([sys.exit 1\nwith stderr hint])
-    VENV_OK -->|OK| DEPS[install_dependencies\nupgrade pip silently\nthen pip install -r requirements.txt]
+    VENV --> VENV_OK{Created or<br/>already exists?}
+    VENV_OK -->|Error| ABORT2([sys.exit 1<br/>with stderr hint])
+    VENV_OK -->|OK| DEPS[install_dependencies<br/>upgrade pip silently<br/>then pip install -r requirements.txt]
 
     DEPS --> DEPS_OK{returncode == 0?}
-    DEPS_OK -->|No| ABORT3([sys.exit 1\ncommon causes hint])
-    DEPS_OK -->|Yes| VERIFY[verify_install\nimport each of 6 packages\nvia venv Python subprocess]
+    DEPS_OK -->|No| ABORT3([sys.exit 1<br/>common causes hint])
+    DEPS_OK -->|Yes| VERIFY[verify_install<br/>import each of 6 packages<br/>via venv Python subprocess]
 
     VERIFY --> VER_OK{All 6 imports pass?}
     VER_OK -->|No| ABORT4([sys.exit 1])
-    VER_OK -->|Yes| LAUNCH[generate_launch_script\nWindows: write launch.bat + launch.ps1\nmacOS/Linux: write launch.sh\nset chmod 755 on Unix]
+    VER_OK -->|Yes| LAUNCH[generate_launch_script<br/>Windows: write launch.bat + launch.ps1<br/>macOS/Linux: write launch.sh<br/>set chmod 755 on Unix]
 
-    LAUNCH --> SUCCESS([print_success\nnext-steps message\nexit 0])
+    LAUNCH --> SUCCESS([print_success<br/>next-steps message<br/>exit 0])
 ```

@@ -59,7 +59,8 @@ def fetch_news_articles() -> list[dict]:
     cutoff = dt.datetime.now(dt.UTC) - dt.timedelta(hours=NEWS_MAX_AGE_HOURS)
 
     def _fetch_feed(source_name: str, feed_url: str) -> list[dict]:
-        # Validate URL scheme — only http/https permitted (blocks file://, ftp://, internal addrs)
+        # Validate URL scheme — only http/https permitted
+        # (blocks file://, ftp://, internal addresses)
         try:
             _scheme = urlparse(feed_url).scheme
             if _scheme not in ("http", "https"):

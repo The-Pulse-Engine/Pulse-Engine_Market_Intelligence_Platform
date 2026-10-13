@@ -163,12 +163,12 @@ def _render_volume_chart(history: pd.DataFrame) -> None:
         vol_col: pd.Series = (
             raw_vol_col.iloc[:, 0] if isinstance(raw_vol_col, pd.DataFrame) else raw_vol_col
         )
-        vfig = go.Figure(go.Bar(
+        volume_fig = go.Figure(go.Bar(
             x=history.index, y=vol_col,
             marker={"color": "rgba(196,163,90,0.25)"},
             hovertemplate="%{y:,.0f}<extra></extra>",
         ))
-        vfig.update_layout(
+        volume_fig.update_layout(
             height=200,
             margin={"l": 0, "r": 0, "t": 0, "b": 0},
             plot_bgcolor="rgba(0,0,0,0)",
@@ -177,7 +177,7 @@ def _render_volume_chart(history: pd.DataFrame) -> None:
             yaxis={"showgrid": False, "color": "#635a48"},
             font={"family": "Georgia, 'Times New Roman', serif"},
         )
-        st.plotly_chart(vfig, config={"responsive": True})
+        st.plotly_chart(volume_fig, config={"responsive": True})
 
 
 def _render_signal_components(live_signal: dict) -> None:
