@@ -95,7 +95,7 @@ What is missing:
 The goal: download and double-click. No terminal required.
 
 | Deliverable             | Detail                                                          |
-| ----------------------- | --------------------------------------------------------------- |
+|-------------------------|-----------------------------------------------------------------|
 | PyInstaller EXE         | Windows first, then macOS and Linux                             |
 | Launcher script         | Starts the server, waits for ready, opens browser automatically |
 | System tray icon        | Shows running status, allows clean shutdown                     |
@@ -113,7 +113,7 @@ The goal: download and double-click. No terminal required.
 This is where the local app becomes genuinely independent of any external service.
 
 | Deliverable           | Detail                                                                       |
-| --------------------- | ---------------------------------------------------------------------------- |
+|-----------------------|------------------------------------------------------------------------------|
 | FinBERT local model   | Downloaded once on first run, cached permanently, runs fully offline         |
 | Offline mode          | Serve cached data when network unavailable, flag signal staleness clearly    |
 | Export                | CSV and PDF export of signal reports and backtest results                    |
@@ -132,7 +132,7 @@ This is where the local app becomes genuinely independent of any external servic
 > Timeline depends on community growth. The more contributors, the faster this lands.
 
 | Deliverable                     | Detail                                                                        |
-| ------------------------------- | ----------------------------------------------------------------------------- |
+|---------------------------------|-------------------------------------------------------------------------------|
 | Dynamic asset discovery         | System finds and covers stocks automatically                                  |
 | All stocks                      | Any exchange, any ticker, any news volume                                     |
 | Auto-generated company profiles | Executive names, subsidiaries, products — all derived automatically           |
@@ -153,7 +153,7 @@ This is where the local app becomes genuinely independent of any external servic
 The web demo is not a separate project. It runs off the same core engine and stays deliberately limited. Its only job is to give people a taste of the tool and send them to the local download.
 
 | Feature                 | Local App | Web Demo |
-| ----------------------- | --------- | -------- |
+|-------------------------|-----------|----------|
 | All 24 current assets   | Yes       | Yes      |
 | Arbitrary ticker lookup | Yes       | No       |
 | Backtesting             | Yes       | No       |
@@ -206,7 +206,7 @@ pulseengine/
 ## What the Web Demo Unlocks vs Locks
 
 | Feature                    | Web Demo | Local App |
-| -------------------------- | -------- | --------- |
+|----------------------------|----------|-----------|
 | assets                     | Yes      | Yes       |
 | Signal score + explanation | Yes      | Yes       |
 | Price chart                | Yes      | Yes       |

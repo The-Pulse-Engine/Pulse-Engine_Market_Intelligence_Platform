@@ -67,7 +67,7 @@ Historical snapshots are persisted to compressed JSON files on disk. A backgroun
 ## Features
 
 | Feature              | Detail                                                                             |
-| -------------------- | ---------------------------------------------------------------------------------- |
+|----------------------|------------------------------------------------------------------------------------|
 | Signal scoring       | Composite score -10 to +10 across 6 weighted components                            |
 | Asset classes        | Commodities, Cryptocurrency, Tech Stocks, Market Indices                           |
 | News ingestion       | 12 public RSS feeds, parallel fetch, Jaccard deduplication                         |
@@ -125,7 +125,7 @@ flowchart TD
 [![Market%20Indices](https://img.shields.io/badge/Market%20Indices-4%20Assets-059669?style=flat-square)](#asset-coverage)
 
 | Category       | Assets                                                              |
-| -------------- | ------------------------------------------------------------------- |
+|----------------|---------------------------------------------------------------------|
 | Commodities    | Gold, Silver, Crude Oil, Natural Gas, Copper, Platinum, Wheat, Corn |
 | Cryptocurrency | Bitcoin, Ethereum, Monero, Solana, Litecoin                         |
 | Tech Stocks    | Apple, Microsoft, NVIDIA, Google, Amazon, Meta, Tesla               |
@@ -215,7 +215,7 @@ After the installer completes, launch the dashboard with:
 ### Dependencies
 
 | Package        | Minimum Version | Purpose                         |
-| -------------- | --------------- | ------------------------------- |
+|----------------|-----------------|---------------------------------|
 | streamlit      | 1.54.0          | Dashboard framework             |
 | yfinance       | 1.2.1           | Price history via Yahoo Finance |
 | pandas         | 2.3.3           | DataFrame operations            |
@@ -306,7 +306,7 @@ Output is written to:
 All tunable values are in `pulseengine/core/config.py`. No magic numbers exist anywhere else in the codebase. `config/settings.py` is a backward-compat shim pointing to the canonical location.
 
 | Constant                      | Default | Description                               |
-| ----------------------------- | ------- | ----------------------------------------- |
+|-------------------------------|---------|-------------------------------------------|
 | `LOOKBACK_DAYS`               | 30      | Price history window in days              |
 | `NEWS_MAX_AGE_HOURS`          | 96      | Maximum article age accepted              |
 | `NEWS_MAX_ARTICLES`           | 300     | Article pool cap before correlation       |
@@ -327,7 +327,7 @@ All tunable values are in `pulseengine/core/config.py`. No magic numbers exist a
 ### Signal Thresholds
 
 | Label            | Score Range |
-| ---------------- | ----------- |
+|------------------|-------------|
 | Strong Bullish   | >= 6.0      |
 | Bullish          | >= 3.0      |
 | Slightly Bullish | >= 1.0      |
@@ -342,7 +342,7 @@ Signal scores are a compact summary of price action, momentum, sentiment, and co
 Use the ranges below as a quick interpretation guide when scanning assets in the dashboard:
 
 | Score Range | Interpretation |
-| ----------- | -------------- |
+|-------------|----------------|
 | +6 to +10   | Strong Bullish |
 | +2 to +6    | Bullish        |
 | -2 to +2    | Neutral        |
@@ -355,7 +355,7 @@ signal components shift over time.
 ### Per-Asset-Class Signal Weights
 
 | Component      | Crypto | Tech Stocks | Commodities | Indices |
-| -------------- | ------ | ----------- | ----------- | ------- |
+|----------------|--------|-------------|-------------|---------|
 | Trend          | 1.2x   | 1.2x        | 1.3x        | 1.5x    |
 | Momentum       | 1.8x   | 1.0x        | 1.0x        | 1.2x    |
 | RSI            | 0.8x   | 1.0x        | 0.8x        | 0.5x    |
@@ -380,7 +380,7 @@ market_data/
 ### Retention Tiers
 
 | Age         | Fields Retained                                                                            |
-| ----------- | ------------------------------------------------------------------------------------------ |
+|-------------|--------------------------------------------------------------------------------------------|
 | 0 – 7 days  | Full snapshot including top 5 headlines                                                    |
 | 8 – 30 days | Reduced: price, change_1d, signal_score, signal_label, trend, rsi, roc_10d, trend_strength |
 | > 60 days   | Deleted automatically after each scan                                                      |
@@ -494,7 +494,7 @@ pulse_engine_1/
 ## Documentation
 
 | Document                                       | Description                                                           |
-| ---------------------------------------------- | --------------------------------------------------------------------- |
+|------------------------------------------------|-----------------------------------------------------------------------|
 | [Docs/code_flow.md](Docs/code_flow.md)         | Step-by-step execution flow for every pipeline with Mermaid diagrams  |
 | [Docs/variable_list.md](Docs/variable_list.md) | Complete reference of all variables, constants, and return structures |
 | [CONTRIBUTING.md](CONTRIBUTING.md)             | How to report issues, propose changes, and submit pull requests       |

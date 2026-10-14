@@ -8,7 +8,7 @@ catch crashes, broken invariants, and pipeline regressions without freezing inte
 ## File Layout
 
 | File                       | Purpose                                                                   |
-| -------------------------- | ------------------------------------------------------------------------- |
+|----------------------------|---------------------------------------------------------------------------|
 | `conftest.py`              | Shared fixtures (price series, DataFrames, articles, signal dicts, mocks) |
 | `test_core.py`             | Core sanity/invariant tests for pure functions                            |
 | `test_pipeline.py`         | Smoke tests for end-to-end orchestration                                  |
@@ -48,7 +48,7 @@ meaningful pipeline outcomes (no crash, sane outputs, expected side effects).
 Canonical imports use the `pulseengine.*` package. The existing test files import from the backward-compat shims intentionally — this verifies the shims themselves remain functional. New tests should prefer canonical paths.
 
 | Import style                             | Module resolved                                   |
-| ---------------------------------------- | ------------------------------------------------- |
+|------------------------------------------|---------------------------------------------------|
 | `from pulseengine.core.app import X`     | Canonical — `pulseengine/core/app.py`             |
 | `from pulseengine.core.storage import X` | Canonical — `pulseengine/core/storage.py`         |
 | `from pulseengine.local.scan import X`   | Canonical — `pulseengine/local/scan.py`           |
@@ -68,7 +68,7 @@ Network calls are mocked at the point of use in `src/engine.py` (the backward-co
 ## When to update tests
 
 | Change                                              | Action required                                       |
-| --------------------------------------------------- | ----------------------------------------------------- |
+|-----------------------------------------------------|-------------------------------------------------------|
 | New key added to `analyse_asset()` result           | Usually nothing; avoid strict key snapshots           |
 | `analyse_asset()` top-level contract changed        | Update smoke expectations in `test_pipeline.py`       |
 | RSI/ROC formula replaced                            | Re-check range/sign invariants and edge-case behavior |

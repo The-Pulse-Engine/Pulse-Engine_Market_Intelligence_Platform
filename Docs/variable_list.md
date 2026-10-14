@@ -18,7 +18,7 @@ This document lists every significant constant, module-level variable, function 
 ### 1. Asset Configuration
 
 | Name               | Type                        | Value / Shape           | Description                                                                                                 |
-| ------------------ | --------------------------- | ----------------------- | ----------------------------------------------------------------------------------------------------------- |
+|--------------------|-----------------------------|-------------------------|-------------------------------------------------------------------------------------------------------------|
 | `TRACKED_ASSETS`   | `dict[str, dict[str, str]]` | 4 categories, 24 assets | Top-level map from category name to `{asset_name: yahoo_ticker}`. The only place tickers are defined.       |
 | `SECTOR_PEERS`     | `dict[str, list[str]]`      | 22 keys                 | Maps each asset name to a list of peer asset names used for sector correlation in `analyse_market_context`. |
 | `MARKET_BENCHMARK` | `dict[str, str]`            | 4 keys                  | Maps each category to a benchmark ticker (e.g. Commodities -> `^GSPC`).                                     |
@@ -26,20 +26,20 @@ This document lists every significant constant, module-level variable, function 
 ### 2. News Feeds
 
 | Name         | Type                    | Value      | Description                                                                          |
-| ------------ | ----------------------- | ---------- | ------------------------------------------------------------------------------------ |
+|--------------|-------------------------|------------|--------------------------------------------------------------------------------------|
 | `NEWS_FEEDS` | `list[tuple[str, str]]` | 12 entries | List of `(feed_name, url)` tuples. Feed name is used as the key in `SOURCE_WEIGHTS`. |
 
 ### 3. Keyword and Event Configuration
 
 | Name             | Type                               | Shape         | Description                                                                                                          |
-| ---------------- | ---------------------------------- | ------------- | -------------------------------------------------------------------------------------------------------------------- |
+|------------------|------------------------------------|---------------|----------------------------------------------------------------------------------------------------------------------|
 | `ASSET_KEYWORDS` | `dict[str, list[tuple[str, int]]]` | 24 assets     | Maps each asset name to a list of `(keyword, weight)` tuples. Weight is 1, 2, or 3. Used in `correlate_news`.        |
 | `EVENT_TRIGGERS` | `dict[str, dict]`                  | 8 event types | Maps event category ID to a dict with `keywords: list[str]`, `label: str`, and `icon: str`. Used in `detect_events`. |
 
 ### 4. Data Settings
 
 | Name                                   | Type    | Default | Description                                                                                                                                                                        |
-| -------------------------------------- | ------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|----------------------------------------|---------|---------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `LOOKBACK_DAYS`                        | `int`   | 30      | Number of calendar days of price history to fetch from Yahoo Finance.                                                                                                              |
 | `PRICE_CHANGE_THRESHOLD`               | `float` | 2.0     | Percent change above which the dashboard displays a significant move alert.                                                                                                        |
 | `NEWS_MAX_AGE_HOURS`                   | `int`   | 96      | Articles older than this are discarded during ingestion.                                                                                                                           |
@@ -53,7 +53,7 @@ This document lists every significant constant, module-level variable, function 
 ### 5. Dashboard Settings
 
 | Name               | Type  | Default                                                                                                                          | Description                               |
-| ------------------ | ----- | -------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
+|--------------------|-------|----------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------|
 | `DASHBOARD_TITLE`  | `str` | `"PulseEngine"`                                                                                                                  | Browser tab title and sidebar header.     |
 | `DASHBOARD_ICON`   | `str` | str — Absolute path to `assets/icons/favicon.ico` relative to the project root. Passed to `st.set_page_config` as the page icon. |                                           |
 | `DASHBOARD_LAYOUT` | `str` | `"wide"`                                                                                                                         | Streamlit page layout.                    |
@@ -63,7 +63,7 @@ This document lists every significant constant, module-level variable, function 
 ### 6. Cache and Performance
 
 | Name                     | Type    | Default | Description                                                                                 |
-| ------------------------ | ------- | ------- | ------------------------------------------------------------------------------------------- |
+|--------------------------|---------|---------|---------------------------------------------------------------------------------------------|
 | `PRICE_CACHE_TTL`        | `int`   | 90      | TTL in seconds for `@st.cache_data` on price history and metrics functions.                 |
 | `NEWS_CACHE_TTL`         | `int`   | 300     | TTL in seconds for `@st.cache_data` on news fetching.                                       |
 | `REQUEST_TIMEOUT`        | `int`   | 20      | HTTP timeout in seconds applied to all RSS feed fetch requests.                             |
@@ -75,26 +75,26 @@ This document lists every significant constant, module-level variable, function 
 ### 7. Source Credibility Weights
 
 | Name             | Type               | Shape      | Description                                                                                     |
-| ---------------- | ------------------ | ---------- | ----------------------------------------------------------------------------------------------- |
+|------------------|--------------------|------------|-------------------------------------------------------------------------------------------------|
 | `SOURCE_WEIGHTS` | `dict[str, float]` | 12 entries | Maps feed name to a credibility multiplier applied during news correlation. Range: 0.90 – 1.35. |
 
 ### 8. Momentum Settings
 
 | Name              | Type  | Default | Description                                                  |
-| ----------------- | ----- | ------- | ------------------------------------------------------------ |
+|-------------------|-------|---------|--------------------------------------------------------------|
 | `RSI_PERIOD`      | `int` | 14      | Lookback window for the Relative Strength Index calculation. |
 | `MOMENTUM_PERIOD` | `int` | 10      | Number of days for the rate-of-change (ROC) calculation.     |
 
 ### 9. Signal Thresholds
 
 | Name                | Type               | Shape  | Description                                                                                                                                 |
-| ------------------- | ------------------ | ------ | ------------------------------------------------------------------------------------------------------------------------------------------- |
+|---------------------|--------------------|--------|---------------------------------------------------------------------------------------------------------------------------------------------|
 | `SIGNAL_THRESHOLDS` | `dict[str, float]` | 6 keys | Maps signal label identifiers to the minimum score for that label. Labels below the `bearish` threshold are classified as `strong_bearish`. |
 
 Component scaling used by `compute_signal_score` and `classify_trend`:
 
 | Name                               | Type    | Default | Description                                                                      |
-| ---------------------------------- | ------- | ------- | -------------------------------------------------------------------------------- |
+|------------------------------------|---------|---------|----------------------------------------------------------------------------------|
 | `SIGNAL_TREND_SCORE`               | `float` | 2.0     | Raw trend score for an uptrend. A downtrend gets the negative value.             |
 | `SIGNAL_MOMENTUM_CAP`              | `float` | 2.0     | Maximum absolute raw momentum score.                                             |
 | `SIGNAL_MOMENTUM_NORMALISER`       | `float` | 5.0     | 10-day ROC in percent that earns 1.0 momentum point.                             |
@@ -111,13 +111,13 @@ Component scaling used by `compute_signal_score` and `classify_trend`:
 ### 10. Asset Class Weights
 
 | Name                  | Type                          | Shape                        | Description                                                                                                            |
-| --------------------- | ----------------------------- | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+|-----------------------|-------------------------------|------------------------------|------------------------------------------------------------------------------------------------------------------------|
 | `ASSET_CLASS_WEIGHTS` | `dict[str, dict[str, float]]` | 4 classes, 6 components each | Per-class multipliers for trend, momentum, rsi, sentiment, trend_strength, and context components of the signal score. |
 
 ### 11. Storage Retention
 
 | Name                          | Type  | Default         | Description                                                                  |
-| ----------------------------- | ----- | --------------- | ---------------------------------------------------------------------------- |
+|-------------------------------|-------|-----------------|------------------------------------------------------------------------------|
 | `STORAGE_DIR`                 | `str` | `"market_data"` | Relative path to the snapshot storage directory.                             |
 | `STORAGE_FULL_DETAIL_DAYS`    | `int` | 7               | Snapshots younger than this retain all fields including headlines.           |
 | `STORAGE_REDUCED_DETAIL_DAYS` | `int` | 30              | Snapshots between this and `STORAGE_FULL_DETAIL_DAYS` retain reduced fields. |
@@ -134,24 +134,24 @@ Component scaling used by `compute_signal_score` and `classify_trend`:
 
 ### Module-Level
 
-| Name                | Type                          | Description                                                                                           |                                                                       |
-| ------------------- | ----------------------------- | ----------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| `VADER_AVAILABLE`   | `bool`                        | Set to `True` if `vaderSentiment` imported successfully, `False` if fallback keyword scoring is used. |                                                                       |
-| `STORAGE_AVAILABLE` | `bool`                        | Set to `True` if `storage.save_snapshot` imported successfully.                                       |                                                                       |
-| `_save_snapshot`    | `Callable`                    | Alias for `storage.save_snapshot`, or a no-op if storage is unavailable.                              |                                                                       |
-| `_vader`            | `SentimentIntensityAnalyzer \ | None`                                                                                                 | VADER analyzer instance. `None` if `vaderSentiment` is not installed. |
-| `_yf_semaphore`     | `threading.Semaphore`         | Semaphore with `PRICE_FETCH_WORKERS` permits to limit concurrent Yahoo Finance requests.              |                                                                       |
-| `_FINANCE_LEXICON`  | `dict[str, float]`            | Custom financial sentiment words with signed weights, injected into VADER. 55+ entries.               |                                                                       |
-| `_POS_WORDS`        | `frozenset[str]`              | 17 positive financial terms used by the keyword fallback sentiment scorer.                            |                                                                       |
-| `_NEG_WORDS`        | `frozenset[str]`              | 25 negative financial terms used by the keyword fallback sentiment scorer.                            |                                                                       |
-| `log`               | `logging.Logger`              | Module-level logger named after `__name__`.                                                           |                                                                       |
+| Name                | Type                                 | Description                                                                                           |
+|---------------------|--------------------------------------|-------------------------------------------------------------------------------------------------------|
+| `VADER_AVAILABLE`   | `bool`                               | Set to `True` if `vaderSentiment` imported successfully, `False` if fallback keyword scoring is used. |
+| `STORAGE_AVAILABLE` | `bool`                               | Set to `True` if `storage.save_snapshot` imported successfully.                                       |
+| `_save_snapshot`    | `Callable`                           | Alias for `storage.save_snapshot`, or a no-op if storage is unavailable.                              |
+| `_vader`            | `SentimentIntensityAnalyzer \| None` | VADER analyzer instance. `None` if `vaderSentiment` is not installed.                                 |
+| `_yf_semaphore`     | `threading.Semaphore`                | Semaphore with `PRICE_FETCH_WORKERS` permits to limit concurrent Yahoo Finance requests.              |
+| `_FINANCE_LEXICON`  | `dict[str, float]`                   | Custom financial sentiment words with signed weights, injected into VADER. 55+ entries.               |
+| `_POS_WORDS`        | `frozenset[str]`                     | 17 positive financial terms used by the keyword fallback sentiment scorer.                            |
+| `_NEG_WORDS`        | `frozenset[str]`                     | 25 negative financial terms used by the keyword fallback sentiment scorer.                            |
+| `log`               | `logging.Logger`                     | Module-level logger named after `__name__`.                                                           |
 
 ### Function Signatures and Return Structures
 
 #### `fetch_price_history(ticker, days)`
 
 | Parameter | Type  | Default         | Description                      |
-| --------- | ----- | --------------- | -------------------------------- |
+|-----------|-------|-----------------|----------------------------------|
 | `ticker`  | `str` | —               | Yahoo Finance ticker symbol      |
 | `days`    | `int` | `LOOKBACK_DAYS` | Number of calendar days to fetch |
 
@@ -162,13 +162,13 @@ Returns `pd.DataFrame` with columns `Open High Low Close Volume Adj Close` index
 #### `compute_price_metrics(df)`
 
 | Parameter | Type                     | Description                                |
-| --------- | ------------------------ | ------------------------------------------ |
+|-----------|--------------------------|--------------------------------------------|
 | `df`      | `Optional[pd.DataFrame]` | OHLCV DataFrame from `fetch_price_history` |
 
 Returns `dict`:
 
 | Key            | Type              | Description                                                                         |
-| -------------- | ----------------- | ----------------------------------------------------------------------------------- |
+|----------------|-------------------|-------------------------------------------------------------------------------------|
 | `latest_price` | `float`           | Most recent Close value                                                             |
 | `change_1d`    | `Optional[float]` | Percentage change over 1 trading day                                                |
 | `change_7d`    | `Optional[float]` | Percentage change over 7 trading days                                               |
@@ -185,7 +185,7 @@ Returns `dict`:
 Returns `dict`:
 
 | Key              | Type              | Description                                         |
-| ---------------- | ----------------- | --------------------------------------------------- |
+|------------------|-------------------|-----------------------------------------------------|
 | `rsi`            | `Optional[float]` | 14-period RSI. None if insufficient history         |
 | `roc_10d`        | `Optional[float]` | 10-day rate of change as percentage                 |
 | `trend_strength` | `Optional[float]` | Divergence of 7-day MA from 30-day MA as percentage |
@@ -198,7 +198,7 @@ Returns `dict`:
 Takes no parameters. Returns `list[dict]` where each dict contains:
 
 | Key         | Type                 | Description                                        |
-| ----------- | -------------------- | -------------------------------------------------- |
+|-------------|----------------------|----------------------------------------------------|
 | `title`     | `str`                | Article headline, HTML stripped                    |
 | `summary`   | `str`                | Article body excerpt, HTML stripped, max 600 chars |
 | `source`    | `str`                | Feed name matching a key in `SOURCE_WEIGHTS`       |
@@ -213,7 +213,7 @@ Takes no parameters. Returns `list[dict]` where each dict contains:
 Returns `dict`:
 
 | Key        | Type    | Description                   |
-| ---------- | ------- | ----------------------------- |
+|------------|---------|-------------------------------|
 | `compound` | `float` | Composite score -1.0 to +1.0  |
 | `pos`      | `float` | Positive component 0.0 to 1.0 |
 | `neg`      | `float` | Negative component 0.0 to 1.0 |
@@ -228,7 +228,7 @@ Keyword matching uses word-boundary regex (`_kw_re`) rather than plain substring
 Returns `list[dict]` — same structure as `fetch_news_articles` output, filtered and extended with:
 
 | Key               | Type         | Description                                                                            |
-| ----------------- | ------------ | -------------------------------------------------------------------------------------- |
+|-------------------|--------------|----------------------------------------------------------------------------------------|
 | `relevance_score` | `float`      | Final weighted score after source credibility multiplier                               |
 | `base_score`      | `float`      | Raw keyword match score before source weighting                                        |
 | `source_weight`   | `float`      | Source credibility multiplier applied from `SOURCE_WEIGHTS`                            |
@@ -241,13 +241,13 @@ Sorted descending by `relevance_score`.
 #### `detect_events(text)`
 
 | Parameter | Type  | Description                               |
-| --------- | ----- | ----------------------------------------- |
+|-----------|-------|-------------------------------------------|
 | `text`    | `str` | Combined title + summary text, lowercased |
 
 Returns `list[dict]` where each dict contains:
 
 | Key          | Type        | Description                                     |
-| ------------ | ----------- | ----------------------------------------------- |
+|--------------|-------------|-------------------------------------------------|
 | `event_key`  | `str`       | Event category identifier from `EVENT_TRIGGERS` |
 | `label`      | `str`       | Human-readable event label                      |
 | `icon`       | `str`       | Display icon for the event                      |
@@ -258,7 +258,7 @@ Returns `list[dict]` where each dict contains:
 #### `cluster_articles(articles)`
 
 | Parameter  | Type         | Description                                          |
-| ---------- | ------------ | ---------------------------------------------------- |
+|------------|--------------|------------------------------------------------------|
 | `articles` | `list[dict]` | Correlated article list (output of `correlate_news`) |
 
 Returns `dict[str, list[dict]]` — articles grouped by detected event type. Ungrouped articles appear under a `"general"` key.
@@ -268,7 +268,7 @@ Returns `dict[str, list[dict]]` — articles grouped by detected event type. Ung
 #### `get_display_clusters(news, max_clusters, min_relevance)`
 
 | Parameter       | Type              | Default | Description                          |
-| --------------- | ----------------- | ------- | ------------------------------------ |
+|-----------------|-------------------|---------|--------------------------------------|
 | `news`          | `list[dict]`      | —       | Correlated article list              |
 | `max_clusters`  | `int`             | `2`     | Maximum number of clusters to return |
 | `min_relevance` | `Optional[float]` | `None`  | Minimum relevance threshold filter   |
@@ -282,7 +282,7 @@ Returns `dict` — top clusters from `cluster_articles` limited to `max_clusters
 Returns `dict`:
 
 | Key              | Type               | Description                                                   |
-| ---------------- | ------------------ | ------------------------------------------------------------- |
+|------------------|--------------------|---------------------------------------------------------------|
 | `score`          | `float`            | Composite score clamped to -10.0 to +10.0                     |
 | `label`          | `str`              | Human-readable label from `SIGNAL_THRESHOLDS`                 |
 | `components`     | `dict[str, float]` | Per-component contributions after class-weight multiplication |
@@ -296,7 +296,7 @@ Returns `dict`:
 Returns `dict`:
 
 | Key                 | Type                         | Description                                          |
-| ------------------- | ---------------------------- | ---------------------------------------------------- |
+|---------------------|------------------------------|------------------------------------------------------|
 | `peer_moves`        | `dict[str, Optional[float]]` | 1-day percentage change for each sector peer         |
 | `benchmark_change`  | `Optional[float]`            | 1-day percentage change of the category benchmark    |
 | `is_sector_wide`    | `bool`                       | True if >= 60% of peers moved in the same direction  |
@@ -310,7 +310,7 @@ Returns `dict`:
 Returns `dict`:
 
 | Key               | Type         | Description                                                                               |
-| ----------------- | ------------ | ----------------------------------------------------------------------------------------- |
+|-------------------|--------------|-------------------------------------------------------------------------------------------|
 | `verdict`         | `str`        | One-line summary sentence                                                                 |
 | `why_it_matters`  | `str`        | Contextual significance paragraph                                                         |
 | `detail`          | `str`        | Full markdown narrative with all contributing factors                                     |
@@ -324,7 +324,7 @@ Returns `dict`:
 #### `analyse_asset(asset_name, ticker, category, articles, with_market_ctx, save, price_cache)`
 
 | Parameter         | Type                         | Default | Description                                                                                                                                                                                                  |
-| ----------------- | ---------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+|-------------------|------------------------------|---------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `asset_name`      | `str`                        | —       | Asset display name                                                                                                                                                                                           |
 | `ticker`          | `str`                        | —       | Yahoo Finance ticker                                                                                                                                                                                         |
 | `category`        | `str`                        | —       | Asset category                                                                                                                                                                                               |
@@ -336,7 +336,7 @@ Returns `dict`:
 Returns `dict`:
 
 | Key                   | Type             | Description                                                                                                        |
-| --------------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------ |
+|-----------------------|------------------|--------------------------------------------------------------------------------------------------------------------|
 | `ticker`              | `str`            | Yahoo Finance ticker                                                                                               |
 | `history`             | `pd.DataFrame`   | Raw OHLCV DataFrame                                                                                                |
 | `metrics`             | `dict`           | Output of `compute_price_metrics`                                                                                  |
@@ -354,7 +354,7 @@ Returns `dict`:
 #### `fetch_all_metrics_parallel(days)`
 
 | Parameter | Type  | Default         | Description                             |
-| --------- | ----- | --------------- | --------------------------------------- |
+|-----------|-------|-----------------|-----------------------------------------|
 | `days`    | `int` | `LOOKBACK_DAYS` | Calendar days of price history to fetch |
 
 Fetches price metrics and momentum for every tracked asset in parallel using `PRICE_FETCH_WORKERS` threads. Returns `dict`:
@@ -380,13 +380,13 @@ Takes no parameters. Fetches news once, then analyses every tracked asset in par
 ## pulseengine/core/signals.py — Module-Level Constants
 
 | Name  | Type             | Description                                 |
-| ----- | ---------------- | ------------------------------------------- |
+|-------|------------------|---------------------------------------------|
 | `log` | `logging.Logger` | Module-level logger named after `__name__`. |
 
 #### `_kw_re(kw)`
 
 | Parameter | Type  | Description                                                                    |
-| --------- | ----- | ------------------------------------------------------------------------------ |
+|-----------|-------|--------------------------------------------------------------------------------|
 | `kw`      | `str` | Lowercase keyword string from `ASSET_KEYWORDS` or the auto-appended asset name |
 
 Returns a `re.Pattern` that matches `kw` as a whole token. A leading `\b` is added only when `kw` starts with an alphanumeric character; a trailing `\b` is added only when `kw` ends with an alphanumeric character. Both guards are independent, so a keyword like `opec+` (alphanumeric start, special-char end) produces `\bopec\+` with no trailing boundary. Results are cached by `functools.cache`, so each pattern is compiled once and reused across all `correlate_news` calls. `_kw_re.cache_info()` shows the cache size.
@@ -396,14 +396,14 @@ Returns a `re.Pattern` that matches `kw` as a whole token. A leading `\b` is add
 ## pulseengine/core/news.py — Module-Level Constants and `generate_keywords`
 
 | Name             | Type             | Description                                                                                                                                                   |
-| ---------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|------------------|------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `_CORP_SUFFIXES` | `frozenset[str]` | Common corporate suffix words stripped from company name tokens during keyword generation (e.g. `"inc"`, `"corp"`, `"holdings"`, `"technology"`). 18 entries. |
 | `log`            | `logging.Logger` | Module-level logger named after `__name__`.                                                                                                                   |
 
 #### `generate_keywords(ticker)`
 
 | Parameter | Type  | Description                                                     |
-| --------- | ----- | --------------------------------------------------------------- |
+|-----------|-------|-----------------------------------------------------------------|
 | `ticker`  | `str` | Any valid Yahoo Finance ticker symbol (e.g. `"NVDA"`, `"AAPL"`) |
 
 Fetches company metadata from `yf.Ticker(ticker).info` in a daemon thread bounded by `REQUEST_TIMEOUT`. Falls back to `[ticker]` on timeout, network failure, or unknown ticker (empty `info` dict).
@@ -411,7 +411,7 @@ Fetches company metadata from `yf.Ticker(ticker).info` in a daemon thread bounde
 Returns `list[str]` — a deduplicated list of keyword strings, all >= 3 characters, in the following order of precedence:
 
 | Source                                            | Example output                 |
-| ------------------------------------------------- | ------------------------------ |
+|---------------------------------------------------|--------------------------------|
 | Ticker symbol                                     | `"NVDA"`                       |
 | `longName` full string                            | `"NVIDIA Corporation"`         |
 | `longName` tokens (corporate suffixes stripped)   | `"NVIDIA"`                     |
@@ -427,7 +427,7 @@ Industry and sector fields are intentionally excluded — terms like `"Technolog
 ### Module-Level Constants
 
 | Name                 | Type              | Description                                                                                                                           |
-| -------------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+|----------------------|-------------------|---------------------------------------------------------------------------------------------------------------------------------------|
 | `_NAV_DETECT_KEYS`   | `tuple[str, ...]` | Session-state keys whose changes trigger a history push: `_selected_category`, `_selected_asset`, `_confirmed_custom_ticker`.         |
 | `_NAV_SNAPSHOT_KEYS` | `tuple[str, ...]` | Keys saved in each history snapshot (superset of `_NAV_DETECT_KEYS`; also includes `_news_for`, `_live_for`, `_custom_ticker_input`). |
 | `_EGG_LIMIT`         | `int`             | Click count threshold for the easter egg (5).                                                                                         |
@@ -439,7 +439,7 @@ Industry and sector fields are intentionally excluded — terms like `"Technolog
 Each constant lives in the submodule that uses it; none are shared across submodules.
 
 | Name                  | Module        | Type             | Description                                                                                                                                  |
-| --------------------- | ------------- | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+|-----------------------|---------------|------------------|----------------------------------------------------------------------------------------------------------------------------------------------|
 | `_BACKTEST_AVAILABLE` | `analysis.py` | `bool`           | `True` if `pulseengine.core.backtest` imported successfully. Controls whether the backtest section renders.                                  |
 | `_STORAGE_AVAILABLE`  | `analysis.py` | `bool`           | `True` if `pulseengine.core.storage.get_historical_features` imported successfully. Controls whether the historical context section renders. |
 | `_WARN_FACTOR_TYPES`  | `analysis.py` | `set[str]`       | Factor types rendered as warning-styled pills.                                                                                               |
@@ -449,7 +449,7 @@ Each constant lives in the submodule that uses it; none are shared across submod
 ### Singleton Scan State (via `@st.cache_resource`)
 
 | Key in `_get_scan_state()` | Type             | Description                                                                              |
-| -------------------------- | ---------------- | ---------------------------------------------------------------------------------------- |
+|----------------------------|------------------|------------------------------------------------------------------------------------------|
 | `lock`                     | `threading.Lock` | Prevents concurrent scan threads. Acquired before starting, released in `finally` block. |
 | `running`                  | `bool`           | True while a scan thread is active.                                                      |
 | `last_started`             | `float`          | `time.time()` value when the most recent scan was initiated.                             |
@@ -461,7 +461,7 @@ Each constant lives in the submodule that uses it; none are shared across submod
 ### `st.session_state` Keys
 
 | Key                        | Type          | Description                                                                                                                                                                                          |
-| -------------------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|----------------------------|---------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `_scan_check_ts`           | `float`       | `time.time()` of the last call that passed the 60-second rate-limit guard in `_maybe_trigger_scan`.                                                                                                  |
 | `_scan_refresh_epoch`      | `int`         | Monotonically increasing counter; incrementing it busts `cached_scan_summary()`.                                                                                                                     |
 | `_scan_rerun_done`         | `bool`        | Guards the one-time rerun triggered when a background scan finishes.                                                                                                                                 |
@@ -481,7 +481,7 @@ Each constant lives in the submodule that uses it; none are shared across submod
 ### Cached Data Functions (`pulseengine/local/data.py`)
 
 | Function                            | TTL                      | Returns                                                                                                            |
-| ----------------------------------- | ------------------------ | ------------------------------------------------------------------------------------------------------------------ |
+|-------------------------------------|--------------------------|--------------------------------------------------------------------------------------------------------------------|
 | `cached_news()`                     | `NEWS_CACHE_TTL` (300 s) | Deduplicated article list from all 12 feeds                                                                        |
 | `cached_scan_summary(epoch)`        | `PRICE_CACHE_TTL` (90 s) | Nested summary dict loaded from `_scan_summary.json.gz`; used to populate the market heatmap and category overview |
 | `cached_live_analysis(...)`         | `PRICE_CACHE_TTL` (90 s) | Full `analyse_asset` result dict for the selected ticker                                                           |
@@ -490,7 +490,7 @@ Each constant lives in the submodule that uses it; none are shared across submod
 ### UI Rendering Functions (`pulseengine/local/components.py`)
 
 | Function                                                                          | Description                                                                         |
-| --------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+|-----------------------------------------------------------------------------------|-------------------------------------------------------------------------------------|
 | `sidebar_header_html()`                                                           | Returns HTML for the sidebar logo and title header                                  |
 | `render_scan_status_sidebar(scan_state, summary)`                                 | Renders the scan status badge and last-scan timestamp in the sidebar                |
 | `render_signal_legend_sidebar()`                                                  | Renders the signal score legend in the sidebar                                      |
@@ -508,7 +508,7 @@ Each constant lives in the submodule that uses it; none are shared across submod
 ### Per-Rerun Variables (main panel)
 
 | Variable              | Type              | Description                                                                            |
-| --------------------- | ----------------- | -------------------------------------------------------------------------------------- |
+|-----------------------|-------------------|----------------------------------------------------------------------------------------|
 | `selected_category`   | `str`             | Category chosen in sidebar selectbox (or `"Custom Ticker"` when using a custom ticker) |
 | `selected_asset`      | `str`             | Asset chosen in sidebar selectbox (or the confirmed custom ticker symbol)              |
 | `ticker`              | `str`             | Yahoo Finance ticker for `selected_asset`                                              |
@@ -524,7 +524,7 @@ Each constant lives in the submodule that uses it; none are shared across submod
 ### Module-Level
 
 | Name                     | Type                        | Description                                                                                           |
-| ------------------------ | --------------------------- | ----------------------------------------------------------------------------------------------------- |
+|--------------------------|-----------------------------|-------------------------------------------------------------------------------------------------------|
 | `_storage_path`          | `pathlib.Path`              | Resolved path to `STORAGE_DIR`.                                                                       |
 | `_asset_locks`           | `dict[str, threading.Lock]` | Per-asset write locks to prevent concurrent snapshot writes for the same asset.                       |
 | `_asset_locks_mutex`     | `threading.Lock`            | Guards access to `_asset_locks` dict during lock creation.                                            |
@@ -536,7 +536,7 @@ Each constant lives in the submodule that uses it; none are shared across submod
 ### Snapshot Dict Structure (full detail)
 
 | Key              | Type              | Description                                                      |
-| ---------------- | ----------------- | ---------------------------------------------------------------- |
+|------------------|-------------------|------------------------------------------------------------------|
 | `asset`          | `str`             | Asset name                                                       |
 | `date`           | `str`             | ISO date string `YYYY-MM-DD`                                     |
 | `price`          | `Optional[float]` | Latest close price                                               |
@@ -560,14 +560,14 @@ Each constant lives in the submodule that uses it; none are shared across submod
 ### Additional Functions
 
 | Function                              | Description                                                                              |
-| ------------------------------------- | ---------------------------------------------------------------------------------------- |
+|---------------------------------------|------------------------------------------------------------------------------------------|
 | `load_snapshots(asset_name, days=30)` | Returns `list[dict]` of all snapshots for the asset within the last `days` calendar days |
 | `list_tracked_assets_with_history()`  | Returns sorted `list[str]` of asset names that have at least one stored snapshot         |
 
 ### `get_historical_features(asset_name)` Return Structure
 
 | Key                  | Type              | Description                                                |
-| -------------------- | ----------------- | ---------------------------------------------------------- |
+|----------------------|-------------------|------------------------------------------------------------|
 | `available`          | `int`             | Number of snapshots found                                  |
 | `signal_consistency` | `Optional[float]` | Fraction of historical signals in same direction as latest |
 | `trend_persistence`  | `int`             | Consecutive days the current trend has held                |
@@ -580,21 +580,21 @@ Each constant lives in the submodule that uses it; none are shared across submod
 ### Module-Level
 
 | Name            | Type             | Description                                                                                       |
-| --------------- | ---------------- | ------------------------------------------------------------------------------------------------- |
+|-----------------|------------------|---------------------------------------------------------------------------------------------------|
 | `_SUMMARY_FILE` | `pathlib.Path`   | Path to `market_data/_scan_summary.json.gz` — the persistent scan summary written after each run. |
 | `log`           | `logging.Logger` | Module logger.                                                                                    |
 
 ### `run_scan(verbose, dry_run)` Parameters
 
 | Parameter | Type   | Default | Description                                    |
-| --------- | ------ | ------- | ---------------------------------------------- |
+|-----------|--------|---------|------------------------------------------------|
 | `verbose` | `bool` | `True`  | Log per-asset progress lines                   |
 | `dry_run` | `bool` | `False` | Run the full pipeline but skip all file writes |
 
 ### `run_scan()` Return Structure
 
 | Key             | Type                         | Description                                                                                          |
-| --------------- | ---------------------------- | ---------------------------------------------------------------------------------------------------- |
+|-----------------|------------------------------|------------------------------------------------------------------------------------------------------|
 | `scan_date`     | `str`                        | ISO date string of scan execution                                                                    |
 | `scan_time`     | `str`                        | ISO datetime string of scan start                                                                    |
 | `total`         | `int`                        | Total number of assets processed                                                                     |
@@ -608,7 +608,7 @@ Each constant lives in the submodule that uses it; none are shared across submod
 ### Entry Dict Within `results`
 
 | Key              | Type              | Description                                                |
-| ---------------- | ----------------- | ---------------------------------------------------------- |
+|------------------|-------------------|------------------------------------------------------------|
 | `ticker`         | `str`             | Yahoo Finance ticker                                       |
 | `signal_score`   | `Optional[float]` | Composite score                                            |
 | `signal_label`   | `Optional[str]`   | Label string                                               |
@@ -639,7 +639,7 @@ Returns the dict written by the most recent `run_scan()` call (same structure as
 ### Module-Level
 
 | Name                  | Type             | Description                                                                                |
-| --------------------- | ---------------- | ------------------------------------------------------------------------------------------ |
+|-----------------------|------------------|--------------------------------------------------------------------------------------------|
 | `_STRONG_THRESHOLD`   | `float`          | 6.0 — minimum `abs(signal_score)` for the `strong` bucket.                                 |
 | `_MODERATE_THRESHOLD` | `float`          | 3.0 — minimum `abs(signal_score)` for the `moderate` bucket. Scores below this are `weak`. |
 | `log`                 | `logging.Logger` | Module logger.                                                                             |
@@ -647,7 +647,7 @@ Returns the dict written by the most recent `run_scan()` call (same structure as
 ### `evaluate_signal_accuracy(asset_name, lookback)` Return Structure
 
 | Key                  | Type              | Description                                                                                                                                   |
-| -------------------- | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+|----------------------|-------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
 | `hit_rate`           | `Optional[float]` | Fraction of correct directional predictions. None if fewer than 2 pairs available                                                             |
 | `num_evaluated`      | `int`             | Number of signal-outcome pairs evaluated                                                                                                      |
 | `details`            | `list[dict]`      | Per-pair records sorted newest-first. Each dict has `date`, `signal_score`, `signal_label`, `predicted`, `actual_change`, `actual`, `correct` |
@@ -664,7 +664,7 @@ Returns `dict[str, dict]` — one `evaluate_signal_accuracy` result per asset na
 ### `get_signal_streak(details)` Return Structure
 
 | Key      | Type  | Description                             |
-| -------- | ----- | --------------------------------------- |
+|----------|-------|-----------------------------------------|
 | `type`   | `str` | `"win"`, `"loss"`, or `"none"`          |
 | `length` | `int` | Number of consecutive matching outcomes |
 
@@ -675,7 +675,7 @@ Returns `dict[str, dict]` — one `evaluate_signal_accuracy` result per asset na
 ### Constants
 
 | Name             | Type              | Value                                                                           | Description                                                                    |
-| ---------------- | ----------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+|------------------|-------------------|---------------------------------------------------------------------------------|--------------------------------------------------------------------------------|
 | `MIN_PYTHON`     | `tuple[int, int]` | `(3, 11)`                                                                       | Minimum supported Python version (inclusive).                                  |
 | `MAX_PYTHON`     | `tuple[int, int]` | `(3, 14)`                                                                       | Maximum tested Python version (inclusive).                                     |
 | `REPO_ROOT`      | `pathlib.Path`    | `Path(__file__).resolve().parent`                                               | Absolute path to the project root, resolved from the installer's own location. |
@@ -687,7 +687,7 @@ Returns `dict[str, dict]` — one `evaluate_signal_accuracy` result per asset na
 ### Helper Functions
 
 | Function               | Signature                 | Description                                                                                                      |
-| ---------------------- | ------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+|------------------------|---------------------------|------------------------------------------------------------------------------------------------------------------|
 | `_c(code, text)`       | `(str, str) -> str`       | Wraps `text` in the ANSI escape sequence for `code` if `_USE_COLOUR` is set, otherwise returns `text` unchanged. |
 | `green(t)`             | `(str) -> str`            | Green-coloured text. Used for success checkmarks.                                                                |
 | `yellow(t)`            | `(str) -> str`            | Yellow-coloured text. Used for warnings.                                                                         |
@@ -704,14 +704,14 @@ Returns `dict[str, dict]` — one `evaluate_signal_accuracy` result per asset na
 ### Path Helpers
 
 | Function         | Signature            | Returns                                                           | Description                                                   |
-| ---------------- | -------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------- |
+|------------------|----------------------|-------------------------------------------------------------------|---------------------------------------------------------------|
 | `_venv_python()` | `() -> pathlib.Path` | `.venv/Scripts/python.exe` (Windows) or `.venv/bin/python` (Unix) | Path to the Python executable inside the virtual environment. |
 | `_venv_pip()`    | `() -> pathlib.Path` | `.venv/Scripts/pip.exe` (Windows) or `.venv/bin/pip` (Unix)       | Path to the pip executable inside the virtual environment.    |
 
 ### Pipeline Functions
 
 | Function                     | Description                                                                                                                                                                                       |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `check_python_version()`     | Reads `sys.version_info` and calls `_abort` if the version is outside `MIN_PYTHON`–`MAX_PYTHON`.                                                                                                  |
 | `create_venv()`              | Runs `python -m venv .venv` via subprocess. Skips silently if `.venv/` already exists. Aborts with the subprocess stderr on failure.                                                              |
 | `install_dependencies()`     | First upgrades pip silently, then runs `pip install -r requirements.txt` with output streamed to the terminal. Aborts on non-zero exit code.                                                      |
