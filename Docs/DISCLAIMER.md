@@ -70,7 +70,7 @@ This limitation applies regardless of whether the damages are based on contract,
 This software fetches data from the following third-party sources:
 
 | Source               | Type                  | License / Terms                |
-| -------------------- | --------------------- | ------------------------------ |
+|----------------------|-----------------------|--------------------------------|
 | Yahoo Finance        | Price history (OHLCV) | Yahoo Finance Terms of Service |
 | Reuters              | News RSS feed         | Reuters Terms of Use           |
 | CNBC                 | News RSS feed         | CNBC Terms of Service          |

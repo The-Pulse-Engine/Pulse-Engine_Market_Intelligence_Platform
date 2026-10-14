@@ -138,7 +138,7 @@ Requires the [Python](https://marketplace.visualstudio.com/items?itemName=ms-pyt
 Open the project folder in VS Code. The configurations in `.vscode/launch.json` will appear in the **Run and Debug** panel (`Ctrl+Shift+D`):
 
 | Configuration         | Equivalent command                             |
-| --------------------- | ---------------------------------------------- |
+|-----------------------|------------------------------------------------|
 | Dashboard (Streamlit) | `streamlit run pulseengine/local/dashboard.py` |
 | Scan (Dry Run)        | `python -m pulseengine.local.scan --dry-run`   |
 | Scan (Full)           | `python -m pulseengine.local.scan`             |
@@ -154,7 +154,7 @@ Open the project root as a PyCharm project. Configure the interpreter once via *
 The run configurations in `.idea/runConfigurations/` are loaded automatically by PyCharm and appear in the run/debug dropdown in the toolbar:
 
 | Configuration  | Equivalent command                                       |
-| -------------- | -------------------------------------------------------- |
+|----------------|----------------------------------------------------------|
 | Dashboard      | `python -m streamlit run pulseengine/local/dashboard.py` |
 | Scan (Dry Run) | `python -m pulseengine.local.scan --dry-run`             |
 | Scan (Full)    | `python -m pulseengine.local.scan`                       |
@@ -254,15 +254,15 @@ If you are modifying signal scoring logic (`compute_signal_score` in `pulseengin
 
 The following areas are particularly welcome for contribution:
 
-| Area                   | Description                                                                                                                                                                                                                                                             |
-| ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Additional assets      | New tickers can be added to `TRACKED_ASSETS` in `pulseengine/core/config.py` along with keywords in `ASSET_KEYWORDS` and peers in `SECTOR_PEERS`                                                                                                                        |
-| Additional news feeds  | New RSS feeds can be added to `NEWS_FEEDS` in `pulseengine/core/config.py` with a corresponding entry in `SOURCE_WEIGHTS`                                                                                                                                               |
+| Area                   | Description                                                                                                                                                                                                                                                                                         |
+|------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Additional assets      | New tickers can be added to `TRACKED_ASSETS` in `pulseengine/core/config.py` along with keywords in `ASSET_KEYWORDS` and peers in `SECTOR_PEERS`                                                                                                                                                    |
+| Additional news feeds  | New RSS feeds can be added to `NEWS_FEEDS` in `pulseengine/core/config.py` with a corresponding entry in `SOURCE_WEIGHTS`                                                                                                                                                                           |
 | Test suite expansion   | The current suite has 90 tests covering core invariants, pipeline smoke tests, edge cases, storage/scan integration, and the legacy import contract. Contributions that add meaningful property-based or integration tests are welcome — see `tests/MAINTENANCE.md` for what makes a good test here |
-| Export functionality   | CSV or Excel export of the category overview table                                                                                                                                                                                                                      |
-| Alert system           | Email or webhook notification when a signal crosses a configurable threshold                                                                                                                                                                                            |
-| Improved deduplication | Replace Jaccard similarity with a more robust semantic deduplication approach                                                                                                                                                                                           |
-| Documentation          | Improvements to `Docs/code_flow.md` and `Docs/variable_list.md`                                                                                                                                                                                                         |
+| Export functionality   | CSV or Excel export of the category overview table                                                                                                                                                                                                                                                  |
+| Alert system           | Email or webhook notification when a signal crosses a configurable threshold                                                                                                                                                                                                                        |
+| Improved deduplication | Replace Jaccard similarity with a more robust semantic deduplication approach                                                                                                                                                                                                                       |
+| Documentation          | Improvements to `Docs/code_flow.md` and `Docs/variable_list.md`                                                                                                                                                                                                                                     |
 
 ---
 
