@@ -3,7 +3,7 @@
     <option name="myName" value="Project Default" />
 
     <!--
-      Four inspections are disabled. Each is something the repository cannot
+      Five inspections are disabled. Each is something the repository cannot
       fix in source, with the evidence recorded. Everything the IDE reported
       that COULD be fixed was fixed instead of suppressed:
 
@@ -45,9 +45,24 @@
         declared in pyproject.toml under [project.optional-dependencies] and
         pinned in requirements-dev.txt, so `import pytest` in tests/ is
         properly declared; this inspection just cannot see either file.
+
+      GrazieStyle — checks prose against American English. The project writes
+        British English on purpose, and some of it is public API:
+        analyse_asset, analyse_market_context, tests/test_optimisation.py.
+        All 35 findings were British spellings such as "analyse" and
+        "behaviour". Real grammar errors still come from GrazieInspection,
+        which stays ON.
+
+      OutdatedRequirementInspection — flags every pin in requirements*.txt
+        that has a newer release. The pins are deliberate (CI reproduces
+        them), and Dependabot opens one PR per upgrade, so each bump gets its
+        own CI run. Some upgrades need code work first: pandas 3 conflicts
+        with the pandas-stubs<3 pin in pyproject.toml.
     -->
     <inspection_tool class="CssUnusedSymbol" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="UndefinedParamsPresent" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="PyPackageRequirementsInspection" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
+    <inspection_tool class="GrazieStyle" enabled="false" level="TYPO" enabled_by_default="false" />
+    <inspection_tool class="OutdatedRequirementInspection" enabled="false" level="WARNING" enabled_by_default="false" />
   </profile>
 </component>
