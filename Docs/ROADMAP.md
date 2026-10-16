@@ -15,8 +15,24 @@ The project is split into two surfaces sharing one core engine:
 
 ---
 
+## What PulseEngine Stands For
+
+Every milestone below must keep these six promises. A change that breaks one needs an issue and a discussion first.
+
+1. **Explainable signals.** Every score comes with its reasons: the components, the matched news, the detected events. A number without an explanation is not a PulseEngine signal.
+2. **Honest about uncertainty.** When data is thin, the engine says so. Low news coverage lowers the sentiment weight and is flagged in the UI. Signals are analysis, never financial advice.
+3. **Local-first and private.** The full product runs on the user's machine. No accounts, no telemetry, no data leaves the device. The web demo stores nothing.
+4. **Free and open data.** Only free public feeds (Yahoo Finance, public RSS). No paid APIs, no proprietary data, MIT licensed.
+5. **One shared core.** `pulseengine/core/` holds the engine and has no UI code. `local/` can be heavy (models, storage, backtests). `web/` stays stateless, with no file I/O.
+6. **Standard, checkable methods.** Indicators follow their standard definitions, so users can compare them with other tools. For example, RSI uses Wilder smoothing. Every tunable number lives in `pulseengine/core/config.py`.
+
+The engineering rules that protect these promises are in [CONTRIBUTING.md](../CONTRIBUTING.md): constants only in `config.py`, `logging` instead of `print()`, specific exceptions instead of `except Exception`, and CI that runs ruff, mypy and pytest on every pull request.
+
+---
+
 ## Table of Contents
 
+- [What PulseEngine Stands For](#what-pulseengine-stands-for)
 - [Current State](#current-state)
 - [v0.3 Foundation Split](#v03--foundation-split--arbitrary-tickers)
 - [v0.4 Desktop Experience](#v04--desktop-experience)
@@ -32,7 +48,7 @@ The project is split into two surfaces sharing one core engine:
 
 [![Version](https://img.shields.io/badge/Version-0.3.2-a16207?style=flat-square)]()
 [![Assets](https://img.shields.io/badge/Assets-24%20Tracked-0ea5e9?style=flat-square)]()
-[![Tests](https://img.shields.io/badge/Tests-54%20passing-22c55e?style=flat-square)]()
+[![Tests](https://img.shields.io/badge/Tests-95%20passing-22c55e?style=flat-square)]()
 [![Sentiment](https://img.shields.io/badge/Sentiment-VADER-7c3aed?style=flat-square)]()
 [![Demo](https://img.shields.io/badge/Demo-Live-FF4B4B?style=flat-square&logo=streamlit&logoColor=white)](https://pulseengine.streamlit.app/)
 
@@ -42,7 +58,7 @@ What exists right now:
 - Arbitrary ticker lookup — enter any valid Yahoo Finance symbol in the sidebar
 - VADER sentiment engine with injected financial lexicon
 - 12 RSS feeds ingested in parallel with Jaccard deduplication
-- RSI, momentum, trend strength, and 8-category event detection
+- Wilder RSI, momentum, trend strength, and 8-category event detection
 - Per-asset-class signal weighting profiles
 - Background scan daemon refreshing all assets every 30 minutes
 - Startup auto-refresh — `@st.fragment(run_every=5)` poller triggers a page rerun when the scan completes, no manual refresh required
@@ -50,10 +66,11 @@ What exists right now:
 - Compressed snapshot storage with tiered retention (7 / 30 / 60 days)
 - Backtesting module with hit-rate evaluation
 - Streamlit live demo at [pulseengine.streamlit.app](https://pulseengine.streamlit.app/)
-- Docker support, 54 tests, full documentation
+- Docker support, 95 tests, full documentation
 - Local installer (`install.py`, `install.sh`, `install.ps1`) with zero terminal friction
 - Clean `pulseengine/core/` + `pulseengine/local/` + `pulseengine/web/` split — completed in v0.3.0
-- Modern Python 3.10+ type annotations (`X | None` union syntax) across all core modules
+- Python 3.11+ with type annotations (`X | None` union syntax) across all core modules, checked by mypy in CI and shipped with a PEP 561 `py.typed` marker
+- Lint-free under ruff, mypy, and the shared PyCharm inspection profile in `.idea/inspectionProfiles/`
 
 What is missing:
 
@@ -102,6 +119,8 @@ The goal: download and double-click. No terminal required.
 | GitHub Actions pipeline | Builds and attaches platform binaries to every release tag      |
 | First-run setup         | Lightweight wizard to configure data directory on first launch  |
 
+Tracking issue: [#56 PyInstaller EXE and release pipeline](https://github.com/The-Pulse-Engine/Pulse-Engine_Market_Intelligence_Platform/issues/56).
+
 ---
 
 ## v0.5 — Local Intelligence
@@ -120,6 +139,8 @@ This is where the local app becomes genuinely independent of any external servic
 | Backtest improvements | Lag correction, rolling validation, signal weight evaluation                 |
 | Test coverage         | Property-based tests for pure functions, integration tests for full pipeline |
 | Custom RSS feeds      | Users add their own news sources via config                                  |
+
+Tracking issues: [#60 offline mode](https://github.com/The-Pulse-Engine/Pulse-Engine_Market_Intelligence_Platform/issues/60), [#57 CSV and PDF export](https://github.com/The-Pulse-Engine/Pulse-Engine_Market_Intelligence_Platform/issues/57), [#61 property-based tests](https://github.com/The-Pulse-Engine/Pulse-Engine_Market_Intelligence_Platform/issues/61).
 
 ---
 
