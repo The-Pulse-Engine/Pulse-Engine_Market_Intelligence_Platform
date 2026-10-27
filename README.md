@@ -11,7 +11,7 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-brightgreen?style=flat-square)](CONTRIBUTING.md)
 [![Disclaimer](https://img.shields.io/badge/Disclaimer-Not%20Financial%20Advice-red?style=flat-square)](Docs/DISCLAIMER.md)
 
-> **Written up in full:** [codex-crusader.github.io/projects/pulse-engine/](https://codex-crusader.github.io/projects/pulse-engine/) covers the problem, the architecture, the results and what it deliberately does not do.
+> **Written up in full:** [Explainable market intelligence: building a signal that shows its working](https://codex-crusader.github.io/writing/explainable-market-intelligence/)
 
 Originally Created by *Bhargavaram Krishnapur (Codex-Crusader)*
 
